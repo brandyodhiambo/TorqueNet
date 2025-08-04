@@ -18,6 +18,13 @@
 		0477CF9A2E40BCFC00A9DB5F /* Exo2-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0477CF892E40BCFC00A9DB5F /* Exo2-ExtraBold.ttf */; };
 		0477CF9B2E40BCFC00A9DB5F /* Exo2-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0477CF902E40BCFC00A9DB5F /* Exo2-SemiBold.ttf */; };
 		0477CF9C2E40BCFC00A9DB5F /* Exo2-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0477CF8A2E40BCFC00A9DB5F /* Exo2-ExtraLight.ttf */; };
+		0477D0832E40EBCB00A9DB5F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0477D0822E40EBCB00A9DB5F /* GoogleService-Info.plist */; };
+		0477D0862E40ED9C00A9DB5F /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = 0477D0852E40ED9C00A9DB5F /* FirebaseAI */; };
+		0477D0882E40ED9C00A9DB5F /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 0477D0872E40ED9C00A9DB5F /* FirebaseAnalytics */; };
+		0477D08A2E40ED9C00A9DB5F /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0477D0892E40ED9C00A9DB5F /* FirebaseAnalyticsCore */; };
+		0477D08C2E40ED9C00A9DB5F /* FirebaseAnalyticsIdentitySupport in Frameworks */ = {isa = PBXBuildFile; productRef = 0477D08B2E40ED9C00A9DB5F /* FirebaseAnalyticsIdentitySupport */; };
+		0477D08E2E40ED9C00A9DB5F /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 0477D08D2E40ED9C00A9DB5F /* FirebaseAppCheck */; };
+		0477D0912E40EDB400A9DB5F /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 0477D0902E40EDB400A9DB5F /* Lottie */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +59,7 @@
 		0477CF8F2E40BCFC00A9DB5F /* Exo2-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo2-Regular.ttf"; sourceTree = "<group>"; };
 		0477CF902E40BCFC00A9DB5F /* Exo2-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo2-SemiBold.ttf"; sourceTree = "<group>"; };
 		0477CF912E40BCFC00A9DB5F /* Exo2-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo2-Thin.ttf"; sourceTree = "<group>"; };
+		0477D0822E40EBCB00A9DB5F /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -90,6 +98,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0477D08C2E40ED9C00A9DB5F /* FirebaseAnalyticsIdentitySupport in Frameworks */,
+				0477D0882E40ED9C00A9DB5F /* FirebaseAnalytics in Frameworks */,
+				0477D08A2E40ED9C00A9DB5F /* FirebaseAnalyticsCore in Frameworks */,
+				0477D08E2E40ED9C00A9DB5F /* FirebaseAppCheck in Frameworks */,
+				0477D0862E40ED9C00A9DB5F /* FirebaseAI in Frameworks */,
+				0477D0912E40EDB400A9DB5F /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +127,7 @@
 		04356D562E40B85B00D1C0A6 = {
 			isa = PBXGroup;
 			children = (
+				0477D0822E40EBCB00A9DB5F /* GoogleService-Info.plist */,
 				04356D612E40B85B00D1C0A6 /* TorqueNet */,
 				04356D722E40B85B00D1C0A6 /* TorqueNetTests */,
 				04356D7C2E40B85B00D1C0A6 /* TorqueNetUITests */,
@@ -161,6 +176,12 @@
 			);
 			name = TorqueNet;
 			packageProductDependencies = (
+				0477D0852E40ED9C00A9DB5F /* FirebaseAI */,
+				0477D0872E40ED9C00A9DB5F /* FirebaseAnalytics */,
+				0477D0892E40ED9C00A9DB5F /* FirebaseAnalyticsCore */,
+				0477D08B2E40ED9C00A9DB5F /* FirebaseAnalyticsIdentitySupport */,
+				0477D08D2E40ED9C00A9DB5F /* FirebaseAppCheck */,
+				0477D0902E40EDB400A9DB5F /* Lottie */,
 			);
 			productName = TorqueNet;
 			productReference = 04356D5F2E40B85B00D1C0A6 /* TorqueNet.app */;
@@ -244,6 +265,10 @@
 			);
 			mainGroup = 04356D562E40B85B00D1C0A6;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				0477D0842E40ED9C00A9DB5F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				0477D08F2E40EDB400A9DB5F /* XCRemoteSwiftPackageReference "lottie-spm" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 04356D602E40B85B00D1C0A6 /* Products */;
 			projectDirPath = "";
@@ -272,6 +297,7 @@
 				0477CF9A2E40BCFC00A9DB5F /* Exo2-ExtraBold.ttf in Resources */,
 				0477CF9B2E40BCFC00A9DB5F /* Exo2-SemiBold.ttf in Resources */,
 				0477CF9C2E40BCFC00A9DB5F /* Exo2-ExtraLight.ttf in Resources */,
+				0477D0832E40EBCB00A9DB5F /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -620,6 +646,58 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0477D0842E40ED9C00A9DB5F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.0.0;
+			};
+		};
+		0477D08F2E40EDB400A9DB5F /* XCRemoteSwiftPackageReference "lottie-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0477D0852E40ED9C00A9DB5F /* FirebaseAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0477D0842E40ED9C00A9DB5F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAI;
+		};
+		0477D0872E40ED9C00A9DB5F /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0477D0842E40ED9C00A9DB5F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		0477D0892E40ED9C00A9DB5F /* FirebaseAnalyticsCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0477D0842E40ED9C00A9DB5F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsCore;
+		};
+		0477D08B2E40ED9C00A9DB5F /* FirebaseAnalyticsIdentitySupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0477D0842E40ED9C00A9DB5F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsIdentitySupport;
+		};
+		0477D08D2E40ED9C00A9DB5F /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0477D0842E40ED9C00A9DB5F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAppCheck;
+		};
+		0477D0902E40EDB400A9DB5F /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0477D08F2E40EDB400A9DB5F /* XCRemoteSwiftPackageReference "lottie-spm" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 04356D572E40B85B00D1C0A6 /* Project object */;
 }
