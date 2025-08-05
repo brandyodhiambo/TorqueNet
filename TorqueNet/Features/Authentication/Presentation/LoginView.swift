@@ -10,8 +10,20 @@ import SwiftUI
 struct LoginView: View {
     var onLoginSuccess: () -> Void
     var onLoginFailure: (String) -> Void
+    
+    @EnvironmentObject var router: Router
     var body: some View {
-        Text("Login Screen")
+        Button(action: {
+            onLoginSuccess()
+        }, label: {
+            Text("Login Screen")
+        })
+        
+        Button(action:{
+            router.push(.register)
+        }, label: {
+            Text("Dont have an account? Sign Up")
+        })
     }
 }
 

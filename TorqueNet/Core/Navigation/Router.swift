@@ -104,10 +104,12 @@ class Router: ObservableObject {
 @ViewBuilder
 func viewForRoute(_ route: Route, router: Router) -> some View{
     switch route {
-        
-    case .landing:
-        LandingView()
-            .navigationBarBackButtonHidden()
+    
+    case .onboarding:
+        OnboardingView(
+            action:{}
+        )
+        .navigationBarBackButtonHidden()
         
     case .dashboard:
         DashboardView()

@@ -6,7 +6,7 @@
 //
 
 enum Route: Hashable {
-    case landing
+    case onboarding
     case dashboard
     
     case login

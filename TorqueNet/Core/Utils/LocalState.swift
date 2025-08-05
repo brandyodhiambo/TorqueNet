@@ -10,14 +10,14 @@ import SwiftUI
 
 enum Keys: String{
     case isFirstTimeUsingApp
-    case fontPrefix
-    case theme
     case isDarkModeOn
-    case isLogedIn
+    case isLoggedIn
+    case isLogout
 }
 
 public class LocalState {
-    @AppStorage(Keys.isFirstTimeUsingApp.rawValue) static var isFirstLaunch: Bool = true
+    @AppStorage(Keys.isFirstTimeUsingApp.rawValue) static var isFirstTimeUsingApp: Bool = true
     @AppStorage(Keys.isDarkModeOn.rawValue) static var isDarkModeOn: String?
-    @AppStorage(Keys.isLogedIn.rawValue) static var isLogedIn: Bool = false
+    @AppStorage(Keys.isLoggedIn.rawValue) static var isLoggedIn: Bool = false
+    @AppStorage(Keys.isLogout.rawValue) static var isLogout: Bool = false
 }

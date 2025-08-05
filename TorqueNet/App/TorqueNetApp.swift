@@ -13,6 +13,7 @@ struct TorqueNetApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .environmentObject(Router())
         }
     }
 }
