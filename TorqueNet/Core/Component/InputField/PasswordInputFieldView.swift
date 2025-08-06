@@ -1,14 +1,13 @@
 //
-//  InputFieldView.swift
+//  PasswordInputFieldView.swift
 //  TorqueNet
 //
-//  Created by MAC on 04/08/2025.
+//  Created by MAC on 06/08/2025.
 //
 
 import SwiftUI
 
-
-struct InputFieldView: View {
+struct PasswordInputFieldView: View {
     var image: String = ""
     var description: String = ""
     var placeHolder: String = ""
@@ -35,7 +34,7 @@ struct InputFieldView: View {
             }
 
             HStack(spacing: 8) {
-                TextField(placeHolder, text: $text)
+                SecureField(placeHolder, text: $text)
                     .font(.custom("Exo2-Medium", size: 15))
                     .foregroundColor(foregroundColor)
                     .keyboardType(keyboardType)
@@ -47,7 +46,7 @@ struct InputFieldView: View {
                     .padding(.vertical, 6)
                 
                 if !image.isEmpty {
-                    Image(image)
+                    Image(systemName:image)
                         .renderingMode(.template)
                         .resizable()
                         .scaledToFit()
@@ -84,18 +83,15 @@ struct InputFieldView: View {
     }
 }
 
-
-
-
-struct InputFieldViewPreview: View {
+struct PasswordInputFieldViewPreview: View {
     @State var text: String = ""
 
     var body: some View {
         VStack(spacing: 20) {
-            InputFieldView(
-                image: "search_icon",
-                description: "Username",
-                placeHolder: "Enter username",
+            PasswordInputFieldView(
+                image: "eye.slash",
+                description: "Password",
+                placeHolder: "Enter password",
                 text: $text,
                 foregroundColor: .black,
                 backgroundColor: Color.gray.opacity(0.1),
@@ -105,8 +101,8 @@ struct InputFieldViewPreview: View {
                 }
             )
 
-            InputFieldView(
-                placeHolder: "Email",
+            PasswordInputFieldView(
+                placeHolder: "Password",
                 text: $text,
                 foregroundColor: .white,
                 backgroundColor: .blue.opacity(0.7),
@@ -119,5 +115,5 @@ struct InputFieldViewPreview: View {
 }
 
 #Preview {
-    InputFieldViewPreview()
+    PasswordInputFieldViewPreview()
 }

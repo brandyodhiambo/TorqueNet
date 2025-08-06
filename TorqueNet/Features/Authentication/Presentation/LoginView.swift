@@ -47,20 +47,14 @@ struct LoginView: View {
                     keyboardType: .emailAddress,
                     inputFieldStyle: .outlined
                 )
-
-                HStack {
-                    Image(systemName: "lock")
-                    SecureField("Enter Your Password", text: $password)
-                    Spacer()
-                    Image(systemName: "eye.slash")
-                        .foregroundColor(.gray)
-                }
-                .padding()
-                .background(Color.white)
-                .cornerRadius(12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.orange.opacity(0.2), lineWidth: 1)
+                
+                PasswordInputFieldView(
+                    image: "eye.slash",
+                    description: "Password",
+                    placeHolder: "********",
+                    text: $password,
+                    foregroundColor: Color.theme.onSurfaceColor,
+                    inputFieldStyle: .outlined
                 )
 
                 HStack {
