@@ -22,10 +22,9 @@ final class OnboardingManager: ObservableObject {
     
     func load() {
         items = [
-            .init(image: "🤝", title: "Join the crew", content: "Handshake. Two hands performing a handshake gesture, indicating a cordial greeting between friends or associates. "),
-            .init(image: "❤️", title: "Support the crew", content: "A classic red love heart emoji. The red heart ideograph is traditionally used for expressions of love and romance across many cultures."),
-            .init(image: "🥳", title: "Celebrate the crew", content: "Celebrate the crew and congratulation for joining the crew"),
-            .init(image: "👨‍🎓", title: "Eduction", content: "Eduction is the key to success and prosperity and so are we."),
+            .init(image: "car", title: "Car Binding", content: "Get the opportunity to bind your car with TorqueNet Easily connect your vehicle to your profile for better management"),
+            .init(image: "carAuction", title: "Auction Management", content: "Auction car is the best way to get the car at the lowest price and manage your auctions at all times"),
+            .init(image: "carKey2", title: "Car Key", content: "Obtain your car key and get ready to hit the road,Start driving with ease and confidence in your new ride Everything you need is now at your fingertips"),
         ]
     }
 }

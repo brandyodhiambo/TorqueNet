@@ -6,57 +6,60 @@
 //
 
 import SwiftUI
-
 struct OnboardingView: View {
     let action: () -> Void
     @StateObject private var manager = OnboardingManager()
     @State private var showBtn = false
     @EnvironmentObject var router: Router
-    
+
     var body: some View {
-        ZStack{
-            Color.theme.surfaceColor.ignoresSafeArea()
+        ZStack(alignment: .bottom) {
             if !manager.items.isEmpty {
-                TabView{
+                TabView {
                     ForEach(manager.items) { item in
                         OnboardingInfoView(item: item)
-                            .onAppear{
+                            .onAppear {
                                 if item == manager.items.last {
-                                    withAnimation(.spring().delay(0.35)) {
+                                    withAnimation(.spring().delay(0.3)) {
                                         showBtn = true
                                     }
-                                }
-                                else {
-                                    showBtn = false
-                                }
-                            }
-                            .overlay(alignment: .bottom) {
-                                if showBtn {
-                                    CustomButtonView(
-                                        buttonName:"Continue",
-                                        onTap: {
-                                            action()
-                                            router.push(.login)
-                                        }
-                                    )
-                                    .padding()
-                                    .offset(y: 60)
-                                    .transition(.scale.combined(with: .opacity))
+                                } else {
+                                    withAnimation {
+                                        showBtn = false
+                                    }
                                 }
                             }
                     }
                 }
                 .tabViewStyle(.page)
                 .indexViewStyle(.page(backgroundDisplayMode: .always))
-                
-               
+                .ignoresSafeArea()
+            }
+
+            if showBtn {
+                CustomButtonView(
+                    buttonName: "Continue",
+                    onTap: {
+                        action()
+                        router.push(.login)
+                    }
+                )
+                .padding(.bottom, 32)
+                .padding()
+                .transition(.scale.combined(with: .opacity))
             }
         }
-        .onAppear{
+        .background(Color.theme.surfaceColor)
+        .onAppear {
             manager.load()
+
+            UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(Color.theme.primaryColor)
+            UIPageControl.appearance().pageIndicatorTintColor = UIColor(Color.theme.primaryColor).withAlphaComponent(0.2)
         }
+
     }
 }
+
 
 #Preview {
     OnboardingView{

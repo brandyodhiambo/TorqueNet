@@ -11,27 +11,41 @@ struct OnboardingInfoView: View {
     let item: OnboardingItem
     
     var body: some View {
-        VStack{
-            Text(item.image)
-                .font(.system(size: 150))
+        VStack(spacing: 0){
             
-            Text(item.title)
-                .font(.custom("Exo2-ExtraBold", size: 35))
-                .foregroundColor(Color.theme.onSurfaceColor)
-                .padding(.bottom, 12)
+            Image(item.image)
+                .resizable()
+                .scaledToFill()
+                .frame(height: 500)
+                .frame(maxWidth: .infinity)
+                .clipped()
+                .ignoresSafeArea(edges: .top)
             
-            Text(item.content)
-                .font(.custom("Exo2-Light", size: 15))
-                .foregroundColor(Color.theme.onSurfaceColor)
+            VStack(spacing: 0) {
+                VStack(spacing: 16) {
+                    Text(item.title)
+                        .font(.custom("Exo2-ExtraBold", size: 35))
+                        .foregroundColor(Color.theme.onSurfaceColor)
+                        .padding(.top, 24)
+
+                    Text(item.content)
+                        .font(.custom("Exo2-Light", size: 15))
+                        .foregroundColor(Color.theme.onSurfaceColor)
+                        .padding(.horizontal)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(.bottom, 40)
+            }
             
+            Spacer()
         }
-        .multilineTextAlignment(.center)
-        .padding()
+        .ignoresSafeArea(edges: .all)
     }
 }
 
+
 #Preview {
-    OnboardingInfoView(item: .init(image: "🤝", title: "Join the crew", content: "Handshake. Two hands performing a handshake gesture, indicating a cordial greeting between friends or associates."))
+    OnboardingInfoView(item: .init(image: "carKey2", title: "Join the crew", content: "Handshake. Two hands performing a handshake gesture, indicating a cordial greeting between friends or associates."))
         .previewLayout(.sizeThatFits)
         .background(Color.theme.surfaceColor)
 }
