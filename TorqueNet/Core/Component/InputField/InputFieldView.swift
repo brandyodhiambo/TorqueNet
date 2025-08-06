@@ -34,14 +34,14 @@ struct InputFieldView: View {
         VStack(alignment: .leading, spacing: 4) {
             if !description.isEmpty {
                 Text(description)
-                    .font(.system(size: 12, weight: .light, design: .rounded))
+                    .font(.custom("Exo2-Medium", size: 15))
                     .foregroundColor(foregroundColor)
                     .padding(.horizontal, 4)
             }
 
             HStack(spacing: 8) {
                 TextField(placeHolder, text: $text)
-                    .font(.system(size: 15, weight: .light, design: .rounded))
+                    .font(.custom("Exo2-Medium", size: 15))
                     .foregroundColor(foregroundColor)
                     .keyboardType(keyboardType)
                     .autocapitalization(autoCapitalization)
@@ -127,6 +127,7 @@ struct InputFieldViewPreview: View {
                 text: $text,
                 foregroundColor: .white,
                 backgroundColor: .blue.opacity(0.7),
+                keyboardType: .emailAddress,
                 inputFieldStyle: .outlined
             )
         }
