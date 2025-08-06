@@ -112,12 +112,12 @@ struct LoginView: View {
                 .font(.custom("Exo2-Regular", size: 14))
                 .padding(.top, 8)
             }
-            .padding(.vertical, 40)
+            .padding(.vertical, 30)
             .padding(.horizontal, 16)
             .background(
                 Rectangle()
-                    .fill(Color.theme.onSurfaceColor.opacity(0.2))
-                    .clipShape(RoundedCorner(radius: 45, corners: [.topLeft, .topRight]))
+                    .fill(Color.theme.onSurfaceColor.opacity(0.1))
+                    .clipShape(RoundedCorner(radius: 40, corners: [.topLeft, .topRight]))
                     .frame(maxWidth: .infinity, maxHeight: 900)
                     .edgesIgnoringSafeArea(.bottom)
             )
