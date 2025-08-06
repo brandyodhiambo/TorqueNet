@@ -49,7 +49,6 @@ struct LoginView: View {
                 )
                 
                 PasswordInputFieldView(
-                    image: "eye.slash",
                     description: "Password",
                     placeHolder: "********",
                     text: $password,

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct PasswordInputFieldView: View {
-    var image: String = ""
     var description: String = ""
     var placeHolder: String = ""
     @Binding var text: String
@@ -24,6 +23,8 @@ struct PasswordInputFieldView: View {
     var height: CGFloat = 56
     var onSubmit: (() -> Void)? = nil
 
+    @State private var isSecure: Bool = true
+
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             if !description.isEmpty {
@@ -34,20 +35,27 @@ struct PasswordInputFieldView: View {
             }
 
             HStack(spacing: 8) {
-                SecureField(placeHolder, text: $text)
-                    .font(.custom("Exo2-Medium", size: 15))
-                    .foregroundColor(foregroundColor)
-                    .keyboardType(keyboardType)
-                    .autocapitalization(autoCapitalization)
-                    .submitLabel(.done)
-                    .onSubmit {
-                        onSubmit?()
+                Group {
+                    if isSecure {
+                        SecureField(placeHolder, text: $text)
+                    } else {
+                        TextField(placeHolder, text: $text)
                     }
-                    .padding(.vertical, 6)
-                
-                if !image.isEmpty {
-                    Image(systemName:image)
-                        .renderingMode(.template)
+                }
+                .font(.custom("Exo2-Medium", size: 15))
+                .foregroundColor(foregroundColor)
+                .keyboardType(keyboardType)
+                .autocapitalization(autoCapitalization)
+                .submitLabel(.done)
+                .onSubmit {
+                    onSubmit?()
+                }
+                .padding(.vertical, 6)
+
+                Button(action: {
+                    isSecure.toggle()
+                }) {
+                    Image(systemName: isSecure ? "eye.slash" : "eye")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 20, height: 20)
@@ -83,13 +91,13 @@ struct PasswordInputFieldView: View {
     }
 }
 
+
 struct PasswordInputFieldViewPreview: View {
     @State var text: String = ""
 
     var body: some View {
         VStack(spacing: 20) {
             PasswordInputFieldView(
-                image: "eye.slash",
                 description: "Password",
                 placeHolder: "Enter password",
                 text: $text,
