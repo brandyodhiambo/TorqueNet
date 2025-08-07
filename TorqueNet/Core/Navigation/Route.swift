@@ -11,6 +11,7 @@ enum Route: Hashable {
     
     case login
     case register
+    case forgotPassword
     
     case home
     case wishlist

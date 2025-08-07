@@ -125,6 +125,10 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
     case .register:
         RegisterView()
             .navigationBarBackButtonHidden()
+   
+    case .forgotPassword:
+        ForgotPasswordView()
+            .navigationBarBackButtonHidden()
 
     case .home:
         HomeView()
