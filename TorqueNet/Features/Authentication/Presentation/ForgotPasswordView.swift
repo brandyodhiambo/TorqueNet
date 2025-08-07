@@ -52,7 +52,9 @@ struct ForgotPasswordView: View {
 
                 CustomButtonView(
                     buttonName:"Send",
-                    onTap: {}
+                    onTap: {
+                        router.push(.login)
+                    }
                 )
             }
             .padding(.vertical, 50)

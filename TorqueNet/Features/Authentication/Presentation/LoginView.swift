@@ -67,7 +67,7 @@ struct LoginView: View {
 
                     Spacer()
                     Button("Forgot Password?") {
-                        // Action
+                        router.push(.forgotPassword)
                     }
                     .foregroundColor(.theme.primaryColor)
                     .font(.custom("Exo2-Medium", size: 15))
@@ -76,7 +76,9 @@ struct LoginView: View {
                 CustomButtonView(
                     buttonName:"Sign In",
                     onTap: {
-                        onLoginSuccess()
+                        if rememberMe {
+                            onLoginSuccess()
+                        }
                     }
                 )
 
