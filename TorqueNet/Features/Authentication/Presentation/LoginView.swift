@@ -79,6 +79,7 @@ struct LoginView: View {
                         if rememberMe {
                             onLoginSuccess()
                         }
+                        router.push(.dashboard)
                     }
                 )
 

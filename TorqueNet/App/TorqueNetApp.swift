@@ -14,6 +14,7 @@ struct TorqueNetApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(Router())
+                .environmentObject(TabRouter())
         }
     }
 }
