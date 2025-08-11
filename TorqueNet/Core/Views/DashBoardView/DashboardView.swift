@@ -49,15 +49,15 @@ struct DashboardView: View {
                         }
                     }
                     .frame(height: 70)
-                    .background(.ultraThinMaterial)
-                    .background(Color.theme.onSurfaceColor)
+                    .background(Color.theme.onSurfaceColor.opacity(0.1))
                     .overlay(
                         RoundedRectangle(cornerRadius: 0)
-                            .stroke(Color.theme.onSurfaceColor, lineWidth: 0.5)
+                            .stroke(Color.theme.surfaceColor.opacity(0.3), lineWidth: 0.5)
                     )
                 }
             }
         }
+        .background(Color.theme.surfaceColor)
         .onAppear {
             setUpDashboardVisibility()
             setupKeyboardObservers()
