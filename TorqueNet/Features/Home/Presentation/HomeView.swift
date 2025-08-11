@@ -126,7 +126,7 @@ struct CarCardView: View {
             Image(imageName)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 220, height: 220)
+                .frame(width: 220, height: 130)
                 .cornerRadius(10)
                 .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
             
