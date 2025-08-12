@@ -9,6 +9,31 @@ import SwiftUI
 
 struct HomeView: View {
     @State var text: String = ""
+    var brands: [Brand] = [
+        Brand(
+            image: "benz",
+            title: "Mercedes-Benz"
+        ),
+        Brand(
+            image: "benz",
+            title: "Tesla"
+        ),
+        Brand(
+            image: "benz",
+            title: "Audi"
+        ),
+        Brand(
+            image: "benz",
+            title: "BMW"
+        ),
+    ]
+    
+    var recomendedCars:[RecommendedCars] = [
+        RecommendedCars(image:"car",title: "Mercedes-Benz"),
+        RecommendedCars(image: "car", title: "Red Mazda 6 - Elite Estate"),
+        RecommendedCars(image: "car", title: "Red Mazda 2 - Hatchback"),
+        RecommendedCars(image: "car", title: "Tesla Model 3"),
+    ]
     var body: some View {
         ZStack {
             Color.theme.surfaceColor
@@ -56,10 +81,9 @@ struct HomeView: View {
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 15) {
-                            BrandLogoView(imageName: "tesla", brandName: "Tesla")
-                            BrandLogoView(imageName: "audi", brandName: "Audi")
-                            BrandLogoView(imageName: "bmw", brandName: "BMW")
-                            BrandLogoView(imageName: "benz", brandName: "Mercedes-Benz")
+                            ForEach(brands) { brand in
+                                BrandLogoView(imageName: brand.image, brandName:brand.title)
+                            }
                         }
                     }
                     
@@ -68,8 +92,10 @@ struct HomeView: View {
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 15) {
-                            CarCardView(imageName: "car", title: "Red Mazda 6 - Elite Estate")
-                            CarCardView(imageName: "car", title: "Red Mazda 2 - Hatchback")
+                            ForEach(recomendedCars) { recommendCar in
+                                CarCardView(imageName: recommendCar.image, title: recommendCar.title,onFavoriteTapped: {})
+                            }
+                            
                         }
                     }
                     
@@ -80,7 +106,7 @@ struct HomeView: View {
     }
     
     @ViewBuilder
-private func sectionHeader(title: String) -> some View {
+    private func sectionHeader(title: String) -> some View {
         HStack {
             Text(title)
                 .font(.custom("Exo2-Bold", size: 18))
@@ -120,15 +146,34 @@ struct BrandLogoView: View {
 struct CarCardView: View {
     var imageName: String
     var title: String
+    var onFavoriteTapped: () -> Void?
+    
+    @State private var isFavorite = false
     
     var body: some View {
         VStack(alignment: .leading) {
-            Image(imageName)
-                .resizable()
-                .scaledToFill()
-                .frame(width: 220, height: 130)
-                .cornerRadius(10)
-                .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+            ZStack(alignment: .topTrailing) {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 220, height: 130)
+                    .cornerRadius(10)
+                    .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                
+                Button(action: {
+                    withAnimation(.spring()) {
+                        isFavorite.toggle()
+                        onFavoriteTapped()
+                    }
+                }) {
+                    Image(systemName: isFavorite ? "heart.fill" : "heart")
+                        .foregroundColor(isFavorite ? .red : .white)
+                        .padding(8)
+                        .background(Color.black.opacity(0.4))
+                        .clipShape(Circle())
+                        .padding(8)
+                }
+            }
             
             Text(title)
                 .font(.custom("Exo2-Regular", size: 14))
@@ -139,6 +184,7 @@ struct CarCardView: View {
         .frame(width: 220)
     }
 }
+
 
 #Preview {
     HomeView()
