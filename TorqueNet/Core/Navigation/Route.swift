@@ -14,6 +14,7 @@ enum Route: Hashable {
     case forgotPassword
     
     case home
+    case carDetails
     case wishlist
     case auction
     case settings

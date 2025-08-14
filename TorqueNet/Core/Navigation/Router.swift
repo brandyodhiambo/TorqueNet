@@ -132,6 +132,9 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
 
     case .home:
         HomeView()
+        
+    case .carDetails:
+        CarDetailView()
     
     case .auction:
         AuctionView()

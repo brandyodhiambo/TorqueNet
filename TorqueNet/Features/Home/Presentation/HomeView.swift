@@ -40,7 +40,7 @@ struct HomeView: View {
                 .ignoresSafeArea()
             
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 30) {
                     
                     HStack {
                         HStack(spacing: 8) {
