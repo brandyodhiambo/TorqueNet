@@ -14,11 +14,19 @@ struct CarDetailView: View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading, spacing: 24) {
                 
-                Image("car")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .cornerRadius(12)
-                    .shadow(color: .black.opacity(0.1), radius: 10, y: 5)
+                let carImages: [String] = ["car", "carKey", "benz"]
+
+                TabView {
+                    ForEach(carImages, id: \.self) { imageName in
+                        Image(imageName)
+                            .resizable()
+                            .scaledToFill()
+                    }
+                }
+                .tabViewStyle(.page)
+                .frame(height: 250)
+                .cornerRadius(12)
+                .shadow(color: .black.opacity(0.1), radius: 10, y: 5)
 
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
