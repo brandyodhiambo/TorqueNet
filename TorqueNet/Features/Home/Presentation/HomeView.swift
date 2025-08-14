@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     @State var text: String = ""
+    @EnvironmentObject var router:Router
     var brands: [Brand] = [
         Brand(
             image: "benz",
@@ -93,7 +94,14 @@ struct HomeView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 15) {
                             ForEach(recomendedCars) { recommendCar in
-                                CarCardView(imageName: recommendCar.image, title: recommendCar.title,onFavoriteTapped: {})
+                                CarCardView(
+                                    imageName: recommendCar.image,
+                                    title: recommendCar.title,
+                                    onFavoriteTapped: {},
+                                    onCardTapped: {
+                                        router.push(.carDetails)
+                                    }
+                                )
                             }
                             
                         }
@@ -147,6 +155,7 @@ struct CarCardView: View {
     var imageName: String
     var title: String
     var onFavoriteTapped: () -> Void?
+    var onCardTapped: () -> Void?
     
     @State private var isFavorite = false
     
@@ -182,11 +191,15 @@ struct CarCardView: View {
                 .foregroundColor(.theme.onSurfaceColor)
         }
         .frame(width: 220)
+        .onTapGesture {
+            onCardTapped()
+        }
     }
 }
 
 
 #Preview {
     HomeView()
+        
 }
 

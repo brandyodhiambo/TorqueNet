@@ -135,16 +135,16 @@ struct CarDetailView: View {
                 }
             }
             .padding()
+            .customTopAppBar(
+                title: "Car Details",
+                leadingIcon: "chevron.left",
+                navbarTitleDisplayMode: .inline,
+                onLeadingTap: {},
+                trailingIcon: "",
+                onTrailingTap: {}
+            )
         }
         .background(Color.theme.surfaceColor)
-        .customTopAppBar(
-            title: "Car Details",
-            leadingIcon: "chevron.left",
-            navbarTitleDisplayMode: .inline,
-            onLeadingTap: {},
-            trailingIcon: "",
-            onTrailingTap: {}
-        )
     }
 }
 
@@ -194,7 +194,7 @@ struct CarSpecCard: View {
 
 struct CarDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationStack{
+        NavigationView{
             CarDetailView()
         }
     }
