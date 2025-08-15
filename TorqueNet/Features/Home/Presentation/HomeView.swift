@@ -36,13 +36,9 @@ struct HomeView: View {
         RecommendedCars(image: "car", title: "Tesla Model 3"),
     ]
     var body: some View {
-        ZStack {
-            Color.theme.surfaceColor
-                .ignoresSafeArea()
-            
+        VStack {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 30) {
-                    
                     HStack {
                         HStack(spacing: 8) {
                             Image(systemName: "bell")
@@ -111,6 +107,7 @@ struct HomeView: View {
                 .padding()
             }
         }
+        .background( Color.theme.surfaceColor.ignoresSafeArea())
     }
     
     @ViewBuilder
@@ -135,9 +132,9 @@ struct BrandLogoView: View {
     var body: some View {
         VStack {
             RoundedRectangle(cornerRadius: 15)
-                .fill(Color.white)
+                .fill(Color.theme.surfaceColor)
                 .frame(width: 70, height: 70)
-                .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                .shadow(color: .theme.onSurfaceColor.opacity(0.2), radius: 8, x: 0, y: 4)
                 .overlay(
                     Image(imageName)
                         .resizable()

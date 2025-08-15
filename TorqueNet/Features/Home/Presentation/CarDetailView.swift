@@ -10,6 +10,7 @@ import SwiftUI
 import SwiftUI
 
 struct CarDetailView: View {
+    @EnvironmentObject var router:Router
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading, spacing: 24) {
@@ -31,7 +32,7 @@ struct CarDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text("Red Mazda 6 - Elite Estate")
-                            .font(.custom("Ex02-ExtraBold", size: 24))
+                            .font(.custom("Exo2-ExtraBold", size: 24))
                             .foregroundColor(Color.theme.primaryColor)
                             .fontWeight(.bold)
                         Spacer()
@@ -44,12 +45,12 @@ struct CarDetailView: View {
                         Image(systemName: "star.fill")
                             .foregroundColor(.yellow)
                         Text("4.8")
-                            .font(.custom("Ex02-SemiBold", size: 16))
+                            .font(.custom("Exo2-SemiBold", size: 16))
                             .fontWeight(.semibold)
                             .foregroundColor(.theme.onSurfaceColor)
                             
                         Text("(100+ Reviews)")
-                            .font(.custom("Ex02-SemiBold", size: 16))
+                            .font(.custom("Exo2-SemiBold", size: 16))
                             .font(.subheadline)
                             .foregroundColor(.theme.onSurfaceColor)
                     }
@@ -64,11 +65,11 @@ struct CarDetailView: View {
 
                     VStack(alignment: .leading) {
                         Text("John Downson")
-                            .font(.custom("Ex02-SemiBold", size: 20))
+                            .font(.custom("Exo2-SemiBold", size: 20))
                             .fontWeight(.semibold)
                             .foregroundColor(.theme.onSurfaceColor)
-                        Text("Renter")
-                            .font(.custom("Ex02-SemiBold", size: 14))
+                        Text("Binder")
+                            .font(.custom("Exo2-SemiBold", size: 14))
                             .font(.subheadline)
                             .foregroundColor(.theme.onSurfaceColor)
                     }
@@ -100,7 +101,7 @@ struct CarDetailView: View {
                 
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Car Info")
-                        .font(.custom("Ex02-Medium", size: 16))
+                        .font(.custom("Exo2-Medium", size: 16))
                         .font(.headline)
                         .fontWeight(.bold)
                         .foregroundColor(Color.theme.onSurfaceColor)
@@ -122,7 +123,7 @@ struct CarDetailView: View {
                 
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Car Specs")
-                        .font(.custom("Ex02-Medium", size: 16))
+                        .font(.custom("Exo2-Medium", size: 16))
                         .font(.headline)
                         .fontWeight(.bold)
                         .foregroundColor(Color.theme.onSurfaceColor)
@@ -136,10 +137,12 @@ struct CarDetailView: View {
             }
             .padding()
             .customTopAppBar(
-                title: "Car Details",
+                title: "",
                 leadingIcon: "chevron.left",
                 navbarTitleDisplayMode: .inline,
-                onLeadingTap: {},
+                onLeadingTap: {
+                    router.pop()
+                },
                 trailingIcon: "",
                 onTrailingTap: {}
             )
@@ -161,7 +164,7 @@ struct CarInfoItem: View {
                 .foregroundColor(.theme.primaryColor)
                 .frame(width: 20)
             Text(text)
-                .font(.custom("Ex02-Regular", size: 14))
+                .font(.custom("Exo2-Regular", size: 14))
                 .font(.subheadline)
                 .foregroundColor(.theme.onSurfaceColor.opacity(0.4))
         }
@@ -176,10 +179,10 @@ struct CarSpecCard: View {
     var body: some View {
         VStack(spacing: 8) {
             Text(label)
-                .font(.custom("Ex02-Light", size: 12))
+                .font(.custom("Exo2-Light", size: 12))
                 .foregroundColor(.theme.onSurfaceColor)
             Text(value)
-                .font(.custom("Ex02-Bold", size: 18))
+                .font(.custom("Exo2-Bold", size: 18))
                 .fontWeight(.bold)
                 .foregroundColor(.theme.onSurfaceColor)
 
