@@ -136,18 +136,17 @@ struct CarDetailView: View {
                 }
             }
             .padding()
-            .customTopAppBar(
-                title: "",
-                leadingIcon: "chevron.left",
-                navbarTitleDisplayMode: .inline,
-                onLeadingTap: {
-                    router.pop()
-                },
-                trailingIcon: "",
-                onTrailingTap: {}
-            )
         }
-        .background(Color.theme.surfaceColor)
+        .customTopAppBar(
+            title: "",
+            leadingIcon: "chevron.left",
+            navbarTitleDisplayMode: .inline,
+            onLeadingTap: {
+                router.pop()
+            },
+            trailingIcon: "",
+            onTrailingTap: {}
+        )
     }
 }
 

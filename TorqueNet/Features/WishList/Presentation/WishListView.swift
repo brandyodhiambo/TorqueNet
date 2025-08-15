@@ -29,20 +29,23 @@ struct WishListView: View {
                 auctionEndDate: Date().addingTimeInterval(3600 * 2)
             ),
         ]
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 24) {
-                ForEach(wishListCars) { wishListCar in
-                    WishListCarCardView(
-                        imageName: wishListCar.image,
-                        title: wishListCar.title,
-                        currentPrice: wishListCar.currentPrice,
-                        auctionEndDate: wishListCar.auctionEndDate,
-                        onFavoriteTapped: {},
-                        onCardTapped: {}
-                    )
+        VStack(spacing:16) {
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 24) {
+                    ForEach(wishListCars) { wishListCar in
+                        WishListCarCardView(
+                            imageName: wishListCar.image,
+                            title: wishListCar.title,
+                            currentPrice: wishListCar.currentPrice,
+                            auctionEndDate: wishListCar.auctionEndDate,
+                            onFavoriteTapped: {},
+                            onCardTapped: {}
+                        )
+                    }
                 }
             }
         }
+        .background(Color.theme.surfaceColor)
         .customTopAppBar(
             title: "Wishlist",
             leadingIcon: "",
@@ -52,7 +55,6 @@ struct WishListView: View {
             trailingIcon: "",
             onTrailingTap: {}
         )
-        .background(Color.theme.surfaceColor)
     }
 }
 
@@ -75,7 +77,7 @@ struct WishListCarCardView: View {
                 Image(imageName)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: .infinity, height: 200)
+                    .frame(height: 200)
                     .cornerRadius(10)
                     .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                 
