@@ -50,10 +50,6 @@ struct DashboardView: View {
                     }
                     .frame(height: 70)
                     .background(Color.theme.onSurfaceColor.opacity(0.1))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 0)
-                            .stroke(Color.theme.surfaceColor.opacity(0.3), lineWidth: 0.5)
-                    )
                 }
             }
         }

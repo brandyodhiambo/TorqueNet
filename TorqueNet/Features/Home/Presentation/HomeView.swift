@@ -107,7 +107,7 @@ struct HomeView: View {
                 .padding()
             }
         }
-        .background( Color.theme.surfaceColor.ignoresSafeArea())
+        .background( Color.theme.surfaceColor.ignoresSafeArea(.all))
     }
     
     @ViewBuilder

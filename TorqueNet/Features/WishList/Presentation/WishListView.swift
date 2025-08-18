@@ -29,7 +29,6 @@ struct WishListView: View {
                 auctionEndDate: Date().addingTimeInterval(3600 * 2)
             ),
         ]
-        VStack(spacing:16) {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
                     ForEach(wishListCars) { wishListCar in
@@ -44,7 +43,6 @@ struct WishListView: View {
                     }
                 }
             }
-        }
         .background(Color.theme.surfaceColor)
         .customTopAppBar(
             title: "Wishlist",

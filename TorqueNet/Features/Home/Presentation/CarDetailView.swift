@@ -137,6 +137,7 @@ struct CarDetailView: View {
             }
             .padding()
         }
+        .background(Color.theme.surfaceColor)
         .customTopAppBar(
             title: "",
             leadingIcon: "chevron.left",
