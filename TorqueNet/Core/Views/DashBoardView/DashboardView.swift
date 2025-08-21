@@ -11,22 +11,28 @@ struct DashboardView: View {
        @State var isDashboardBottomNavigationVisible : Bool = true
        @State var isKeyboardVisible : Bool = false
        @EnvironmentObject var tabRouter: TabRouter
+       @EnvironmentObject var router: Router
+    
     var body: some View {
         VStack(spacing: 0) {
             TabView(selection: $tabRouter.selectedTab) {
-                HomeView()
-                    .tag(TabItem.home)
+                TabNavigationView(router: router) {
+                    HomeView()
+                }.tag(TabItem.home)
                 
-                AuctionView()
-                    .tag(TabItem.auction)
+                TabNavigationView(router: router) {
+                    AuctionView()
+                }.tag(TabItem.auction)
                 
-                WishListView()
-                    .tag(TabItem.wishlist)
+                TabNavigationView(router: router) {
+                    WishListView()
+                }.tag(TabItem.wishlist)
                 
-                SettingsView()
-                    .tag(TabItem.settings)
+                TabNavigationView(router: router) {
+                    SettingsView()
+                }.tag(TabItem.settings)
+            
             }
-            .ignoresSafeArea(.keyboard)
 
             if isDashboardBottomNavigationVisible && !isKeyboardVisible {
                 ZStack {
@@ -48,7 +54,8 @@ struct DashboardView: View {
                             }
                         }
                     }
-                    .frame(height: 70)
+                    .frame(maxWidth: .infinity)
+                    .padding(5)
                     .background(Color.theme.onSurfaceColor.opacity(0.1))
                 }
             }
@@ -92,7 +99,22 @@ extension DashboardView{
     }
 }
 
+struct TabNavigationView<Content: View>: View {
+    @ObservedObject var router: Router
+    let content: () -> Content
+    
+    var body: some View {
+        NavigationStack(path: $router.path) {
+            content()
+                .navigationDestination(for: Route.self) { route in
+                    viewForRoute(route, router: router)
+                }
+        }
+    }
+}
+
 #Preview {
     DashboardView()
         .environmentObject(TabRouter())
+        .environmentObject(Router())
 }

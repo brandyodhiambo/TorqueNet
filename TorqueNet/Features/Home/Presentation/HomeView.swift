@@ -38,7 +38,7 @@ struct HomeView: View {
     var body: some View {
         VStack {
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 30) {
+                VStack(alignment: .leading, spacing: 25) {
                     HStack {
                         HStack(spacing: 8) {
                             Image(systemName: "bell")

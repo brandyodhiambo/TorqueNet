@@ -9,26 +9,27 @@ import SwiftUI
 
 struct WishListView: View {
     var body: some View {
-        var wishListCars: [WishList] = [
+        let wishListCars: [WishList] = [
             WishList(
                 image: "car",
                 title: "Red Mazda 6 - Elite Estate",
-                currentPrice:  25000.00,
+                currentPrice: 25000.00,
                 auctionEndDate: Date().addingTimeInterval(3600 * 5)
             ),
             WishList(
                 image: "car",
                 title: "Red Mazda 6 - Elite Estate",
-                currentPrice:  25000.00,
+                currentPrice: 25000.00,
                 auctionEndDate: Date().addingTimeInterval(3600 * 2)
             ),
             WishList(
                 image: "car",
                 title: "Red Mazda 6 - Elite Estate",
-                currentPrice:  25000.00,
+                currentPrice: 25000.00,
                 auctionEndDate: Date().addingTimeInterval(3600 * 2)
             ),
         ]
+        
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
                     ForEach(wishListCars) { wishListCar in
@@ -42,16 +43,21 @@ struct WishListView: View {
                         )
                     }
                 }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
             }
         .background(Color.theme.surfaceColor)
         .customTopAppBar(
             title: "Wishlist",
-            leadingIcon: "",
+            leadingIcon: "chevron.left",
             navbarTitleDisplayMode: .automatic,
             onLeadingTap: {
+                // Handle back navigation
             },
-            trailingIcon: "",
-            onTrailingTap: {}
+            trailingIcon: "ellipsis",
+            onTrailingTap: {
+                // Handle menu action
+            }
         )
     }
 }
