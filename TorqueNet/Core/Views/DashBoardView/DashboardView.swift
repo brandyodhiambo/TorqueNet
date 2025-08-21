@@ -11,26 +11,21 @@ struct DashboardView: View {
        @State var isDashboardBottomNavigationVisible : Bool = true
        @State var isKeyboardVisible : Bool = false
        @EnvironmentObject var tabRouter: TabRouter
-       @EnvironmentObject var router: Router
     
     var body: some View {
         VStack(spacing: 0) {
             TabView(selection: $tabRouter.selectedTab) {
-                TabNavigationView(router: router) {
                     HomeView()
-                }.tag(TabItem.home)
+                    .tag(TabItem.home)
                 
-                TabNavigationView(router: router) {
                     AuctionView()
-                }.tag(TabItem.auction)
+                    .tag(TabItem.auction)
                 
-                TabNavigationView(router: router) {
                     WishListView()
-                }.tag(TabItem.wishlist)
+                    .tag(TabItem.wishlist)
                 
-                TabNavigationView(router: router) {
                     SettingsView()
-                }.tag(TabItem.settings)
+                    .tag(TabItem.settings)
             
             }
 
@@ -99,22 +94,8 @@ extension DashboardView{
     }
 }
 
-struct TabNavigationView<Content: View>: View {
-    @ObservedObject var router: Router
-    let content: () -> Content
-    
-    var body: some View {
-        NavigationStack(path: $router.path) {
-            content()
-                .navigationDestination(for: Route.self) { route in
-                    viewForRoute(route, router: router)
-                }
-        }
-    }
-}
 
 #Preview {
     DashboardView()
         .environmentObject(TabRouter())
-        .environmentObject(Router())
 }

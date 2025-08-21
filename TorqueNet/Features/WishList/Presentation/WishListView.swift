@@ -29,36 +29,37 @@ struct WishListView: View {
                 auctionEndDate: Date().addingTimeInterval(3600 * 2)
             ),
         ]
-        
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 24) {
-                    ForEach(wishListCars) { wishListCar in
-                        WishListCarCardView(
-                            imageName: wishListCar.image,
-                            title: wishListCar.title,
-                            currentPrice: wishListCar.currentPrice,
-                            auctionEndDate: wishListCar.auctionEndDate,
-                            onFavoriteTapped: {},
-                            onCardTapped: {}
-                        )
+        NavigationView {
+            VStack(spacing:16){
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 24) {
+                        ForEach(wishListCars) { wishListCar in
+                            WishListCarCardView(
+                                imageName: wishListCar.image,
+                                title: wishListCar.title,
+                                currentPrice: wishListCar.currentPrice,
+                                auctionEndDate: wishListCar.auctionEndDate,
+                                onFavoriteTapped: {},
+                                onCardTapped: {}
+                            )
+                        }
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
             }
-        .background(Color.theme.surfaceColor)
-        .customTopAppBar(
-            title: "Wishlist",
-            leadingIcon: "chevron.left",
-            navbarTitleDisplayMode: .automatic,
-            onLeadingTap: {
-                // Handle back navigation
-            },
-            trailingIcon: "ellipsis",
-            onTrailingTap: {
-                // Handle menu action
-            }
-        )
+            .background(Color.theme.surfaceColor)
+            .customTopAppBar(
+                title: "Wishlist",
+                leadingIcon: "",
+                navbarTitleDisplayMode: .inline,
+                onLeadingTap: {
+                    // Handle back navigation
+                },
+                trailingIcon: "ellipsis",
+                onTrailingTap: {
+                    // Handle menu action
+                }
+            )
+        }
     }
 }
 
@@ -76,56 +77,55 @@ struct WishListCarCardView: View {
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
-        VStack(alignment: .leading) {
-            ZStack(alignment: .topTrailing) {
-                Image(imageName)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(height: 200)
-                    .cornerRadius(10)
-                    .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
-                
-                Button(action: {
-                    withAnimation(.spring()) {
-                        isFavorite.toggle()
-                        onFavoriteTapped()
+            VStack(alignment: .leading) {
+                ZStack(alignment: .topTrailing) {
+                    Image(imageName)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 200)
+                        .cornerRadius(10)
+                        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                    
+                    Button(action: {
+                        withAnimation(.spring()) {
+                            isFavorite.toggle()
+                            onFavoriteTapped()
+                        }
+                    }) {
+                        Image(systemName: isFavorite ? "heart.fill" : "heart")
+                            .foregroundColor(isFavorite ? .red : .white)
+                            .padding(8)
+                            .background(Color.black.opacity(0.4))
+                            .clipShape(Circle())
+                            .padding(8)
                     }
-                }) {
-                    Image(systemName: isFavorite ? "heart.fill" : "heart")
-                        .foregroundColor(isFavorite ? .red : .white)
-                        .padding(8)
-                        .background(Color.black.opacity(0.4))
-                        .clipShape(Circle())
-                        .padding(8)
                 }
-            }
-            
-            Text(title)
-                .font(.custom("Exo2-Medium", size: 14))
-                .fontWeight(.medium)
-                .padding(.top, 5)
-                .foregroundColor(.theme.onSurfaceColor)
-            
-            HStack {
-                Text(String(format: "$%.2f", currentPrice))
-                    .font(.custom("Exo2-Regular", size: 16))
-                    .fontWeight(.bold)
-                    .foregroundColor(.theme.primaryColor)
                 
-                Spacer()
+                Text(title)
+                    .font(.custom("Exo2-Medium", size: 14))
+                    .fontWeight(.medium)
+                    .padding(.top, 5)
+                    .foregroundColor(.theme.onSurfaceColor)
                 
-                Text(countdownString())
-                    .font(.custom("Exo2-Black", size: 14))
-                    .foregroundColor(timeRemaining > 0 ? .green : .red)
+                HStack {
+                    Text(String(format: "$%.2f", currentPrice))
+                        .font(.custom("Exo2-Regular", size: 16))
+                        .fontWeight(.bold)
+                        .foregroundColor(.theme.primaryColor)
+                    
+                    Spacer()
+                    
+                    Text(countdownString())
+                        .font(.custom("Exo2-Black", size: 14))
+                        .foregroundColor(timeRemaining > 0 ? .green : .red)
+                }
+                .padding(.top, 2)
+                
             }
-            .padding(.top, 2)
-            
-        }
-        .frame(width: .infinity)
-        .padding()
-        .onTapGesture {
-            onCardTapped()
-        }
+            .padding()
+            .onTapGesture {
+                onCardTapped()
+            }
     }
     
         private func countdownString() -> String {
