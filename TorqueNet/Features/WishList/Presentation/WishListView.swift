@@ -8,55 +8,95 @@
 import SwiftUI
 
 struct WishListView: View {
+    @State var text: String = ""
+    let wishListCars: [WishList] = [
+        WishList(
+            image: "car",
+            title: "Red Mazda 6 - Elite Estate",
+            currentPrice: 25000.00,
+            auctionEndDate: Date().addingTimeInterval(3600 * 5)
+        ),
+        WishList(
+            image: "car",
+            title: "Red Mazda 6 - Elite Estate",
+            currentPrice: 25000.00,
+            auctionEndDate: Date().addingTimeInterval(3600 * 2)
+        ),
+        WishList(
+            image: "car",
+            title: "Red Mazda 6 - Elite Estate",
+            currentPrice: 25000.00,
+            auctionEndDate: Date().addingTimeInterval(3600 * 2)
+        ),
+    ]
+    @State var carCategoryList = [
+        CarCategory(id: 0, name: "All", icon: "folder.fill.badge.person.crop", isSelected: true),
+        CarCategory(id: 1, name: "Year", icon: "folder.fill.badge.person.crop", isSelected: false),
+        CarCategory(id: 2, name: "Make", icon: "person.fill", isSelected: false),
+        CarCategory(id: 3, name: "Model", icon: "list.bullet.clipboard.fill", isSelected: false),
+        CarCategory(id: 4, name: "Location", icon: "suitcase.fill", isSelected: false),
+    ]
+    private func selectCategory(withId id: Int) {
+        for index in carCategoryList.indices {
+            carCategoryList[index].isSelected = (carCategoryList[index].id == id)
+        }
+    }
     var body: some View {
-        let wishListCars: [WishList] = [
-            WishList(
-                image: "car",
-                title: "Red Mazda 6 - Elite Estate",
-                currentPrice: 25000.00,
-                auctionEndDate: Date().addingTimeInterval(3600 * 5)
-            ),
-            WishList(
-                image: "car",
-                title: "Red Mazda 6 - Elite Estate",
-                currentPrice: 25000.00,
-                auctionEndDate: Date().addingTimeInterval(3600 * 2)
-            ),
-            WishList(
-                image: "car",
-                title: "Red Mazda 6 - Elite Estate",
-                currentPrice: 25000.00,
-                auctionEndDate: Date().addingTimeInterval(3600 * 2)
-            ),
-        ]
         NavigationView {
-            VStack(spacing:16){
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 24) {
-                        ForEach(wishListCars) { wishListCar in
-                            WishListCarCardView(
-                                imageName: wishListCar.image,
-                                title: wishListCar.title,
-                                currentPrice: wishListCar.currentPrice,
-                                auctionEndDate: wishListCar.auctionEndDate,
-                                onFavoriteTapped: {},
-                                onCardTapped: {}
+            VStack(spacing: 16){
+                //Categories View
+                ScrollView(.horizontal,showsIndicators: false){
+                    HStack(spacing: 14){
+                        ForEach($carCategoryList, id: \.self) { $category in
+                            let cardbgColor: Color = category.isSelected ? Color.theme.primaryColor : Color.theme.surfaceColor.opacity(0.9)
+                            
+                            let iconForgroundColor: Color = category.isSelected ? Color.theme.onPrimaryColor : Color.theme.primaryColor
+                            let progressColor: Color = category.isSelected ? Color.theme.onPrimaryColor.opacity(0.7) : Color.gray
+                            
+                            CustomCardView(
+                                title: nil,
+                                bgColor:cardbgColor,
+                                contentColor: iconForgroundColor,
+                                subtitle: nil,
+                                onTap:{
+                                    selectCategory(withId: category.id)
+                                },
+                                content: {
+                                    Text(category.name)
+                                        .font(.custom("Exo2-Medium", size: 16))
+                                        .foregroundColor(iconForgroundColor)
+                                }
                             )
                         }
+                    }.padding(4)
+                }
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 24) {
+                    ForEach(wishListCars) { wishListCar in
+                        WishListCarCardView(
+                            imageName: wishListCar.image,
+                            title: wishListCar.title,
+                            currentPrice: wishListCar.currentPrice,
+                            auctionEndDate: wishListCar.auctionEndDate,
+                            onFavoriteTapped: {},
+                            onCardTapped: {}
+                        )
                     }
                 }
             }
+        }
+            .padding(.horizontal,8)
             .background(Color.theme.surfaceColor)
             .customTopAppBar(
-                title: "Wishlist",
+                title: "My Wishlist",
                 leadingIcon: "",
                 navbarTitleDisplayMode: .inline,
                 onLeadingTap: {
                     // Handle back navigation
                 },
-                trailingIcon: "ellipsis",
+                trailingIcon: "trash.fill",
                 onTrailingTap: {
-                    // Handle menu action
+                   print("delete all wishlist")
                 }
             )
         }
