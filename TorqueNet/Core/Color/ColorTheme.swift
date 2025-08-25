@@ -16,8 +16,8 @@ struct ColorTheme{
         let secondaryColor = Color("LightRedAppColor")
         let onSecondaryColor = Color("WhiteAppColor")
        
-        let surfaceColor = Color("InverseBlackAndWhite")
-        let onSurfaceColor = Color("BlackAndWhiteColor")
+        let surfaceColor = Color("BlackAndWhiteColor")
+        let onSurfaceColor = Color("InverseBlackAndWhite")
        
         let inverseSurfaceColor = Color("BlackAndWhiteColor")
         let onInverseSurfaceColor = Color("InverseBlackAndWhite")

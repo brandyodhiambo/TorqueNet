@@ -112,7 +112,7 @@ struct WishListCarCardView: View {
     var onCardTapped: () -> Void?
     
     @State private var isFavorite = false
-    @State private var timeRemaining: TimeInterval = 0
+    @State private var timeRemaining: TimeInterval = 15
        
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
@@ -163,11 +163,27 @@ struct WishListCarCardView: View {
                 
             }
             .padding()
+            .onAppear {
+                updateTimeRemaining()
+            }
+            .onReceive(timer) { _ in
+                updateTimeRemaining()
+            }
             .onTapGesture {
                 onCardTapped()
             }
     }
     
+    private func updateTimeRemaining() {
+            let now = Date()
+            timeRemaining = auctionEndDate.timeIntervalSince(now)
+            
+            // Stop the timer if auction has ended (optional optimization)
+            if timeRemaining <= 0 {
+                timeRemaining = 0
+            }
+        }
+        
         private func countdownString() -> String {
             let formatter = DateComponentsFormatter()
             formatter.allowedUnits = [.hour, .minute, .second]
