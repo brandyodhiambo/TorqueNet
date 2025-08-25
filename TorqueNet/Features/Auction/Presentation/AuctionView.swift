@@ -8,8 +8,153 @@
 import SwiftUI
 
 struct AuctionView: View {
+    @EnvironmentObject var router:Router
+    var recomendedCars:[RecommendedCars] = [
+        RecommendedCars(image:"car",title: "Mercedes-Benz"),
+        RecommendedCars(image: "car", title: "Red Mazda 6 - Elite Estate"),
+        RecommendedCars(image: "car", title: "Red Mazda 2 - Hatchback"),
+        RecommendedCars(image: "car", title: "Tesla Model 3"),
+    ]
     var body: some View {
-        Text("Auction View")
+        NavigationView{
+            VStack(alignment:.leading,spacing: 16){
+                Text("Recomended for you")
+                    .font(.custom("Exo2-Bold", size: 18))
+                    .foregroundColor(.theme.onSurfaceColor)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 15) {
+                        ForEach(recomendedCars) { recommendCar in
+                            RecomendedCarCardView(
+                                imageName: recommendCar.image,
+                                title: recommendCar.title,
+                                onFavoriteTapped: {},
+                                onCardTapped: {
+                                    router.push(.carDetails)
+                                }
+                            )
+                        }
+                        
+                    }
+                }
+                
+                Text("Ongoing Auctions")
+                    .font(.custom("Exo2-Bold", size: 18))
+                    .foregroundColor(.theme.onSurfaceColor)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 15) {
+                        ForEach(recomendedCars) { recommendCar in
+                            CarCardView(
+                                imageName: recommendCar.image,
+                                title: recommendCar.title,
+                                onFavoriteTapped: {},
+                                onCardTapped: {
+                                    router.push(.carDetails)
+                                }
+                            )
+                        }
+                        
+                    }
+                }
+                
+                Text("Upcoming Auctions")
+                    .font(.custom("Exo2-Bold", size: 18))
+                    .foregroundColor(.theme.onSurfaceColor)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 15) {
+                        ForEach(recomendedCars) { recommendCar in
+                            CarCardView(
+                                imageName: recommendCar.image,
+                                title: recommendCar.title,
+                                onFavoriteTapped: {},
+                                onCardTapped: {
+                                    router.push(.carDetails)
+                                }
+                            )
+                        }
+                        
+                    }
+                }
+                                
+            }
+            .padding(.horizontal,8)
+            .background(Color.theme.surfaceColor)
+            .customTopAppBar(
+                title: "Auctions",
+                leadingIcon: "",
+                navbarTitleDisplayMode: .inline,
+                onLeadingTap: {},
+                trailingIcon: "",
+                onTrailingTap: {
+                }
+            )
+        }
+        
+    }
+}
+
+struct RecomendedCarCardView: View {
+    var imageName: String
+    var title: String
+    var onFavoriteTapped: () -> Void?
+    var onCardTapped: () -> Void?
+    
+    @State private var isFavorite = false
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            ZStack(alignment: .topLeading) {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 220, height: 130)
+                    .cornerRadius(10)
+                    .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+
+                Text("New")
+                    .font(.custom("Exo2-Light", size: 8))
+                    .foregroundColor(.theme.primaryColor)
+                    .padding(.top, 4)
+                    .padding([.leading, .trailing,.bottom], 4)
+                    .background(Color.theme.onPrimaryColor)
+                    .clipShape(Capsule())
+                    .padding(.top, 8)
+                    .padding([.leading, .trailing,.bottom], 8)
+            }
+            
+            VStack(alignment:.leading,spacing:8){
+                Text(title)
+                    .font(.custom("Exo2-Regular", size: 14))
+                    .fontWeight(.medium)
+                    .padding(.top, 5)
+                    .foregroundColor(.theme.onSurfaceColor)
+                
+                Text("Nairobi,Kenya")
+                    .font(.custom("Exo2-Regular", size: 12))
+                    .fontWeight(.medium)
+                    .foregroundColor(.theme.onSurfaceColor)
+                Text("67.567km")
+                    .font(.custom("Exo2-Regular", size: 12))
+                    .fontWeight(.medium)
+                    .foregroundColor(.theme.onSurfaceColor)
+                
+                HStack{
+                    Text("$12,000")
+                        .font(.custom("Exo2-Regular", size: 12))
+                        .fontWeight(.medium)
+                        .foregroundColor(.red)
+                    Text("$14,000")
+                        .font(.custom("Exo2-Regular", size: 12))
+                        .foregroundColor(.gray)
+                }
+            }
+        }
+        .frame(width: 220)
+        .onTapGesture {
+            onCardTapped()
+        }
     }
 }
 

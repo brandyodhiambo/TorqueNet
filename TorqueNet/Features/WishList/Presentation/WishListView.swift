@@ -91,9 +91,7 @@ struct WishListView: View {
                 title: "My Wishlist",
                 leadingIcon: "",
                 navbarTitleDisplayMode: .inline,
-                onLeadingTap: {
-                    // Handle back navigation
-                },
+                onLeadingTap: {},
                 trailingIcon: "trash.fill",
                 onTrailingTap: {
                    print("delete all wishlist")
