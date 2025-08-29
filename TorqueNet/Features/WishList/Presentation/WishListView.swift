@@ -43,60 +43,62 @@ struct WishListView: View {
     }
     var body: some View {
         NavigationView {
-            VStack(spacing: 16){
-                //Categories View
-                ScrollView(.horizontal,showsIndicators: false){
-                    HStack(spacing: 14){
-                        ForEach($carCategoryList, id: \.self) { $category in
-                            let cardbgColor: Color = category.isSelected ? Color.theme.primaryColor : Color.theme.surfaceColor.opacity(0.9)
-                            
-                            let iconForgroundColor: Color = category.isSelected ? Color.theme.onPrimaryColor : Color.theme.primaryColor
-                            let progressColor: Color = category.isSelected ? Color.theme.onPrimaryColor.opacity(0.7) : Color.gray
-                            
-                            CustomCardView(
-                                title: nil,
-                                bgColor:cardbgColor,
-                                contentColor: iconForgroundColor,
-                                subtitle: nil,
-                                onTap:{
-                                    selectCategory(withId: category.id)
-                                },
-                                content: {
-                                    Text(category.name)
-                                        .font(.custom("Exo2-Medium", size: 16))
-                                        .foregroundColor(iconForgroundColor)
-                                }
+            ScrollView(.vertical,showsIndicators: false) {
+                VStack(spacing: 16){
+                    //Categories View
+                    ScrollView(.horizontal,showsIndicators: false){
+                        HStack(spacing: 14){
+                            ForEach($carCategoryList, id: \.self) { $category in
+                                let cardbgColor: Color = category.isSelected ? Color.theme.primaryColor : Color.theme.surfaceColor.opacity(0.9)
+                                
+                                let iconForgroundColor: Color = category.isSelected ? Color.theme.onPrimaryColor : Color.theme.primaryColor
+                                let progressColor: Color = category.isSelected ? Color.theme.onPrimaryColor.opacity(0.7) : Color.gray
+                                
+                                CustomCardView(
+                                    title: nil,
+                                    bgColor:cardbgColor,
+                                    contentColor: iconForgroundColor,
+                                    subtitle: nil,
+                                    onTap:{
+                                        selectCategory(withId: category.id)
+                                    },
+                                    content: {
+                                        Text(category.name)
+                                            .font(.custom("Exo2-Medium", size: 16))
+                                            .foregroundColor(iconForgroundColor)
+                                    }
+                                )
+                            }
+                        }.padding(4)
+                    }
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 24) {
+                        ForEach(wishListCars) { wishListCar in
+                            WishListCarCardView(
+                                imageName: wishListCar.image,
+                                title: wishListCar.title,
+                                currentPrice: wishListCar.currentPrice,
+                                auctionEndDate: wishListCar.auctionEndDate,
+                                onFavoriteTapped: {},
+                                onCardTapped: {}
                             )
                         }
-                    }.padding(4)
-                }
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 24) {
-                    ForEach(wishListCars) { wishListCar in
-                        WishListCarCardView(
-                            imageName: wishListCar.image,
-                            title: wishListCar.title,
-                            currentPrice: wishListCar.currentPrice,
-                            auctionEndDate: wishListCar.auctionEndDate,
-                            onFavoriteTapped: {},
-                            onCardTapped: {}
-                        )
                     }
                 }
             }
-        }
-            .padding(.horizontal,8)
+                .padding(.horizontal,8)
+                .customTopAppBar(
+                    title: "My Wishlist",
+                    leadingIcon: "",
+                    navbarTitleDisplayMode: .inline,
+                    onLeadingTap: {},
+                    trailingIcon: "trash.fill",
+                    onTrailingTap: {
+                       print("delete all wishlist")
+                    }
+                )
+            }
             .background(Color.theme.surfaceColor)
-            .customTopAppBar(
-                title: "My Wishlist",
-                leadingIcon: "",
-                navbarTitleDisplayMode: .inline,
-                onLeadingTap: {},
-                trailingIcon: "trash.fill",
-                onTrailingTap: {
-                   print("delete all wishlist")
-                }
-            )
         }
     }
 }

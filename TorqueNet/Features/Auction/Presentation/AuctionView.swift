@@ -81,7 +81,6 @@ struct AuctionView: View {
                                     
                 }
                 .padding(.horizontal,8)
-                .background(Color.theme.surfaceColor)
                 .customTopAppBar(
                     title: "Auctions",
                     leadingIcon: "",
@@ -92,6 +91,7 @@ struct AuctionView: View {
                     }
                 )
             }
+            .background(Color.theme.surfaceColor)
         }
         
     }
