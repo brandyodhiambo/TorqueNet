@@ -64,15 +64,34 @@ struct HomeView: View {
                         .font(.custom("Exo2-Bold", size: 28))
                         .foregroundColor(.theme.onSurfaceColor)
                     
-                    InputFieldView(
-                        placeHolder: "Search vehicle..",
-                        text: $text,
-                        foregroundColor: .theme.primaryColor,
-                        backgroundColor: .theme.surfaceColor.opacity(0.7),
-                        keyboardType: .default,
-                        inputFieldStyle: .outlined
-                    )
-                    
+                    // Search Bar
+                    HStack(spacing: 12) {
+                        HStack {
+                            Image(systemName: "magnifyingglass")
+                                .foregroundColor(.gray)
+                                .font(.system(size: 16))
+                            
+                            TextField("Search auctions...", text: $text)
+                                .font(.custom("Exo2-Regular", size: 16))
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 12)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(12)
+                        
+                        Button(action: {
+                            // Filter action
+                        }) {
+                            Image(systemName: "slider.horizontal.3")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.theme.primaryColor)
+                                .padding(12)
+                                .background(Color.theme.primaryColor.opacity(0.1))
+                                .cornerRadius(12)
+                        }
+                    }
+                    .padding(.horizontal, 8)
+            
                   
                     sectionHeader(title: "Top Brands")
                     
