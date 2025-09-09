@@ -159,7 +159,6 @@ struct HomeView: View {
         .background(Color.theme.surfaceColor.ignoresSafeArea(.all))
     }
     
-    // MARK: - View Components
     
     @ViewBuilder
     private func headerView() -> some View {
@@ -257,9 +256,9 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
-                .background(Color.white)
+                .background(Color.theme.surfaceColor)
                 .cornerRadius(16)
-                .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+                .shadow(color: Color.theme.onSurfaceColor.opacity(0.05), radius: 8, x: 0, y: 2)
                 
                 Button(action: {
                     // Filter action
@@ -343,7 +342,7 @@ struct LiveAuctionsBanner: View {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     Circle()
-                        .fill(Color.red)
+                        .fill(Color.theme.onPrimaryColor)
                         .frame(width: 8, height: 8)
                     
                     Text("LIVE AUCTIONS")
