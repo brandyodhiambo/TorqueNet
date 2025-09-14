@@ -2,7 +2,7 @@
 //  RecommendedCars.swift
 //  TorqueNet
 //
-//  Created by MAC on 12/08/2025.
+//  Created by Brandy Odhiambo on 12/08/2025.
 //
 
 import Foundation

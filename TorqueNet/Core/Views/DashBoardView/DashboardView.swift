@@ -2,7 +2,7 @@
 //  DashboardView.swift
 //  TorqueNet
 //
-//  Created by MAC on 05/08/2025.
+//  Created by Brandy Odhiambo on 05/08/2025.
 //
 
 import SwiftUI

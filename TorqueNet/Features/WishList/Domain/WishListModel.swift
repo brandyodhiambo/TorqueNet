@@ -2,7 +2,7 @@
 //  WishListModel.swift
 //  TorqueNet
 //
-//  Created by MAC on 15/08/2025.
+//  Created by Brandy Odhiambo on 15/08/2025.
 //
 import Foundation
 

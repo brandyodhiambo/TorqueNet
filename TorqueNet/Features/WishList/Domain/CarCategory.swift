@@ -2,7 +2,7 @@
 //  CarCategory.swift
 //  TorqueNet
 //
-//  Created by MAC on 22/08/2025.
+//  Created by Brandy Odhiambo on 22/08/2025.
 //
 
 struct CarCategory: Identifiable, Hashable {

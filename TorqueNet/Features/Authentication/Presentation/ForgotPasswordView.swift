@@ -2,7 +2,7 @@
 //  ForgotPasswordView.swift
 //  TorqueNet
 //
-//  Created by MAC on 07/08/2025.
+//  Created by Brandy Odhiambo on 07/08/2025.
 //
 
 import SwiftUI

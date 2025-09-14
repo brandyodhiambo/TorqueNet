@@ -2,7 +2,7 @@
 //  WishListView.swift
 //  TorqueNet
 //
-//  Created by MAC on 05/08/2025.
+//  Created by Brandy Odhiambo on 05/08/2025.
 //
 
 import SwiftUI
@@ -11,6 +11,7 @@ struct WishListView: View {
     @State var text: String = ""
     @State private var selectedCategory = 0
     @State private var showingDeleteAlert = false
+    @EnvironmentObject var router: Router
     
     let wishListCars: [WishList] = [
         WishList(
@@ -71,9 +72,11 @@ struct WishListView: View {
                         
                         // Categories Section
                         categoriesSection
+                            .zIndex(1)
                         
                         // Cars Grid Section
                         carsSection
+                            .zIndex(0)
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
@@ -151,7 +154,7 @@ struct WishListView: View {
                     )
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 8)
         }
     }
     
@@ -159,7 +162,7 @@ struct WishListView: View {
     private var carsSection: some View {
         LazyVStack(spacing: 20) {
             ForEach(Array(wishListCars.enumerated()), id: \.element.id) { index, wishListCar in
-                EnhancedWishListCarCard(
+                WishListCarCard(
                     imageName: wishListCar.image,
                     title: wishListCar.title,
                     currentPrice: wishListCar.currentPrice,
@@ -168,7 +171,7 @@ struct WishListView: View {
                         // Handle favorite toggle
                     },
                     onCardTapped: {
-                        // Handle card tap
+                        router.push(.auctionDetails)
                     }
                 )
                 .transition(.asymmetric(
@@ -197,7 +200,7 @@ struct CategoryChip: View {
             }
             .foregroundColor(isSelected ? .theme.onPrimaryColor : .theme.onSurfaceColor)
             .padding(.horizontal, 16)
-            .padding(.vertical, 10)
+            .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 20)
                     .fill(isSelected ? Color.theme.primaryColor : Color.gray)
@@ -209,12 +212,13 @@ struct CategoryChip: View {
                     )
             )
         }
+        .buttonStyle(PlainButtonStyle())
         .scaleEffect(isSelected ? 1.05 : 1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
     }
 }
 
-struct EnhancedWishListCarCard: View {
+struct WishListCarCard: View {
     var imageName: String
     var title: String
     var currentPrice: Double
@@ -340,8 +344,8 @@ struct EnhancedWishListCarCard: View {
         .buttonStyle(PlainButtonStyle())
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color.theme.surfaceColor)
-                .shadow(color: Color.theme.onSurfaceColor.opacity(0.08), radius: 12, x: 0, y: 6)
+                .fill(.ultraThinMaterial)
+                .shadow(color: .black.opacity(0.08), radius: 12, x: 0, y: 6)
         )
         .scaleEffect(isPressed ? 0.98 : 1.0)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
@@ -356,7 +360,6 @@ struct EnhancedWishListCarCard: View {
             updateTimeRemaining()
         }
     }
-    
     private var auctionStatusBadge: some View {
         HStack(spacing: 6) {
             Circle()

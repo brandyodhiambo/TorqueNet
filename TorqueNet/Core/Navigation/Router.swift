@@ -2,7 +2,7 @@
 //  Router.swift
 //  TorqueNet
 //
-//  Created by MAC on 05/08/2025.
+//  Created by Brandy Odhiambo on 05/08/2025.
 //
 
 import Foundation
@@ -12,14 +12,14 @@ class Router: ObservableObject {
     @Published var path = NavigationPath()
     
     private var routeStack: [Route] = []
-
+    
     /// Pushes a new route onto the navigation stack
     /// - Parameter route: The route to navigate to
     func push(_ route: Route) {
         path.append(route)
         routeStack.append(route)
     }
-
+    
     /// Pops the last route from the stack (navigates back by one screen)
     func pop() {
         if !routeStack.isEmpty {
@@ -27,13 +27,13 @@ class Router: ObservableObject {
             routeStack.removeLast()
         }
     }
-
+    
     /// Pops all routes and returns to the root screen
     func popToRoot() {
         path = NavigationPath()
         routeStack.removeAll()
     }
-
+    
     /// Replaces the current navigation stack with a single new route
     /// Useful when you don’t want the user to go back to previous screens
     /// - Parameter route: The new route to display
@@ -42,7 +42,7 @@ class Router: ObservableObject {
         routeStack = [route]
         path.append(route)
     }
-
+    
     /// Replaces the current navigation stack with a list of routes
     /// Useful for building up a multi-step screen history programmatically
     /// - Parameter routes: A list of routes to push in order
@@ -54,7 +54,7 @@ class Router: ObservableObject {
             path.append(route)
         }
     }
-
+    
     /// Pops routes from the stack until the first occurrence of a given route type is found
     /// Example: `popTo(HomeRoute.self)` will pop all routes above the first `HomeRoute`
     /// - Parameter routeType: The type of route to pop to
@@ -64,14 +64,14 @@ class Router: ObservableObject {
             routeStack.removeLast()
         }
     }
-
+    
     /// Checks whether a specific route is currently in the navigation stack
     /// - Parameter route: The route to check for
     /// - Returns: `true` if the route exists in the stack
     func contains(_ route: Route) -> Bool {
         return routeStack.contains(route)
     }
-
+    
     /// Removes a specific route from the navigation stack if it exists
     /// After removal, it rebuilds the navigation path
     /// - Parameter route: The route to remove
@@ -83,7 +83,7 @@ class Router: ObservableObject {
             path.append(route)
         }
     }
-
+    
     /// Pops the current route and immediately pushes a new one
     /// Useful when replacing the current screen with a new one
     /// - Parameter route: The new route to navigate to
@@ -91,7 +91,7 @@ class Router: ObservableObject {
         pop()
         push(route)
     }
-
+    
     /// Clears the entire navigation stack
     /// Effectively resets the navigation to its initial state
     func reset() {
@@ -104,7 +104,7 @@ class Router: ObservableObject {
 @ViewBuilder
 func viewForRoute(_ route: Route, router: Router) -> some View{
     switch route {
-    
+        
     case .onboarding:
         OnboardingView(
             action:{}
@@ -120,32 +120,36 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
             onLoginSuccess: {},
             onLoginFailure: {_ in}
         )
-            .navigationBarBackButtonHidden()
+        .navigationBarBackButtonHidden()
         
     case .register:
         RegisterView()
             .navigationBarBackButtonHidden()
-   
+        
     case .forgotPassword:
         ForgotPasswordView()
             .navigationBarBackButtonHidden()
-
+        
     case .home:
         HomeView()
         
     case .carDetails:
         CarDetailView()
             .navigationBarBackButtonHidden()
-    
+        
     case .auction:
         AuctionView()
-
+        
+    case .auctionDetails:
+        AuctionCarDetailView()
+            .navigationBarBackButtonHidden()
+        
     case .wishlist:
         WishListView()
         
     case .settings:
         SettingsView()
- 
+        
     case .profile:
         ProfileView(
             onLogoutSuccess: {
@@ -155,6 +159,6 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
                 
             }
         )
-
+        
     }
 }

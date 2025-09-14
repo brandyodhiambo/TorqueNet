@@ -2,7 +2,7 @@
 //  FeaturedAuction.swift
 //  TorqueNet
 //
-//  Created by MAC on 08/09/2025.
+//  Created by Brandy Odhiambo on 08/09/2025.
 //
 import Foundation
 

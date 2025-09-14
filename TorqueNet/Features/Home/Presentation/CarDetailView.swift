@@ -2,7 +2,7 @@
 //  CarDetailView.swift
 //  TorqueNet
 //
-//  Created by MAC on 14/08/2025.
+//  Created by Brandy Odhiambo on 14/08/2025.
 //
 
 import SwiftUI

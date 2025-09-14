@@ -2,7 +2,7 @@
 //  AuctionCarDetailView.swift
 //  TorqueNet
 //
-//  Created by MAC on 11/09/2025.
+//  Created by Brandy Odhiambo on 11/09/2025.
 //
 
 import SwiftUI
@@ -14,6 +14,7 @@ struct AuctionCarDetailView: View {
     @State private var timeRemaining: TimeInterval = 0
     @State private var showBidSheet = false
     @State private var selectedTab = 0
+    @EnvironmentObject var router: Router
     
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
@@ -63,7 +64,8 @@ struct AuctionCarDetailView: View {
                 }
                 .padding(.horizontal, 20)
             }
-            .navigationBarHidden(true)
+            .ignoresSafeArea(edges: .top)
+            .padding(.horizontal, 20)
             .onAppear {
                 updateTimeRemaining()
             }
@@ -73,7 +75,6 @@ struct AuctionCarDetailView: View {
         }
         .sheet(isPresented: $showBidSheet) {
             BidSheetView(currentBid: 25000, onBidSubmitted: { amount in
-                // Handle bid submission
                 print("Bid submitted: $\(amount)")
             })
         }
@@ -88,15 +89,16 @@ struct AuctionCarDetailView: View {
                         Image(carImages[index])
                             .resizable()
                             .scaledToFill()
-                            .frame(height: 400)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .ignoresSafeArea(edges: .top)
+                            .tag(index)
                             .clipped()
                         
-                        // Gradient overlay
                         LinearGradient(
                             gradient: Gradient(colors: [
                                 .clear,
                                 .clear,
-                                .black.opacity(0.4)
+                                .black.opacity(0.9)
                             ]),
                             startPoint: .top,
                             endPoint: .bottom
@@ -106,14 +108,15 @@ struct AuctionCarDetailView: View {
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            .frame(height: 400)
+            .frame(height: 450)
+            .ignoresSafeArea(edges: .top)
+            
             
             // Navigation Controls
             VStack {
-                // Top Navigation
                 HStack {
                     Button(action: {
-                        // Back action
+                        router.pop()
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .semibold))
@@ -167,6 +170,8 @@ struct AuctionCarDetailView: View {
                 }
                 .padding(.bottom, 20)
             }
+            .padding()
+            .padding(.vertical, 32)
         }
     }
     
@@ -210,6 +215,9 @@ struct AuctionCarDetailView: View {
                 SpecBadge(icon: "gearshape.fill", value: "Auto", unit: "trans")
             }
         }
+        .padding(.horizontal,8)
+
+        
     }
     
     // MARK: - Auction Info Section
@@ -420,6 +428,7 @@ struct AuctionCarDetailView: View {
             }
             .padding(.top, 8)
         }
+        .padding()
     }
     
     // MARK: - Bottom Action Bar

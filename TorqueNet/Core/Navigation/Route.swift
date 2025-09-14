@@ -2,7 +2,7 @@
 //  Route.swift
 //  TorqueNet
 //
-//  Created by MAC on 05/08/2025.
+//  Created by Brandy Odhiambo on 05/08/2025.
 //
 
 enum Route: Hashable {
@@ -17,6 +17,7 @@ enum Route: Hashable {
     case carDetails
     case wishlist
     case auction
+    case auctionDetails
     case settings
     case profile
 }

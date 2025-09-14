@@ -2,7 +2,7 @@
 //  Constant.swift
 //  TorqueNet
 //
-//  Created by MAC on 11/08/2025.
+//  Created by Brandy Odhiambo on 11/08/2025.
 //
 
 class Constants {

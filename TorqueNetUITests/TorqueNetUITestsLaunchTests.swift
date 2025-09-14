@@ -2,7 +2,7 @@
 //  TorqueNetUITestsLaunchTests.swift
 //  TorqueNetUITests
 //
-//  Created by MAC on 04/08/2025.
+//  Created by Brandy Odhiambo on 04/08/2025.
 //
 
 import XCTest
