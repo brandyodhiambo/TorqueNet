@@ -224,9 +224,9 @@ struct AuctionView: View {
                 leadingIcon: "",
                 navbarTitleDisplayMode: .inline,
                 onLeadingTap: {},
-                trailingIcon: "bell",
+                trailingIcon: "plus",
                 onTrailingTap: {
-                    // Notifications action
+                    router.push(.auctionUpload)
                 }
             )
         }

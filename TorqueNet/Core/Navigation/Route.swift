@@ -18,6 +18,7 @@ enum Route: Hashable {
     case wishlist
     case auction
     case auctionDetails
+    case auctionUpload
     case settings
     case profile
 }
