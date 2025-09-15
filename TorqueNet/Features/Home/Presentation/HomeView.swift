@@ -489,7 +489,7 @@ struct EnhancedCarCard: View {
                         
                         Text(car.location)
                             .font(.custom("Exo2-Regular", size: 12))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.theme.onSurfaceColor.opacity(0.8))
                     }
                 }
                 
@@ -545,9 +545,9 @@ struct EnhancedCarCard: View {
             .padding(16)
         }
         .frame(width: 280)
-        .background(Color.white)
+        .background(Color.theme.surfaceColor)
         .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
+        .shadow(color: Color.theme.onSurfaceColor.opacity(0.08), radius: 12, x: 0, y: 4)
         .onTapGesture {
             onTap()
         }
@@ -614,9 +614,9 @@ struct RecentlyViewedRow: View {
             .cornerRadius(16)
         }
         .padding(16)
-        .background(Color.white)
+        .background(Color.theme.surfaceColor)
         .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+        .shadow(color: Color.theme.onSurfaceColor.opacity(0.05), radius: 8, x: 0, y: 2)
         .onTapGesture {
             onTap()
         }

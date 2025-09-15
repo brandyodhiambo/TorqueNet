@@ -128,7 +128,7 @@ struct AuctionView: View {
                             HStack(spacing: 16) {
                                 ForEach(featuredCars) { car in
                                     FeaturedAuctionCard(auction: car) {
-                                        router.push(.carDetails)
+                                        router.push(.auctionDetails)
                                     }
                                 }
                             }
@@ -170,7 +170,7 @@ struct AuctionView: View {
                                         imageName: car.image,
                                         title: car.title
                                     ) {
-                                        router.push(.carDetails)
+                                        router.push(.auctionDetails)
                                     }
                                 }
                             }
@@ -207,7 +207,7 @@ struct AuctionView: View {
                                     imageName: car.image,
                                     title: car.title
                                 ) {
-                                    router.push(.carDetails)
+                                    router.push(.auctionDetails)
                                 }
                                 .padding(.horizontal, 16)
                             }
