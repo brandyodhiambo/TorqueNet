@@ -107,7 +107,7 @@ struct SettingsView: View {
             )
             .sheet(isPresented: $showThemeSelector) {
                 ThemeSelectionView()
-                    .environmentObject(themesViewModel)
+                   
             }
         }
     }
@@ -229,7 +229,7 @@ struct ThemeOptionView: View {
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(
-                                isSelected ? Color.blue : Color.secondary.opacity(0.2),
+                                isSelected ? Color.theme.primaryColor : Color.secondary.opacity(0.2),
                                 lineWidth: isSelected ? 2 : 1
                             )
                     )
@@ -300,7 +300,7 @@ struct SettingsRowView: View {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color.theme.surfaceColor)
                     .shadow(
-                        color: Color.black.opacity(0.05),
+                        color: Color.theme.onSurfaceColor.opacity(0.05),
                         radius: 2,
                         x: 0,
                         y: 1

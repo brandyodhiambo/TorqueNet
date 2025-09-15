@@ -203,9 +203,9 @@ struct CategoryChip: View {
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(isSelected ? Color.theme.primaryColor : Color.gray)
+                    .fill(isSelected ? Color.theme.primaryColor : Color.gray.opacity(0.1))
                     .shadow(
-                        color: isSelected ? .theme.primaryColor.opacity(0.3) : .black.opacity(0.05),
+                        color: isSelected ? .theme.primaryColor.opacity(0.3) : Color.theme.onSurfaceColor.opacity(0.05),
                         radius: isSelected ? 8 : 4,
                         x: 0,
                         y: isSelected ? 4 : 2

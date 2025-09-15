@@ -96,7 +96,7 @@ struct HomeView: View {
                 
                 // Live Auctions Banner
                 LiveAuctionsBanner(
-                    onTapJoinNow:{}
+                    onViewAuction:{}
                 )
                     .padding(.horizontal, 16)
                 
@@ -336,7 +336,7 @@ struct QuickActionCard: View {
 }
 
 struct LiveAuctionsBanner: View {
-    let onTapJoinNow: () -> Void
+    let onViewAuction: () -> Void
     var body: some View {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 4) {
@@ -361,8 +361,8 @@ struct LiveAuctionsBanner: View {
             
             Spacer()
             
-            Button("Join Now") {
-                onTapJoinNow()
+            Button("View") {
+                onViewAuction()
             }
             .font(.custom("Exo2-Bold", size: 14))
             .foregroundColor(.theme.primaryColor)
