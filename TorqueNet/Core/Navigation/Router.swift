@@ -146,6 +146,9 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
     case .auctionUpload:
         AuctionUploadView()
             .navigationBarBackButtonHidden()
+    case .auctionLiveBids:
+        LiveAuctionsView()
+            .navigationBarBackButtonHidden()
         
     case .wishlist:
         WishListView()

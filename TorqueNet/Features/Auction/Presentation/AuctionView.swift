@@ -114,13 +114,6 @@ struct AuctionView: View {
                                     .foregroundColor(.gray)
                             }
                             
-                            Spacer()
-                            
-                            Button("View All") {
-                                // View all action
-                            }
-                            .font(.custom("Exo2-Medium", size: 14))
-                            .foregroundColor(.theme.primaryColor)
                         }
                         .padding(.horizontal, 16)
                         
@@ -153,13 +146,11 @@ struct AuctionView: View {
                             
                             Spacer()
                             
-                            Text("12 active")
-                                .font(.custom("Exo2-Medium", size: 12))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.red)
-                                .cornerRadius(12)
+                            Button("View All") {
+                                router.push(.auctionLiveBids)
+                            }
+                            .font(.custom("Exo2-Medium", size: 14))
+                            .foregroundColor(.theme.primaryColor)
                         }
                         .padding(.horizontal, 16)
                         
