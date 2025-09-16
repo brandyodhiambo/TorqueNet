@@ -96,7 +96,9 @@ struct HomeView: View {
                 
                 // Live Auctions Banner
                 LiveAuctionsBanner(
-                    onViewAuction:{}
+                    onViewAuction:{
+                        router.push(.auctionLiveBids)
+                    }
                 )
                     .padding(.horizontal, 16)
                 
@@ -182,7 +184,7 @@ struct HomeView: View {
             
             HStack(spacing: 12) {
                 Button(action: {
-                    // Notifications
+                    router.push(.notification)
                 }) {
                     ZStack {
                         Circle()
@@ -202,7 +204,7 @@ struct HomeView: View {
                 }
                 
                 Button(action: {
-                    // Profile
+                    router.push(.profile)
                 }) {
                     Image("profile")
                         .resizable()

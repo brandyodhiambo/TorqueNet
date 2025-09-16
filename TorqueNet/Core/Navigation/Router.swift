@@ -155,6 +155,10 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
         
     case .settings:
         SettingsView()
+    
+    case .notification:
+        NotificationsView()
+            .navigationBarBackButtonHidden()
         
     case .profile:
         ProfileView(

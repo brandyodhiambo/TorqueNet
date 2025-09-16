@@ -22,4 +22,5 @@ enum Route: Hashable {
     case auctionLiveBids
     case settings
     case profile
+    case notification
 }
