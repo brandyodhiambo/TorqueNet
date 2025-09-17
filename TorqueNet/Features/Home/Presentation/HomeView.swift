@@ -87,7 +87,9 @@ struct HomeView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
                             ForEach(quickActions) { action in
-                                QuickActionCard(action: action)
+                                QuickActionCard(action: action){
+                                    
+                                }
                             }
                         }
                         .padding(.horizontal, 16)
@@ -316,26 +318,33 @@ struct HomeView: View {
 
 struct QuickActionCard: View {
     let action: QuickAction
+    let onTap: () -> Void
     
     var body: some View {
-        VStack(spacing: 8) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(action.color.opacity(0.1))
-                    .frame(width: 60, height: 60)
+        Button(action: {
+            onTap()
+        }) {
+            VStack(spacing: 8) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(action.color.opacity(0.1))
+                        .frame(width: 60, height: 60)
+                    
+                    Image(systemName: action.icon)
+                        .foregroundColor(action.color)
+                        .font(.system(size: 20, weight: .medium))
+                }
                 
-                Image(systemName: action.icon)
-                    .foregroundColor(action.color)
-                    .font(.system(size: 20, weight: .medium))
+                Text(action.title)
+                    .font(.custom("Exo2-Medium", size: 12))
+                    .foregroundColor(.theme.onSurfaceColor)
             }
-            
-            Text(action.title)
-                .font(.custom("Exo2-Medium", size: 12))
-                .foregroundColor(.theme.onSurfaceColor)
+            .frame(width: 80)
         }
-        .frame(width: 80)
+        .buttonStyle(.plain)
     }
 }
+
 
 struct LiveAuctionsBanner: View {
     let onViewAuction: () -> Void
