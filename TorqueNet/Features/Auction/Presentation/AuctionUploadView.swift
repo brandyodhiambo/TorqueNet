@@ -127,7 +127,10 @@ struct AuctionUploadView: View {
                 }) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.theme.onSurfaceColor)
+                        .foregroundColor(.white)
+                        .frame(width: 44, height: 44)
+                        .background(Color.theme.primaryColor)
+                        .clipShape(Circle())
                 }
                 
                 Spacer()
@@ -166,7 +169,7 @@ struct AuctionUploadView: View {
                         }
                     }
                 }
-
+                
                 
                 Text("\(currentStep + 1) of \(steps.count): \(steps[currentStep])")
                     .font(.custom("Exo2-Regular", size: 14))
@@ -191,16 +194,43 @@ struct AuctionUploadView: View {
                                   selectedImages: $selectedImages,
                                   showingImagePicker: $showingImagePicker)
                     }
-
+                    
                 }
             }
             
             SectionHeader(title: "Basic Information", subtitle: "Essential details about your vehicle")
             
             VStack(spacing: 16) {
-                CustomTextField(title: "Car Title", placeholder: "2023 BMW X5 M Competition", text: $carTitle)
-                CustomTextField(title: "Subtitle", placeholder: "Elite Performance SUV", text: $subtitle)
-                CustomTextField(title: "Lot Number", placeholder: "2847", text: $lotNumber)
+                InputFieldView(
+                    description: "Car Title",
+                    placeHolder: "2023 BMW X5 M Competition",
+                    text: $carTitle,
+                    foregroundColor: .theme.onSurfaceColor,
+                    backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                    keyboardType: .default,
+                    inputFieldStyle: .outlined
+                )
+                
+                InputFieldView(
+                    description: "Subtitle",
+                    placeHolder: "Elite Performance SUV",
+                    text: $subtitle,
+                    foregroundColor: .theme.onSurfaceColor,
+                    backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                    keyboardType: .default,
+                    inputFieldStyle: .outlined
+                )
+                
+                InputFieldView(
+                    description: "Lot Number",
+                    placeHolder: "2847",
+                    text: $lotNumber,
+                    foregroundColor: .theme.onSurfaceColor,
+                    backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                    keyboardType: .default,
+                    inputFieldStyle: .outlined
+                )
+                
                 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Vehicle Rating")
@@ -223,7 +253,16 @@ struct AuctionUploadView: View {
                         .fill(.ultraThinMaterial)
                 )
                 
-                CustomTextField(title: "Starting Bid ($)", placeholder: "85500", text: $startingBid)
+                InputFieldView(
+                    description: "Starting Bid ($)",
+                    placeHolder: "85500",
+                    text: $startingBid,
+                    foregroundColor: .theme.surfaceColor,
+                    backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                    keyboardType: .default,
+                    inputFieldStyle: .outlined
+                )
+                
                 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Auction End Date")
@@ -267,13 +306,47 @@ struct AuctionUploadView: View {
             
             VStack(spacing: 16) {
                 HStack(spacing: 16) {
-                    CustomTextField(title: "Mileage", placeholder: "12,450", text: $mileage)
-                    CustomTextField(title: "Year", placeholder: "2023", text: $year)
+                    InputFieldView(
+                        description: "Mileage",
+                        placeHolder: "12,450",
+                        text: $mileage,
+                        foregroundColor: .theme.onSurfaceColor,
+                        backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                        keyboardType: .default,
+                        inputFieldStyle: .outlined
+                    )
+                    
+                    InputFieldView(
+                        description: "Year",
+                        placeHolder: "2025",
+                        text: $year,
+                        foregroundColor: .theme.onSurfaceColor,
+                        backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                        keyboardType: .default,
+                        inputFieldStyle: .outlined
+                    )
                 }
                 
                 HStack(spacing: 16) {
-                    CustomTextField(title: "Engine", placeholder: "4.4L Twin-Turbo V8", text: $engine)
-                    CustomTextField(title: "Transmission", placeholder: "8-Speed Automatic", text: $transmission)
+                    InputFieldView(
+                        description: "Engine",
+                        placeHolder: "4.4L Twin-Turbo V8",
+                        text: $engine,
+                        foregroundColor: .theme.onSurfaceColor,
+                        backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                        keyboardType: .default,
+                        inputFieldStyle: .outlined
+                    )
+                    
+                    InputFieldView(
+                        description: "Transformation",
+                        placeHolder: "8-Speed Automatic",
+                        text: $transmission,
+                        foregroundColor: .theme.onSurfaceColor,
+                        backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                        keyboardType: .default,
+                        inputFieldStyle: .outlined
+                    )
                 }
             }
             
@@ -281,28 +354,96 @@ struct AuctionUploadView: View {
             
             VStack(spacing: 16) {
                 HStack(spacing: 16) {
-                    CustomTextField(title: "Make", placeholder: "BMW", text: $make)
-                    CustomTextField(title: "Model", placeholder: "X5 M Competition", text: $model)
+                    InputFieldView(
+                        description: "Make",
+                        placeHolder: "BMW",
+                        text: $make,
+                        foregroundColor: .theme.onSurfaceColor,
+                        backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                        keyboardType: .default,
+                        inputFieldStyle: .outlined
+                    )
+                    
+                    InputFieldView(
+                        description: "Model",
+                        placeHolder: "X5 M Competition",
+                        text: $model,
+                        foregroundColor: .theme.onSurfaceColor,
+                        backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                        keyboardType: .default,
+                        inputFieldStyle: .outlined
+                    )
                 }
                 
-                CustomTextField(title: "Drivetrain", placeholder: "All-Wheel Drive", text: $drivetrain)
+                InputFieldView(
+                    description: "Drivetrain",
+                    placeHolder: "All-Wheel Drive",
+                    text: $drivetrain,
+                    foregroundColor: .theme.onSurfaceColor,
+                    backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                    keyboardType: .default,
+                    inputFieldStyle: .outlined
+                )
+                
                 
                 HStack(spacing: 16) {
-                    CustomTextField(title: "Exterior Color", placeholder: "Storm Bay Metallic", text: $exteriorColor)
-                    CustomTextField(title: "Interior Color", placeholder: "Black Merino Leather", text: $interiorColor)
+                    InputFieldView(
+                        description: "Exterior Color",
+                        placeHolder: "Storm Bay Metallic",
+                        text: $exteriorColor,
+                        foregroundColor: .theme.onSurfaceColor,
+                        backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                        keyboardType: .default,
+                        inputFieldStyle: .outlined
+                    )
+                    
+                    InputFieldView(
+                        description: "Interior Color",
+                        placeHolder: "Black Merino Leather",
+                        text: $interiorColor,
+                        foregroundColor: .theme.onSurfaceColor,
+                        backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                        keyboardType: .default,
+                        inputFieldStyle: .outlined
+                    )
                 }
                 
-                CustomTextField(title: "VIN", placeholder: "5UXCR6C0XP9D12345", text: $vin)
+                InputFieldView(
+                    description: "VIN",
+                    placeHolder: "5UXCR6C0XP9D12345",
+                    text: $vin,
+                    foregroundColor: .theme.onSurfaceColor,
+                    backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                    keyboardType: .default,
+                    inputFieldStyle: .outlined
+                )
+                
                 
                 HStack(spacing: 16) {
-                    CustomTextField(title: "Location", placeholder: "Los Angeles, CA", text: $location)
-                    CustomTextField(title: "Seller", placeholder: "Premium Auto Gallery", text: $seller)
+                    InputFieldView(
+                        description: "Location",
+                        placeHolder: "Los Angeles, CA",
+                        text: $location,
+                        foregroundColor: .theme.onSurfaceColor,
+                        backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                        keyboardType: .default,
+                        inputFieldStyle: .outlined
+                    )
+                    
+                    InputFieldView(
+                        description: "Seller",
+                        placeHolder: "Premium Auto Gallery",
+                        text: $seller,
+                        foregroundColor: .theme.onSurfaceColor,
+                        backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                        keyboardType: .default,
+                        inputFieldStyle: .outlined
+                    )
                 }
             }
         }
     }
     
-    // MARK: - Step 3: Features
     private var featuresStep: some View {
         VStack(alignment: .leading, spacing: 24) {
             SectionHeader(title: "Vehicle Features", subtitle: "Add features by category")
@@ -534,7 +675,6 @@ struct AuctionUploadView: View {
     }
 }
 
-// MARK: - Supporting Views
 
 struct SectionHeader: View {
     let title: String
@@ -549,28 +689,6 @@ struct SectionHeader: View {
             Text(subtitle)
                 .font(.custom("Exo2-Regular", size: 14))
                 .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
-        }
-    }
-}
-
-struct CustomTextField: View {
-    let title: String
-    let placeholder: String
-    @Binding var text: String
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.custom("Exo2-Medium", size: 14))
-                .foregroundColor(.theme.onSurfaceColor)
-            
-            TextField(placeholder, text: $text)
-                .font(.custom("Exo2-Regular", size: 16))
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.ultraThinMaterial)
-                )
         }
     }
 }

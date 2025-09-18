@@ -62,7 +62,7 @@ struct HomeView: View {
     
     var quickActions: [QuickAction] = [
         QuickAction(icon: "car.2", title: "Compare", color: .blue),
-        QuickAction(icon: "heart", title: "Wishlist", color: .red),
+        QuickAction(icon: "wallet.bifold", title: "Live Offers", color: .red),
         QuickAction(icon: "bell", title: "Alerts", color: .orange),
         QuickAction(icon: "calendar", title: "Schedule", color: .green)
     ]
@@ -88,7 +88,13 @@ struct HomeView: View {
                         HStack(spacing: 12) {
                             ForEach(quickActions) { action in
                                 QuickActionCard(action: action){
-                                    
+                                    if(action.title == "Schedule"){
+                                        router.push(.auctionSchedule)
+                                    } else if (action.title == "Live Offers"){
+                                        router.push(.auctionLiveBids)
+                                    } else{
+                                        router.push(.notification)
+                                    }
                                 }
                             }
                         }
@@ -106,7 +112,7 @@ struct HomeView: View {
                 
                 // Top Brands
                 VStack(alignment: .leading, spacing: 12) {
-                    sectionHeader(title: "Top Brands", showSeeAll: true)
+                    sectionHeader(title: "Top Brands", showSeeAll: false)
                         .padding(.horizontal, 16)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -143,7 +149,7 @@ struct HomeView: View {
                 
                 // Recently Viewed
                 VStack(alignment: .leading, spacing: 12) {
-                    sectionHeader(title: "Recently Viewed", showSeeAll: true)
+                    sectionHeader(title: "Recently Viewed", showSeeAll: false)
                         .padding(.horizontal, 16)
                     
                     LazyVStack(spacing: 12) {
@@ -297,7 +303,7 @@ struct HomeView: View {
     }
     
     @ViewBuilder
-    private func sectionHeader(title: String, showSeeAll: Bool = true) -> some View {
+    private func sectionHeader(title: String, showSeeAll: Bool = false) -> some View {
         HStack {
             Text(title)
                 .font(.custom("Exo2-Bold", size: 20))

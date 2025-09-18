@@ -13,6 +13,7 @@ struct AuctionScheduleScreen: View {
     @State private var scheduledAuctions: [ScheduledAuction] = sampleScheduledAuctions
     @State private var showingDayDetail = false
     @State private var selectedDayAuctions: [ScheduledAuction] = []
+    @EnvironmentObject var router: Router
     
     private let calendar = Calendar.current
     private let dateFormatter: DateFormatter = {
@@ -46,6 +47,16 @@ struct AuctionScheduleScreen: View {
     
     private var headerView: some View {
         HStack {
+            Button(action: {
+                router.pop()
+            }) {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.white)
+                    .frame(width: 44, height: 44)
+                    .background(Color.theme.primaryColor)
+                    .clipShape(Circle())
+            }
             VStack(alignment: .leading, spacing: 4) {
                 Text("Auction Schedule")
                     .font(.custom("Exo2-Bold", size: 28))
