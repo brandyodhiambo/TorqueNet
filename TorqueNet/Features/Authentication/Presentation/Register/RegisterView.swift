@@ -9,16 +9,9 @@ import SwiftUI
 
 struct RegisterView: View {
     @EnvironmentObject var router: Router
+    @Environment(\.dismiss) var dismiss
     @StateObject var registerViewModel = RegisterViewModel()
-
     
-    @State private var firstName: String = ""
-    @State private var lastName: String = ""
-    @State private var email: String = ""
-    @State private var phoneNumber: String = ""
-    @State private var password: String = ""
-    @State private var confirmPassword: String = ""
-
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 12) {
@@ -26,7 +19,7 @@ struct RegisterView: View {
                 Text("TorqueNet")
                     .font(.custom("Exo2-ExtraBold", size: 40))
                     .foregroundColor(Color.theme.primaryColor)
-
+                
                 Image("appCar")
                     .resizable()
                     .scaledToFit()
@@ -36,7 +29,7 @@ struct RegisterView: View {
             }
             .padding(.horizontal,12)
             Spacer()
-
+            
             // Card Section
             VStack(spacing: 20) {
                 ScrollView(.vertical,showsIndicators: false) {
@@ -71,7 +64,7 @@ struct RegisterView: View {
                                 registerViewModel.updateLastName(value: text)
                             }
                         )
-
+                        
                         InputFieldView(
                             description: "Email",
                             placeHolder: "johndoe@gmail.com",
@@ -121,27 +114,62 @@ struct RegisterView: View {
                                 registerViewModel.updateConfirmPassword(value: text)
                             }
                         )
-
-
+                        
+                        
                         CustomButtonView(
                             buttonName:"Sign Up",
                             isDisabled: !registerViewModel.isRegisterEnabled,
                             onTap: {
-//                                Task {
-//                                    await registerViewModel.registerUser(onSuccess: {
-//                                        
-//                                    }, onFailure: { error in
-//                                        
-//                                    })
-//                                }
+                                Task {
+                                    await registerViewModel.registerUser(
+                                        onSuccess: {
+                                            registerViewModel.updateIsShowAlertDialog(value: true)
+                                            registerViewModel.updateDialogEntity(
+                                                value: DialogEntity(
+                                                    title: "Registration Successful!",
+                                                    message: "Welcome to the community!\nPlease check your email for verification link and proceed to login.",
+                                                    icon: "",
+                                                    confirmButtonText: "Proceed",
+                                                    dismissButtonText: "",
+                                                    onConfirm: {
+                                                        registerViewModel.updateIsShowAlertDialog(value: false)
+                                                        dismiss()
+                                                        router.push(.login)
+                                                    },
+                                                    onDismiss: {
+                                                        registerViewModel.updateIsShowAlertDialog(value: false)
+                                                    }
+                                                )
+                                            )
+                                        },
+                                        onFailure: { error in
+                                            registerViewModel.updateIsShowAlertDialog(value: true)
+                                            registerViewModel.updateDialogEntity(
+                                                value: DialogEntity(
+                                                    title: "Registration Failed.",
+                                                    message: error,
+                                                    icon: "",
+                                                    confirmButtonText: "",
+                                                    dismissButtonText: "Okay",
+                                                    onConfirm: {
+                                                        registerViewModel.updateIsShowAlertDialog(value: false)
+                                                    },
+                                                    onDismiss: {
+                                                        registerViewModel.updateIsShowAlertDialog(value: false)
+                                                    }
+                                                )
+                                            )
+                                        }
+                                    )
+                                }
                             }
                         )
-
+                        
                         VStack(spacing: 12) {
                             Text("Or sign in with")
                                 .font(.custom("Exo2-Medium", size: 15))
                                 .foregroundColor(.gray)
-
+                            
                             HStack(spacing: 16) {
                                 ForEach(["google", "facebook" ], id: \.self) { iconName in
                                     Button(action: {}) {
@@ -156,7 +184,7 @@ struct RegisterView: View {
                                 }
                             }
                         }
-
+                        
                         HStack {
                             Text("Already have an account?")
                                 .foregroundColor(Color.theme.onSurfaceColor)
@@ -181,8 +209,30 @@ struct RegisterView: View {
                     .edgesIgnoringSafeArea(.bottom)
             )
         }
+        .overlay {
+            CustomAlertDialogView(
+                isPresented: $registerViewModel.isShowAlertDialog,
+                title: registerViewModel.dialogEntity.title,
+                text: registerViewModel.dialogEntity.message,
+                confirmButtonText: registerViewModel.dialogEntity.confirmButtonText,
+                dismissButtonText: registerViewModel.dialogEntity.dismissButtonText,
+                imageName: registerViewModel.dialogEntity.icon,
+                onDismiss: {
+                    if let onDismiss = registerViewModel.dialogEntity.onDismiss {
+                        onDismiss()
+                    }
+                },
+                onConfirmation: {
+                    if let onConfirm = registerViewModel.dialogEntity.onConfirm {
+                        onConfirm()
+                    }
+                }
+            )
+        }
         .background(Color.theme.surfaceColor)
         .ignoresSafeArea(edges: .all)
+        .fullScreenProgressOverlay(isShowing: registerViewModel.registeState == .isLoading )
+
     }
 }
 

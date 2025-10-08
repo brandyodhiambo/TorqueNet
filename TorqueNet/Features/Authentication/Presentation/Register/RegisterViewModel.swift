@@ -14,6 +14,8 @@ import Firebase
 
 @MainActor
 class RegisterViewModel: ObservableObject {
+    @Published var dialogEntity = DialogEntity()
+    @Published var isShowAlertDialog = false
     @Published var firstName: String = ""
     @Published var lastName: String = ""
     @Published var email: String = ""
@@ -76,6 +78,14 @@ class RegisterViewModel: ObservableObject {
         confirmPassword = value
         let error = ValidatorUtils.shared.validateConfirmPassword(password: password, confirmPassword: confirmPassword)
         updateRegisterErrors(key: "confirmPassword", value: error)
+    }
+    
+    func updateDialogEntity(value: DialogEntity) {
+        dialogEntity = value
+    }
+    
+    func updateIsShowAlertDialog(value: Bool) {
+        isShowAlertDialog = value
     }
     
     func registerUser(
