@@ -10,6 +10,8 @@ struct LoginView: View {
     var onLoginSuccess: () -> Void
     var onLoginFailure: (String) -> Void
     @EnvironmentObject var router: Router
+    @StateObject var loginViewModel = LoginViewModel()
+    
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var rememberMe: Bool = false
@@ -42,26 +44,32 @@ struct LoginView: View {
                 InputFieldView(
                     description: "Email",
                     placeHolder: "johndoe@gmail.com",
-                    text: $email,
+                    text: $loginViewModel.email,
                     foregroundColor: Color.theme.onSurfaceColor,
                     keyboardType: .emailAddress,
+                    errorMessage: loginViewModel.loginErrors["email"] ?? "",
                     inputFieldStyle: .outlined,
-                    onTextChange: {text in}
+                    onTextChange: { text in
+                        loginViewModel.updateEmail(value: text)
+                    }
 
                 )
                 
                 PasswordInputFieldView(
                     description: "Password",
                     placeHolder: "********",
-                    text: $password,
+                    text: $loginViewModel.password,
                     foregroundColor: Color.theme.onSurfaceColor,
+                    errorMessage: loginViewModel.loginErrors["password"] ?? "",
                     inputFieldStyle: .outlined,
-                    onTextChange: {text in}
+                    onTextChange: { text in
+                        loginViewModel.updatePassword(value: text)
+                    }
 
                 )
 
                 HStack {
-                    Toggle(isOn: $rememberMe) {
+                    Toggle(isOn: $loginViewModel.rememberMe) {
                         Text("Remember me")
                             .font(.custom("Exo2-Medium", size: 15))
                             .foregroundColor(Color.theme.primaryColor)
@@ -79,11 +87,33 @@ struct LoginView: View {
 
                 CustomButtonView(
                     buttonName:"Sign In",
+                    isDisabled: !loginViewModel.isLoginEnable,
                     onTap: {
-                        if rememberMe {
-                            onLoginSuccess()
+                        Task{
+                            await loginViewModel.loginUser(onSuccess: {
+                                if loginViewModel.rememberMe {
+                                    onLoginSuccess()
+                                }
+                                router.push(.dashboard)
+                            }, onFailure: {error in
+                                loginViewModel.updateIsShowAlertDialog(value: true)
+                                loginViewModel.updateDialogEntity(
+                                    value: DialogEntity(
+                                        title: "Login Failed.",
+                                        message: error,
+                                        icon: "",
+                                        confirmButtonText: "",
+                                        dismissButtonText: "Okay",
+                                        onConfirm: {
+                                            loginViewModel.updateIsShowAlertDialog(value: false)
+                                        },
+                                        onDismiss: {
+                                            loginViewModel.updateIsShowAlertDialog(value: false)
+                                        }
+                                    )
+                                )
+                            })
                         }
-                        router.push(.dashboard)
                     }
                 )
 
@@ -129,8 +159,29 @@ struct LoginView: View {
                     .edgesIgnoringSafeArea(.bottom)
             )
         }
+        .overlay {
+            CustomAlertDialogView(
+                isPresented: $loginViewModel.isShowAlertDialog,
+                title: loginViewModel.dialogEntity.title,
+                text: loginViewModel.dialogEntity.message,
+                confirmButtonText: loginViewModel.dialogEntity.confirmButtonText,
+                dismissButtonText: loginViewModel.dialogEntity.dismissButtonText,
+                imageName: loginViewModel.dialogEntity.icon,
+                onDismiss: {
+                    if let onDismiss = loginViewModel.dialogEntity.onDismiss {
+                        onDismiss()
+                    }
+                },
+                onConfirmation: {
+                    if let onConfirm = loginViewModel.dialogEntity.onConfirm {
+                        onConfirm()
+                    }
+                }
+            )
+        }
         .background(Color.theme.surfaceColor)
         .ignoresSafeArea(edges: .all)
+        .fullScreenProgressOverlay(isShowing: loginViewModel.loginState == .isLoading )
     }
 }
 

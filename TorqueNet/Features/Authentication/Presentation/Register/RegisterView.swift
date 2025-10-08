@@ -134,7 +134,6 @@ struct RegisterView: View {
                                                     onConfirm: {
                                                         registerViewModel.updateIsShowAlertDialog(value: false)
                                                         dismiss()
-                                                        router.push(.login)
                                                     },
                                                     onDismiss: {
                                                         registerViewModel.updateIsShowAlertDialog(value: false)
@@ -232,7 +231,7 @@ struct RegisterView: View {
         .background(Color.theme.surfaceColor)
         .ignoresSafeArea(edges: .all)
         .fullScreenProgressOverlay(isShowing: registerViewModel.registeState == .isLoading )
-
+        
     }
 }
 
