@@ -21,6 +21,7 @@ struct PasswordInputFieldView: View {
     var inputFieldStyle: InputFieldStyle = InputFieldStyle.outlined
     var cornerRadius: CGFloat = 12
     var height: CGFloat = 56
+    var onTextChange: (String) -> Void
     var onSubmit: (() -> Void)? = nil
 
     @State private var isSecure: Bool = true
@@ -47,6 +48,9 @@ struct PasswordInputFieldView: View {
                 .keyboardType(keyboardType)
                 .autocapitalization(autoCapitalization)
                 .submitLabel(.done)
+                .onChange(of: text) { newValue in
+                    onTextChange(newValue)
+                }
                 .onSubmit {
                     onSubmit?()
                 }
@@ -104,6 +108,7 @@ struct PasswordInputFieldViewPreview: View {
                 foregroundColor: .black,
                 backgroundColor: Color.gray.opacity(0.1),
                 inputFieldStyle: .outlined,
+                onTextChange: {text in},
                 onSubmit: {
                     
                 }
@@ -115,7 +120,8 @@ struct PasswordInputFieldViewPreview: View {
                 foregroundColor: .white,
                 backgroundColor: .blue.opacity(0.7),
                 keyboardType: .emailAddress,
-                inputFieldStyle: .outlined
+                inputFieldStyle: .outlined,
+                onTextChange: {text in}
             )
         }
         .padding()

@@ -55,7 +55,7 @@ struct CustomButtonView: View {
         .cornerRadius(7)
         .overlay(
                RoundedRectangle(cornerRadius: 7)
-                   .stroke(borderColor, lineWidth: 1)
+                .stroke(isDisabled ? Color.gray : borderColor, lineWidth: 1)
            )
 
 

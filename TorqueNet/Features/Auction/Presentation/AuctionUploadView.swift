@@ -208,7 +208,8 @@ struct AuctionUploadView: View {
                     foregroundColor: .theme.onSurfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                     keyboardType: .default,
-                    inputFieldStyle: .outlined
+                    inputFieldStyle: .outlined,
+                    onTextChange: {text in}
                 )
                 
                 InputFieldView(
@@ -218,7 +219,8 @@ struct AuctionUploadView: View {
                     foregroundColor: .theme.onSurfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                     keyboardType: .default,
-                    inputFieldStyle: .outlined
+                    inputFieldStyle: .outlined,
+                    onTextChange: {text in}
                 )
                 
                 InputFieldView(
@@ -228,7 +230,8 @@ struct AuctionUploadView: View {
                     foregroundColor: .theme.onSurfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                     keyboardType: .default,
-                    inputFieldStyle: .outlined
+                    inputFieldStyle: .outlined,
+                    onTextChange: {text in}
                 )
                 
                 
@@ -260,7 +263,8 @@ struct AuctionUploadView: View {
                     foregroundColor: .theme.surfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                     keyboardType: .default,
-                    inputFieldStyle: .outlined
+                    inputFieldStyle: .outlined,
+                    onTextChange: {text in}
                 )
                 
                 
@@ -313,7 +317,8 @@ struct AuctionUploadView: View {
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
-                        inputFieldStyle: .outlined
+                        inputFieldStyle: .outlined,
+                        onTextChange: {text in}
                     )
                     
                     InputFieldView(
@@ -323,7 +328,8 @@ struct AuctionUploadView: View {
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
-                        inputFieldStyle: .outlined
+                        inputFieldStyle: .outlined,
+                        onTextChange: {text in}
                     )
                 }
                 
@@ -335,7 +341,8 @@ struct AuctionUploadView: View {
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
-                        inputFieldStyle: .outlined
+                        inputFieldStyle: .outlined,
+                        onTextChange: {text in}
                     )
                     
                     InputFieldView(
@@ -345,7 +352,8 @@ struct AuctionUploadView: View {
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
-                        inputFieldStyle: .outlined
+                        inputFieldStyle: .outlined,
+                        onTextChange: {text in}
                     )
                 }
             }
@@ -361,7 +369,8 @@ struct AuctionUploadView: View {
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
-                        inputFieldStyle: .outlined
+                        inputFieldStyle: .outlined,
+                        onTextChange: {text in}
                     )
                     
                     InputFieldView(
@@ -371,7 +380,8 @@ struct AuctionUploadView: View {
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
-                        inputFieldStyle: .outlined
+                        inputFieldStyle: .outlined,
+                        onTextChange: {text in}
                     )
                 }
                 
@@ -382,7 +392,8 @@ struct AuctionUploadView: View {
                     foregroundColor: .theme.onSurfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                     keyboardType: .default,
-                    inputFieldStyle: .outlined
+                    inputFieldStyle: .outlined,
+                    onTextChange: {text in}
                 )
                 
                 
@@ -394,7 +405,8 @@ struct AuctionUploadView: View {
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
-                        inputFieldStyle: .outlined
+                        inputFieldStyle: .outlined,
+                        onTextChange: {text in}
                     )
                     
                     InputFieldView(
@@ -404,7 +416,8 @@ struct AuctionUploadView: View {
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
-                        inputFieldStyle: .outlined
+                        inputFieldStyle: .outlined,
+                        onTextChange: {text in}
                     )
                 }
                 
@@ -415,7 +428,8 @@ struct AuctionUploadView: View {
                     foregroundColor: .theme.onSurfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                     keyboardType: .default,
-                    inputFieldStyle: .outlined
+                    inputFieldStyle: .outlined,
+                    onTextChange: {text in}
                 )
                 
                 
@@ -427,7 +441,8 @@ struct AuctionUploadView: View {
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
-                        inputFieldStyle: .outlined
+                        inputFieldStyle: .outlined,
+                        onTextChange: {text in}
                     )
                     
                     InputFieldView(
@@ -437,7 +452,8 @@ struct AuctionUploadView: View {
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
-                        inputFieldStyle: .outlined
+                        inputFieldStyle: .outlined,
+                        onTextChange: {text in}
                     )
                 }
             }

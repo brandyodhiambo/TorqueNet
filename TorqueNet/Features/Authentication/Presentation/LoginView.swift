@@ -45,7 +45,9 @@ struct LoginView: View {
                     text: $email,
                     foregroundColor: Color.theme.onSurfaceColor,
                     keyboardType: .emailAddress,
-                    inputFieldStyle: .outlined
+                    inputFieldStyle: .outlined,
+                    onTextChange: {text in}
+
                 )
                 
                 PasswordInputFieldView(
@@ -53,7 +55,9 @@ struct LoginView: View {
                     placeHolder: "********",
                     text: $password,
                     foregroundColor: Color.theme.onSurfaceColor,
-                    inputFieldStyle: .outlined
+                    inputFieldStyle: .outlined,
+                    onTextChange: {text in}
+
                 )
 
                 HStack {

@@ -46,7 +46,8 @@ struct ForgotPasswordView: View {
                     text: $email,
                     foregroundColor: Color.theme.onSurfaceColor,
                     keyboardType: .emailAddress,
-                    inputFieldStyle: .outlined
+                    inputFieldStyle: .outlined,
+                    onTextChange: {text in}
                 )
                 
 

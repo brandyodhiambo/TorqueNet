@@ -9,6 +9,9 @@ import SwiftUI
 
 struct RegisterView: View {
     @EnvironmentObject var router: Router
+    @StateObject var registerViewModel = RegisterViewModel()
+
+    
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var email: String = ""
@@ -46,59 +49,91 @@ struct RegisterView: View {
                         InputFieldView(
                             description: "First Name",
                             placeHolder: "John",
-                            text: $firstName,
+                            text: $registerViewModel.firstName,
                             foregroundColor: Color.theme.onSurfaceColor,
                             keyboardType: .default,
-                            inputFieldStyle: .outlined
+                            errorMessage: registerViewModel.registerErrors["firstName"] ?? "",
+                            inputFieldStyle: .outlined,
+                            onTextChange: { text in
+                                registerViewModel.updateFirstName(value: text)
+                            }
                         )
                         
                         InputFieldView(
                             description: "Last Name",
                             placeHolder: "Doe",
-                            text: $lastName,
+                            text: $registerViewModel.lastName,
                             foregroundColor: Color.theme.onSurfaceColor,
                             keyboardType: .default,
-                            inputFieldStyle: .outlined
+                            errorMessage: registerViewModel.registerErrors["lastName"] ?? "",
+                            inputFieldStyle: .outlined,
+                            onTextChange: { text in
+                                registerViewModel.updateLastName(value: text)
+                            }
                         )
 
                         InputFieldView(
                             description: "Email",
                             placeHolder: "johndoe@gmail.com",
-                            text: $email,
+                            text: $registerViewModel.email,
                             foregroundColor: Color.theme.onSurfaceColor,
                             keyboardType: .emailAddress,
-                            inputFieldStyle: .outlined
+                            errorMessage: registerViewModel.registerErrors["email"] ?? "",
+                            inputFieldStyle: .outlined,
+                            onTextChange: { text in
+                                registerViewModel.updateEmail(value: text)
+                            }
                         )
                         
                         InputFieldView(
                             description: "Phone Number",
                             placeHolder: "07---------",
-                            text: $phoneNumber,
+                            text: $registerViewModel.phoneNumber,
                             foregroundColor: Color.theme.onSurfaceColor,
                             keyboardType: .numberPad,
-                            inputFieldStyle: .outlined
+                            errorMessage: registerViewModel.registerErrors["phoneNumber"] ?? "",
+                            inputFieldStyle: .outlined,
+                            onTextChange: { text in
+                                registerViewModel.updatePhoneNumber(value: text)
+                            }
                         )
                         
                         PasswordInputFieldView(
                             description: "Password",
                             placeHolder: "********",
-                            text: $password,
+                            text: $registerViewModel.password,
                             foregroundColor: Color.theme.onSurfaceColor,
-                            inputFieldStyle: .outlined
+                            errorMessage: registerViewModel.registerErrors["password"] ?? "",
+                            inputFieldStyle: .outlined,
+                            onTextChange: { text in
+                                registerViewModel.updatePassword(value: text)
+                            }
                         )
                         
                         PasswordInputFieldView(
                             description: "Confirm Password",
                             placeHolder: "********",
-                            text: $confirmPassword,
+                            text: $registerViewModel.confirmPassword,
                             foregroundColor: Color.theme.onSurfaceColor,
-                            inputFieldStyle: .outlined
+                            errorMessage: registerViewModel.registerErrors["confirmPassword"] ?? "",
+                            inputFieldStyle: .outlined,
+                            onTextChange: { text in
+                                registerViewModel.updateConfirmPassword(value: text)
+                            }
                         )
 
 
                         CustomButtonView(
                             buttonName:"Sign Up",
+                            isDisabled: !registerViewModel.isRegisterEnabled,
                             onTap: {
+//                                Task {
+//                                    await registerViewModel.registerUser(onSuccess: {
+//                                        
+//                                    }, onFailure: { error in
+//                                        
+//                                    })
+//                                }
                             }
                         )
 

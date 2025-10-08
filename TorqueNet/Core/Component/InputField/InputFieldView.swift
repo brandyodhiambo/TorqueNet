@@ -13,7 +13,6 @@ struct InputFieldView: View {
     var description: String = ""
     var placeHolder: String = ""
     @Binding var text: String
-
     var foregroundColor: Color = Color.theme.onSurfaceColor
     var backgroundColor: Color = .clear
     var keyboardType: UIKeyboardType = .default
@@ -23,8 +22,9 @@ struct InputFieldView: View {
     var inputFieldStyle: InputFieldStyle = InputFieldStyle.outlined
     var cornerRadius: CGFloat = 12
     var height: CGFloat = 56
+    var onTextChange: (String) -> Void
     var onSubmit: (() -> Void)? = nil
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             if !description.isEmpty {
@@ -33,7 +33,7 @@ struct InputFieldView: View {
                     .foregroundColor(foregroundColor)
                     .padding(.horizontal, 4)
             }
-
+            
             HStack(spacing: 8) {
                 TextField(placeHolder, text: $text)
                     .font(.custom("Exo2-Medium", size: 15))
@@ -41,6 +41,9 @@ struct InputFieldView: View {
                     .keyboardType(keyboardType)
                     .autocapitalization(autoCapitalization)
                     .submitLabel(.done)
+                    .onChange(of: text){ newValue in
+                        onTextChange(newValue)
+                    }
                     .onSubmit {
                         onSubmit?()
                     }
@@ -67,13 +70,13 @@ struct InputFieldView: View {
                 }
             )
             .cornerRadius(cornerRadius)
-
+            
             if inputFieldStyle == .filled {
                 Divider()
                     .frame(height: 0.5)
                     .background(errorMessage.isEmpty ? dividerColor : Color.theme.errorColor)
             }
-
+            
             if !errorMessage.isEmpty {
                 Text(errorMessage)
                     .font(.system(size: 12, weight: .light, design: .rounded))
@@ -89,7 +92,7 @@ struct InputFieldView: View {
 
 struct InputFieldViewPreview: View {
     @State var text: String = ""
-
+    
     var body: some View {
         VStack(spacing: 20) {
             InputFieldView(
@@ -100,18 +103,20 @@ struct InputFieldViewPreview: View {
                 foregroundColor: .black,
                 backgroundColor: Color.gray.opacity(0.1),
                 inputFieldStyle: .outlined,
+                onTextChange: {text in},
                 onSubmit: {
                     
                 }
             )
-
+            
             InputFieldView(
                 placeHolder: "Email",
                 text: $text,
                 foregroundColor: .white,
                 backgroundColor: .blue.opacity(0.7),
                 keyboardType: .emailAddress,
-                inputFieldStyle: .outlined
+                inputFieldStyle: .outlined,
+                onTextChange: {text in}
             )
         }
         .padding()
