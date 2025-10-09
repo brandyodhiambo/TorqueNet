@@ -172,6 +172,7 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
                 
             }
         )
+        .navigationBarBackButtonHidden()
         
     }
 }

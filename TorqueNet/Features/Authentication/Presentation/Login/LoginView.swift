@@ -10,11 +10,8 @@ struct LoginView: View {
     var onLoginSuccess: () -> Void
     var onLoginFailure: (String) -> Void
     @EnvironmentObject var router: Router
-    @StateObject var loginViewModel = LoginViewModel()
+    @ObservedObject var loginViewModel = LoginViewModel()
     
-    @State private var email: String = ""
-    @State private var password: String = ""
-    @State private var rememberMe: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var themesViewModel: ThemesViewModel
+    @EnvironmentObject var router:Router
     @State private var showThemeSelector = false
     
     var body: some View {
@@ -21,7 +22,9 @@ struct SettingsView: View {
                             iconColor: .blue,
                             title: "Account",
                             subtitle: "brandyodhiambo@gmail.com",
-                            action: {}
+                            action: {
+                                router.push(.profile)
+                            }
                         )
                         
                         SettingsRowView(
