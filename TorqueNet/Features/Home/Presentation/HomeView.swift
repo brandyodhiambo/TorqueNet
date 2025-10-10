@@ -11,6 +11,10 @@ struct HomeView: View {
     @State private var searchText: String = ""
     @State private var selectedBrand = 0
     @EnvironmentObject var router: Router
+    @StateObject var locationManager = LocationManager()
+    @State var isLocationAuthorized = false
+    @State var isShowRequestLocationAlert = false
+    @State private var locationName: String = "Loading..."
     
     var brands: [Brand] = [
         Brand(image: "benz", title: "Mercedes-Benz"),
@@ -108,7 +112,7 @@ struct HomeView: View {
                         router.push(.auctionLiveBids)
                     }
                 )
-                    .padding(.horizontal, 16)
+                .padding(.horizontal, 16)
                 
                 // Top Brands
                 VStack(alignment: .leading, spacing: 12) {
@@ -166,7 +170,45 @@ struct HomeView: View {
                 Spacer(minLength: 100)
             }
         }
+        .onAppear {
+            updateLocationNameIfNeeded()
+        }
         .background(Color.theme.surfaceColor.ignoresSafeArea(.all))
+        .onChange(of: locationManager.authorizationStatus) { newStatus in
+            Task {
+                if newStatus == .authorizedWhenInUse || newStatus == .authorizedAlways {
+                    isLocationAuthorized = true
+                    locationManager.startUpdatingLocation()
+                } else {
+                    isLocationAuthorized = false
+                }
+            }
+        }
+        .alert(isPresented: $isShowRequestLocationAlert) {
+            Alert(
+                title: Text("Location permision is required to proceed"),
+                message: Text("Please enable location access in settings to proceed."),
+                primaryButton: .default(Text("Open Settings")) {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                },
+                secondaryButton: .cancel()
+            )
+        }
+    }
+    
+    func updateLocationNameIfNeeded() {
+        guard locationManager.latitude != 0.0 && locationManager.longitude != 0.0 else { return }
+        Utils.shared.getCityAndCountry(latitude: locationManager.latitude, longitude: locationManager.longitude) { name in
+            DispatchQueue.main.async {
+                if let name = name {
+                    locationName = name
+                } else {
+                    locationName = "Location not found"
+                }
+            }
+        }
     }
     
     
@@ -182,7 +224,7 @@ struct HomeView: View {
                     Text("Your location")
                         .font(.custom("Exo2-Regular", size: 12))
                         .foregroundColor(Color.theme.onSurfaceColor.opacity(0.6))
-                    Text("Nairobi, Kenya")
+                    Text(locationName)
                         .font(.custom("Exo2-SemiBold", size: 14))
                         .foregroundColor(Color.theme.onSurfaceColor)
                 }
@@ -450,7 +492,7 @@ struct EnhancedCarCard: View {
                     .frame(width: 280, height: 180)
                     .clipped()
                     .clipShape(RoundedCorner(radius: 16, corners: [.topLeft, .topRight]))
-
+                
                 // Badges
                 HStack {
                     VStack(alignment: .leading, spacing: 6) {
@@ -638,10 +680,11 @@ struct RecentlyViewedRow: View {
             onTap()
         }
     }
+    
 }
 
 #Preview {
     HomeView()
-        
+    
 }
 
