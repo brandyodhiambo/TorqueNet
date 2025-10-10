@@ -13,224 +13,412 @@ struct ProfileView: View {
     @EnvironmentObject var router: Router
     @State private var showImagePicker = false
     @State private var profileImage: UIImage? = nil
+    @State private var isAnimating = false
     
     var body: some View {
         NavigationView {
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 0) {
-                    headerView
-                    
-                    ZStack(alignment: .top) {
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                .theme.primaryColor.opacity(0.5),
-                                .theme.primaryColor.opacity(0.7),
-                                .theme.primaryColor.opacity(0.9),
-                            ]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                        .frame(height: 180)
-                        
-                        VStack(spacing: 16) {
-                            HStack {
-                                Spacer()
-                                Image(systemName: "camera.circle.fill")
-                                    .font(.system(size: 24))
-                                    .foregroundColor(.white)
-                                    .padding(12)
-                                    .onTapGesture {
-                                        showImagePicker = true
-                                    }
-                            }
-                            .padding(.horizontal, 20)
-                            .padding(.top, 12)
-                            
-                            Spacer()
-                        }
-                    }
-                    
-                    // Profile Image
-                    VStack(spacing: 16) {
-                        if let image = profileImage {
-                            Image(uiImage: image)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 100, height: 100)
-                                .clipShape(Circle())
-                                .overlay(Circle().stroke(Color.white, lineWidth: 4))
-                                .padding(.top, -70)
-                        } else {
-                            Image(systemName: "person.circle.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 100, height: 100)
-                                .foregroundColor(.gray)
-                                .padding(.top, -70)
-                        }
-                        
-                        // User Info
-                        VStack(spacing: 4) {
-                            Text("AVLIN THOMAS")
-                                .font(.custom("Exo2-Bold", size: 18))
-                                .foregroundColor(.theme.primaryColor)
-                            
-                            Text("NEWYORK")
-                                .font(.custom("Exo2-Regular", size: 12))
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(Color.theme.surfaceColor)
-                    
-                    // Profile Details
+            ZStack {
+                Color.theme.surfaceColor
+                    .ignoresSafeArea()
+                
+                ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 0) {
-                        ProfileDetailRow(
-                            label: "Name",
-                            value: "Avlin Thomas",
-                            labelColor: .theme.primaryColor
-                        )
+                        // Header with Navigation
+                        headerView
                         
-                        Divider()
-                            .padding(.horizontal, 16)
+                        // Decorative Background
+                        ZStack(alignment: .top) {
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    .theme.primaryColor.opacity(0.15),
+                                    .theme.primaryColor.opacity(0.05),
+                                ]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                            
+                            VStack(spacing: 0) {
+                                // Camera Button
+                                HStack {
+                                    Spacer()
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.theme.primaryColor)
+                                            .frame(width: 44, height: 44)
+                                        
+                                        Image(systemName: "camera.fill")
+                                            .font(.system(size: 18, weight: .semibold))
+                                            .foregroundColor(.white)
+                                    }
+                                    .padding(16)
+                                    .onTapGesture {
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                            showImagePicker = true
+                                        }
+                                    }
+                                }
+                                
+                                Spacer()
+                                    .frame(height: 60)
+                            }
+                            .frame(height: 140)
+                        }
+                        .frame(height: 140)
                         
-                        ProfileDetailRow(
-                            label: "Email",
-                            value: "Avlin_tms@gmail.com",
-                            labelColor:  .theme.primaryColor
-                        )
+                        // Profile Card
+                        profileCardView
                         
-                        Divider()
-                            .padding(.horizontal, 16)
+                        // Stats Section
+                        statsSection
                         
-                        ProfileDetailRow(
-                            label: "Phone",
-                            value: "+1 (555) 123-4567",
-                            labelColor:  .theme.primaryColor
-                        )
+                        // Action Buttons
+                        actionsSection
                         
-                        Divider()
-                            .padding(.horizontal, 16)
-                        
-                        ProfileDetailRow(
-                            label: "Location",
-                            value: "New York, USA",
-                            labelColor:  .theme.primaryColor
-                        )
-                        
-                        Divider()
-                            .padding(.horizontal, 16)
-                        
-                        ProfileDetailRow(
-                            label: "User ID",
-                            value: "22200",
-                            labelColor:  .theme.primaryColor
-                        )
-                        
-                        Divider()
-                            .padding(.horizontal, 16)
-                        
-                        ProfileDetailRow(
-                            label: "Member Since",
-                            value: "January 2024",
-                            labelColor:  .theme.primaryColor
-                        )
+                        Spacer()
+                            .frame(height: 20)
                     }
-                    .background(Color.theme.surfaceColor)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 16)
-                    
                 }
-            }
-            .background(Color.theme.surfaceColor)
-            .sheet(isPresented: $showImagePicker) {
-                ImagePicker(image: $profileImage)
+                .sheet(isPresented: $showImagePicker) {
+                    ImagePicker(image: $profileImage)
+                }
             }
         }
     }
     
     private var headerView: some View {
-        HStack {
+        HStack(alignment: .center, spacing: 12) {
             Button(action: {
                 router.pop()
             }) {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.white)
-                    .frame(width: 44, height: 44)
-                    .background(Color.theme.primaryColor)
-                    .clipShape(Circle())
+                    .frame(width: 40, height: 40)
+                    .background(
+                        Circle()
+                            .fill(Color.theme.primaryColor)
+                            .shadow(color: Color.theme.primaryColor.opacity(0.3), radius: 8, x: 0, y: 4)
+                    )
             }
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text("Profile")
                     .font(.custom("Exo2-Bold", size: 28))
+                    .foregroundColor(.theme.onSurfaceColor)
+                
+                Text("Manage your account")
+                    .font(.custom("Exo2-Regular", size: 12))
+                    .foregroundColor(.secondary.opacity(0.7))
+            }
+            
+            Spacer()
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+    }
+    
+    private var profileCardView: some View {
+        VStack(spacing: 20) {
+            ZStack(alignment: .bottomTrailing) {
+                if let image = profileImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 110, height: 110)
+                        .clipShape(Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            .theme.primaryColor,
+                                            .theme.primaryColor.opacity(0.6)
+                                        ]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 3
+                                )
+                        )
+                        .shadow(color: Color.theme.primaryColor.opacity(0.3), radius: 10, x: 0, y: 4)
+                } else {
+                    Image(systemName: "person.circle.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 110, height: 110)
+                        .foregroundColor(.gray.opacity(0.3))
+                        .overlay(
+                            Circle()
+                                .stroke(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            .theme.primaryColor.opacity(0.5),
+                                            .theme.primaryColor.opacity(0.2)
+                                        ]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 2
+                                )
+                        )
+                }
+                
+                // Status Badge
+                Circle()
+                    .fill(Color.green)
+                    .frame(width: 16, height: 16)
+                    .overlay(Circle().stroke(Color.white, lineWidth: 2))
+            }
+            .padding(.top, -95)
+            
+            // User Info
+            VStack(spacing: 6) {
+                Text("AVLIN THOMAS")
+                    .font(.custom("Exo2-Bold", size: 22))
+                    .foregroundColor(.theme.onSurfaceColor)
+                
+                HStack(spacing: 6) {
+                    Image(systemName: "mappin.circle.fill")
+                        .font(.system(size: 12))
+                        .foregroundColor(.theme.primaryColor)
+                    
+                    Text("New York, USA")
+                        .font(.custom("Exo2-Regular", size: 13))
+                        .foregroundColor(.secondary.opacity(0.8))
+                }
+            }
+            
+            // Divider with gradient
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    .clear,
+                    .theme.primaryColor.opacity(0.3),
+                    .clear
+                ]),
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+            .frame(height: 1)
+            
+            // Profile Details Grid
+            VStack(spacing: 12) {
+                ProfileDetailItem(
+                    label: "Email",
+                    value: "Avlin_tms@gmail.com",
+                    icon: "envelope.fill"
+                )
+                
+                ProfileDetailItem(
+                    label: "Phone",
+                    value: "+1 (555) 123-4567",
+                    icon: "phone.fill"
+                )
+                
+                ProfileDetailItem(
+                    label: "User ID",
+                    value: "22200",
+                    icon: "person.badge.key.fill"
+                )
+                
+                ProfileDetailItem(
+                    label: "Member Since",
+                    value: "January 2024",
+                    icon: "calendar.circle.fill"
+                )
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 24)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.theme.surfaceColor)
+                .shadow(color: Color.black.opacity(0.05), radius: 12, x: 0, y: 4)
+        )
+        .padding(.horizontal, 16)
+        .padding(.vertical, 20)
+    }
+    
+    private var statsSection: some View {
+        VStack(spacing: 16) {
+            Text("Account Stats")
+                .font(.custom("Exo2-Bold", size: 16))
+                .foregroundColor(.theme.onSurfaceColor)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 20)
+            
+            HStack(spacing: 12) {
+                StatCard(title: "Total Cars", value: "3", icon: "car.fill")
+                StatCard(title: "Rides", value: "42", icon: "road.lanes")
+                StatCard(title: "Rating", value: "4.8", icon: "star.fill")
+            }
+            .padding(.horizontal, 16)
+        }
+        .padding(.horizontal, 4)
+    }
+    
+    private var actionsSection: some View {
+        VStack(spacing: 12) {
+            Text("Actions")
+                .font(.custom("Exo2-Bold", size: 16))
+                .foregroundColor(.theme.onSurfaceColor)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 20)
+            
+            VStack(spacing: 10) {
+                ProfileActionButton(
+                    icon: "pencil.circle.fill",
+                    title: "Edit Profile",
+                    subtitle: "Update your information",
+                    iconColor: .blue,
+                    action: {}
+                )
+                
+                ProfileActionButton(
+                    icon: "lock.circle.fill",
+                    title: "Change Password",
+                    subtitle: "Secure your account",
+                    iconColor: .green,
+                    action: {}
+                )
+                
+                ProfileActionButton(
+                    icon: "bell.circle.fill",
+                    title: "Notifications",
+                    subtitle: "Manage notification settings",
+                    iconColor: .orange,
+                    action: {}
+                )
+                
+                ProfileActionButton(
+                    icon: "rectangle.portrait.and.arrow.right.fill",
+                    title: "Logout",
+                    subtitle: "Sign out from your account",
+                    iconColor: .red,
+                    action: {
+                        onLogoutSuccess()
+                    }
+                )
+            }
+            .padding(.horizontal, 16)
+        }
+        .padding(.horizontal, 4)
+        .padding(.top, 12)
+    }
+}
+
+struct ProfileDetailItem: View {
+    let label: String
+    let value: String
+    let icon: String
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 16))
+                .foregroundColor(.theme.primaryColor)
+                .frame(width: 32, height: 32)
+                .background(Color.theme.primaryColor.opacity(0.1))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(label)
+                    .font(.custom("Exo2-Medium", size: 11))
+                    .foregroundColor(.secondary.opacity(0.7))
+                    .textCase(.uppercase)
+                
+                Text(value)
+                    .font(.custom("Exo2-Regular", size: 13))
                     .foregroundColor(.theme.onSurfaceColor)
             }
             
             Spacer()
-            
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 10)
-        .padding(.bottom, 16)
     }
 }
 
-struct ProfileDetailRow: View {
-    let label: String
+struct StatCard: View {
+    let title: String
     let value: String
-    let labelColor: Color
+    let icon: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(label)
-                .font(.custom("Exo2-Medium", size: 12))
-                .foregroundColor(labelColor)
+        VStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.system(size: 24))
+                .foregroundColor(.theme.primaryColor)
             
             Text(value)
-                .font(.custom("Exo2-Regular", size: 14))
-                .foregroundColor(.primary)
+                .font(.custom("Exo2-Bold", size: 18))
+                .foregroundColor(.theme.onSurfaceColor)
+            
+            Text(title)
+                .font(.custom("Exo2-Regular", size: 11))
+                .foregroundColor(.secondary.opacity(0.7))
+                .lineLimit(1)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, 14)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.theme.primaryColor.opacity(0.08))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.theme.primaryColor.opacity(0.15), lineWidth: 1)
+                )
+        )
     }
 }
 
 struct ProfileActionButton: View {
     let icon: String
     let title: String
+    let subtitle: String
     let iconColor: Color
     let action: () -> Void
     
+    @State private var isPressed = false
+    
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 12) {
+            HStack(spacing: 14) {
                 Image(systemName: icon)
-                    .font(.system(size: 18))
-                    .foregroundColor(iconColor)
-                    .frame(width: 30)
+                    .font(.system(size: 22))
+                    .foregroundColor(.white)
+                    .frame(width: 44, height: 44)
+                    .background(iconColor)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                 
-                Text(title)
-                    .font(.custom("Exo2-Regular", size: 14))
-                    .foregroundColor(.primary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.custom("Exo2-SemiBold", size: 14))
+                        .foregroundColor(.theme.onSurfaceColor)
+                    
+                    Text(subtitle)
+                        .font(.custom("Exo2-Regular", size: 12))
+                        .foregroundColor(.secondary.opacity(0.7))
+                }
                 
                 Spacer()
                 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.secondary.opacity(0.5))
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.secondary.opacity(0.4))
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
-            .background(Color.theme.surfaceColor)
-            .cornerRadius(10)
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color.secondary.opacity(0.1), lineWidth: 1)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(Color.theme.surfaceColor)
+                    .shadow(color: Color.black.opacity(isPressed ? 0.1 : 0.03), radius: 8, x: 0, y: 2)
             )
+            .scaleEffect(isPressed ? 0.97 : 1)
         }
+        .onLongPressGesture(minimumDuration: 0, perform: {}, onPressingChanged: { pressing in
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isPressed = pressing
+            }
+        })
     }
 }
 
@@ -272,7 +460,7 @@ struct ImagePicker: UIViewControllerRepresentable {
         onLogoutSuccess: {
             
         },
-        onLogoutFailed: {error in
+        onLogoutFailed: { error in
             
         }
     )
