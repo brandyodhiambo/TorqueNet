@@ -13,6 +13,7 @@ struct User: Codable, Identifiable, Hashable {
     var uid: String
     var name: String
     var email: String
+    var phoneNumber: String
     var profileUrl: String?
     @ServerTimestamp var createdAt: Date?
     
@@ -32,6 +33,7 @@ extension User {
         uid: "mock-uid-123",
         name: "Mock User",
         email: "mockuser@gmail.com",
+        phoneNumber: "0712345678",
         profileUrl: "https://example.com/mock_profile.jpg",
         createdAt: Date()
     )

@@ -11,6 +11,8 @@ struct SettingsView: View {
     @EnvironmentObject var themesViewModel: ThemesViewModel
     @EnvironmentObject var router:Router
     @ObservedObject var settingsViewModel =  SettingsViewModel()
+    @StateObject var forgotPasswordViewModel = ForgotPasswordViewModel()
+
     
     @State var currentUser: User?
     
@@ -45,7 +47,64 @@ struct SettingsView: View {
                             iconColor: .green,
                             title: "Password",
                             subtitle: "Update your password",
-                            action: {}
+                            action: {
+                                settingsViewModel.updateIsShowAlertDialog(value: true)
+                                settingsViewModel.updateDialogEntity(
+                                    value: DialogEntity(
+                                        title: "Change Password",
+                                        message: "Would you like to change your password?",
+                                        icon: "",
+                                        confirmButtonText: "Okay",
+                                        dismissButtonText: "Cancel",
+                                        onConfirm: {
+                                            Task{
+                                                await settingsViewModel.logoutUser(
+                                                    onSuccess: { logout in
+                                                        settingsViewModel.updateIsShowAlertDialog(value: true)
+                                                        settingsViewModel.updateDialogEntity(
+                                                            value: DialogEntity(
+                                                                title: "Change Password",
+                                                                message: "Check your email for a password reset link",
+                                                                icon: "",
+                                                                confirmButtonText: "",
+                                                                dismissButtonText: "Okay",
+                                                                onConfirm: {
+                                                                    settingsViewModel.updateIsShowAlertDialog(value: false)
+                                                                },
+                                                                onDismiss: {
+                                                                    settingsViewModel.updateIsShowAlertDialog(value: false)
+                                                                }
+                                                            )
+                                                        )
+                                                    },
+                                                    onFailure: { error in
+                                                        settingsViewModel.updateIsShowAlertDialog(value: true)
+                                                        settingsViewModel.updateDialogEntity(
+                                                            value: DialogEntity(
+                                                                title: "Unable to change password. Please try again later.",
+                                                                message: error,
+                                                                icon: "",
+                                                                confirmButtonText: "",
+                                                                dismissButtonText: "Okay",
+                                                                onConfirm: {
+                                                                    settingsViewModel.updateIsShowAlertDialog(value: false)
+                                                                },
+                                                                onDismiss: {
+                                                                    settingsViewModel.updateIsShowAlertDialog(value: false)
+                                                                }
+                                                            )
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        },
+                                        onDismiss: {
+                                            settingsViewModel.updateIsShowAlertDialog(value: false)
+                                        }
+                                    )
+                                )
+                                
+                            }
                         )
                         
                         SettingsRowView(
