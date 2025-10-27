@@ -62,7 +62,47 @@ struct SettingsView: View {
                             title: "Sign out",
                             subtitle: "End your session",
                             action: {
-                                
+                                settingsViewModel.updateIsShowAlertDialog(value: true)
+                                settingsViewModel.updateDialogEntity(
+                                    value: DialogEntity(
+                                        title: "Sign Out",
+                                        message: "Do you really want to sign out?",
+                                        icon: "",
+                                        confirmButtonText: "Okay",
+                                        dismissButtonText: "Cancel",
+                                        onConfirm: {
+                                            Task{
+                                                await settingsViewModel.logoutUser(
+                                                    onSuccess: { logout in
+                                                        settingsViewModel.updateIsShowAlertDialog(value: !logout)
+                                                        router.popToRoot()
+                                                    },
+                                                    onFailure: { error in
+                                                        settingsViewModel.updateIsShowAlertDialog(value: true)
+                                                        settingsViewModel.updateDialogEntity(
+                                                            value: DialogEntity(
+                                                                title: "Unable to sign out this account. Please try again later.",
+                                                                message: error,
+                                                                icon: "",
+                                                                confirmButtonText: "",
+                                                                dismissButtonText: "Okay",
+                                                                onConfirm: {
+                                                                    settingsViewModel.updateIsShowAlertDialog(value: false)
+                                                                },
+                                                                onDismiss: {
+                                                                    settingsViewModel.updateIsShowAlertDialog(value: false)
+                                                                }
+                                                            )
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        },
+                                        onDismiss: {
+                                            settingsViewModel.updateIsShowAlertDialog(value: false)
+                                        }
+                                    )
+                                )
                             }
                         )
                     }
@@ -154,6 +194,26 @@ struct SettingsView: View {
                 trailingIcon: nil,
                 onTrailingTap: nil
             )
+            .overlay {
+                CustomAlertDialogView(
+                    isPresented: $settingsViewModel.isShowAlertDialog,
+                    title: settingsViewModel.dialogEntity.title,
+                    text: settingsViewModel.dialogEntity.message,
+                    confirmButtonText: settingsViewModel.dialogEntity.confirmButtonText,
+                    dismissButtonText: settingsViewModel.dialogEntity.dismissButtonText,
+                    imageName: settingsViewModel.dialogEntity.icon,
+                    onDismiss: {
+                        if let onDismiss = settingsViewModel.dialogEntity.onDismiss {
+                            onDismiss()
+                        }
+                    },
+                    onConfirmation: {
+                        if let onConfirm = settingsViewModel.dialogEntity.onConfirm {
+                            onConfirm()
+                        }
+                    }
+                )
+            }
             .onAppear {
                 Task{
                     await settingsViewModel.fetchUser(onSuccess: { user in
