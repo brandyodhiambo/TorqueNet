@@ -11,6 +11,10 @@ struct ProfileView: View {
     var onLogoutSuccess: () -> Void
     var onLogoutFailed: (String) -> Void
     @EnvironmentObject var router: Router
+    @ObservedObject var settingsViewModel =  SettingsViewModel()
+    
+    @State var currentUser: User?
+    
     @State private var showImagePicker = false
     @State private var profileImage: UIImage? = nil
     @State private var isAnimating = false
@@ -76,6 +80,30 @@ struct ProfileView: View {
                         
                         Spacer()
                             .frame(height: 20)
+                    }
+                }
+                .onAppear {
+                    Task{
+                        await settingsViewModel.fetchUser(onSuccess: { user in
+                            currentUser = user
+                        }, onFailure: { error in
+                            settingsViewModel.updateIsShowAlertDialog(value: true)
+                            settingsViewModel.updateDialogEntity(
+                                value: DialogEntity(
+                                    title: "Unable to fetch user. Please try again later.",
+                                    message: error,
+                                    icon: "",
+                                    confirmButtonText: "",
+                                    dismissButtonText: "Okay",
+                                    onConfirm: {
+                                        settingsViewModel.updateIsShowAlertDialog(value: false)
+                                    },
+                                    onDismiss: {
+                                        settingsViewModel.updateIsShowAlertDialog(value: false)
+                                    }
+                                )
+                            )
+                        })
                     }
                 }
                 .sheet(isPresented: $showImagePicker) {
@@ -204,13 +232,13 @@ struct ProfileView: View {
             VStack(spacing: 12) {
                 ProfileDetailItem(
                     label: "Email",
-                    value: "Avlin_tms@gmail.com",
+                    value: currentUser?.email ?? "Loading...",
                     icon: "envelope.fill"
                 )
                 
                 ProfileDetailItem(
                     label: "Phone",
-                    value: "+1 (555) 123-4567",
+                    value: currentUser?.phoneNumber ?? "Loading...",
                     icon: "phone.fill"
                 )
                 
@@ -222,7 +250,7 @@ struct ProfileView: View {
                 
                 ProfileDetailItem(
                     label: "Member Since",
-                    value: "January 2024",
+                    value: currentUser?.createdAt?.description ?? "Loading...",
                     icon: "calendar.circle.fill"
                 )
             }
