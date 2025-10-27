@@ -14,15 +14,16 @@ class SettingsRepositoryImpl: SettingsRepository {
     static let shared = SettingsRepositoryImpl()
     let db = Firestore.firestore()
     
-    func fetchUser(by uid: String) async -> Result<User, FirebaseAuthError>{
+    func fetchUser() async -> Result<User, FirebaseAuthError> {
         do {
-            guard let uid = Auth.auth().currentUser?.uid else { return .failure(.custom("User not found"))}
+            guard let uid = Auth.auth().currentUser?.uid else {
+                return .failure(.custom("User not found"))
+            }
             let snapshot = try await db.collection("users").document(uid).getDocument()
+            guard snapshot.exists else { return .failure(.custom("User not found")) }
             let user = try snapshot.data(as: User.self)
-            if user != nil { return .success(user) }
-            else { return .failure(.custom("user not found")) }
-        }
-        catch let error as NSError {
+            return .success(user)
+        } catch let error as NSError {
             switch AuthErrorCode(rawValue: error.code) {
             case .userDisabled:
                 return .failure(.userDisabled)
@@ -31,10 +32,9 @@ class SettingsRepositoryImpl: SettingsRepository {
             default:
                 return .failure(.custom(error.localizedDescription))
             }
-        }
-        catch {
+        } catch {
             return .failure(.custom(error.localizedDescription))
         }
     }
-    
 }
+

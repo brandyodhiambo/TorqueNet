@@ -10,7 +10,10 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var themesViewModel: ThemesViewModel
     @EnvironmentObject var router:Router
-    @State private var showThemeSelector = false
+    @ObservedObject var settingsViewModel =  SettingsViewModel()
+    
+    @State var currentUser: User?
+    
     
     var body: some View {
         NavigationView {
@@ -21,7 +24,7 @@ struct SettingsView: View {
                             icon: "person.circle.fill",
                             iconColor: .blue,
                             title: "Account",
-                            subtitle: "brandyodhiambo@gmail.com",
+                            subtitle: currentUser?.email ?? "Loading...",
                             action: {
                                 router.push(.profile)
                             }
@@ -33,7 +36,7 @@ struct SettingsView: View {
                             title: "Personalisation",
                             subtitle: "Theme: \(themesViewModel.currentTheme.themName)",
                             action: {
-                                showThemeSelector = true
+                                settingsViewModel.updateShowThemeSelectorDialog(value: true)
                             }
                         )
                         
@@ -58,7 +61,9 @@ struct SettingsView: View {
                             iconColor: .pink,
                             title: "Sign out",
                             subtitle: "End your session",
-                            action: {}
+                            action: {
+                                
+                            }
                         )
                     }
                     
@@ -79,7 +84,48 @@ struct SettingsView: View {
                             iconColor: .red,
                             title: "Delete account",
                             subtitle: "Erase your account details",
-                            action: {}
+                            action: {
+                                settingsViewModel.updateIsShowAlertDialog(value: true)
+                                settingsViewModel.updateDialogEntity(
+                                    value: DialogEntity(
+                                        title: "Delete Account",
+                                        message: "Once you delete the account you will lose all your data. This action cannot be undone. Are you sure you want to proceed?",
+                                        icon: "",
+                                        confirmButtonText: "Okay",
+                                        dismissButtonText: "Cancel",
+                                        onConfirm: {
+                                            Task{
+                                                await settingsViewModel.deleteAccount(
+                                                    onSuccess: { deleted in
+                                                        settingsViewModel.updateIsShowAlertDialog(value: !deleted)
+                                                    },
+                                                    onFailure: { error in
+                                                        settingsViewModel.updateIsShowAlertDialog(value: true)
+                                                        settingsViewModel.updateDialogEntity(
+                                                            value: DialogEntity(
+                                                                title: "Unable to delete account. Please try again later.",
+                                                                message: error,
+                                                                icon: "",
+                                                                confirmButtonText: "",
+                                                                dismissButtonText: "Okay",
+                                                                onConfirm: {
+                                                                    settingsViewModel.updateIsShowAlertDialog(value: false)
+                                                                },
+                                                                onDismiss: {
+                                                                    settingsViewModel.updateIsShowAlertDialog(value: false)
+                                                                }
+                                                            )
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        },
+                                        onDismiss: {
+                                            settingsViewModel.updateIsShowAlertDialog(value: false)
+                                        }
+                                    )
+                                )
+                            }
                         )
                     }
                     .padding(.top, 20)
@@ -108,9 +154,33 @@ struct SettingsView: View {
                 trailingIcon: nil,
                 onTrailingTap: nil
             )
-            .sheet(isPresented: $showThemeSelector) {
+            .onAppear {
+                Task{
+                    await settingsViewModel.fetchUser(onSuccess: { user in
+                        currentUser = user
+                    }, onFailure: { error in
+                        settingsViewModel.updateIsShowAlertDialog(value: true)
+                        settingsViewModel.updateDialogEntity(
+                            value: DialogEntity(
+                                title: "Unable to fetch user. Please try again later.",
+                                message: error,
+                                icon: "",
+                                confirmButtonText: "",
+                                dismissButtonText: "Okay",
+                                onConfirm: {
+                                    settingsViewModel.updateIsShowAlertDialog(value: false)
+                                },
+                                onDismiss: {
+                                    settingsViewModel.updateIsShowAlertDialog(value: false)
+                                }
+                            )
+                        )
+                    })
+                }
+            }
+            .sheet(isPresented: $settingsViewModel.showThemeSelector) {
                 ThemeSelectionView()
-                   
+                
             }
         }
     }
