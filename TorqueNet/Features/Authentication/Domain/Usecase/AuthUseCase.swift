@@ -15,8 +15,8 @@ class AuthUseCase{
         self.authRepository = authRepository
     }
     
-    func executeRegiserUser(firstName: String,lastName:String,email: String, password: String) async ->  Result<AuthDataResult, FirebaseAuthError>{
-        return await authRepository.signUpUser(name: firstName+" "+lastName, email: email, password: password)
+    func executeRegiserUser(firstName: String,lastName:String,email: String, password: String,phoneNumber:String) async ->  Result<AuthDataResult, FirebaseAuthError>{
+        return await authRepository.signUpUser(name: firstName+" "+lastName, email: email, password: password,phoneNumber: phoneNumber)
          
     }
     
@@ -38,5 +38,9 @@ class AuthUseCase{
     
     func executeDeleteAccount() async ->  Result<Bool,FirebaseAuthError>{
         return await authRepository.deleteAccount()
+    }
+    
+    func executeChangePassword(currentPassword: String, newPassword: String) async ->Result<Bool,FirebaseAuthError>{
+        return await authRepository.changePassword(currentPassword: currentPassword, newPassword: newPassword)
     }
 }

@@ -99,7 +99,8 @@ class RegisterViewModel: ObservableObject {
             firstName: firstName,
             lastName: lastName,
             email: email,
-            password: password
+            password: password,
+            phoneNumber: phoneNumber
         )
         switch result {
         case .success(let authDataResult):

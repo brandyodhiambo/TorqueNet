@@ -18,6 +18,7 @@ enum FirebaseAuthError: Error, CustomStringConvertible{
     case userDisabled
     case invalidCredential
     case wrongPassword
+    case requiresRecentLogin
     case invalidNonce
     case missingIdentityToken
     case unableToSerializeToken
@@ -55,6 +56,8 @@ enum FirebaseAuthError: Error, CustomStringConvertible{
             return "Unable ToSerialize Token"
         case .authorizationError:
             return "Authorization Error"
+        case .requiresRecentLogin:
+            return "Requires Recent Login"
         case .custom(let error):
             return error
         case .unknownError:

@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct ProfileView: View {
-    var onLogoutSuccess: () -> Void
-    var onLogoutFailed: (String) -> Void
     @EnvironmentObject var router: Router
     @ObservedObject var settingsViewModel =  SettingsViewModel()
     
@@ -32,14 +30,6 @@ struct ProfileView: View {
                         
                         // Decorative Background
                         ZStack(alignment: .top) {
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    .theme.primaryColor.opacity(0.15),
-                                    .theme.primaryColor.opacity(0.05),
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
                             
                             VStack(spacing: 0) {
                                 // Camera Button
@@ -105,6 +95,26 @@ struct ProfileView: View {
                             )
                         })
                     }
+                }
+                .overlay {
+                    CustomAlertDialogView(
+                        isPresented: $settingsViewModel.isShowAlertDialog,
+                        title: settingsViewModel.dialogEntity.title,
+                        text: settingsViewModel.dialogEntity.message,
+                        confirmButtonText: settingsViewModel.dialogEntity.confirmButtonText,
+                        dismissButtonText: settingsViewModel.dialogEntity.dismissButtonText,
+                        imageName: settingsViewModel.dialogEntity.icon,
+                        onDismiss: {
+                            if let onDismiss = settingsViewModel.dialogEntity.onDismiss {
+                                onDismiss()
+                            }
+                        },
+                        onConfirmation: {
+                            if let onConfirm = settingsViewModel.dialogEntity.onConfirm {
+                                onConfirm()
+                            }
+                        }
+                    )
                 }
                 .sheet(isPresented: $showImagePicker) {
                     ImagePicker(image: $profileImage)
@@ -197,23 +207,13 @@ struct ProfileView: View {
                     .frame(width: 16, height: 16)
                     .overlay(Circle().stroke(Color.white, lineWidth: 2))
             }
-            .padding(.top, -95)
+            .padding(.top, -120)
             
             // User Info
             VStack(spacing: 6) {
-                Text("AVLIN THOMAS")
+                Text(currentUser?.name ?? "Loading...")
                     .font(.custom("Exo2-Bold", size: 22))
                     .foregroundColor(.theme.onSurfaceColor)
-                
-                HStack(spacing: 6) {
-                    Image(systemName: "mappin.circle.fill")
-                        .font(.system(size: 12))
-                        .foregroundColor(.theme.primaryColor)
-                    
-                    Text("New York, USA")
-                        .font(.custom("Exo2-Regular", size: 13))
-                        .foregroundColor(.secondary.opacity(0.8))
-                }
             }
             
             // Divider with gradient
@@ -324,7 +324,47 @@ struct ProfileView: View {
                     subtitle: "Sign out from your account",
                     iconColor: .red,
                     action: {
-                        onLogoutSuccess()
+                        settingsViewModel.updateIsShowAlertDialog(value: true)
+                        settingsViewModel.updateDialogEntity(
+                            value: DialogEntity(
+                                title: "Sign Out",
+                                message: "Do you really want to sign out?",
+                                icon: "",
+                                confirmButtonText: "Okay",
+                                dismissButtonText: "Cancel",
+                                onConfirm: {
+                                    Task{
+                                        await settingsViewModel.logoutUser(
+                                            onSuccess: { logout in
+                                                settingsViewModel.updateIsShowAlertDialog(value: !logout)
+                                                router.popToRoot()
+                                            },
+                                            onFailure: { error in
+                                                settingsViewModel.updateIsShowAlertDialog(value: true)
+                                                settingsViewModel.updateDialogEntity(
+                                                    value: DialogEntity(
+                                                        title: "Unable to sign out this account. Please try again later.",
+                                                        message: error,
+                                                        icon: "",
+                                                        confirmButtonText: "",
+                                                        dismissButtonText: "Okay",
+                                                        onConfirm: {
+                                                            settingsViewModel.updateIsShowAlertDialog(value: false)
+                                                        },
+                                                        onDismiss: {
+                                                            settingsViewModel.updateIsShowAlertDialog(value: false)
+                                                        }
+                                                    )
+                                                )
+                                            }
+                                        )
+                                    }
+                                },
+                                onDismiss: {
+                                    settingsViewModel.updateIsShowAlertDialog(value: false)
+                                }
+                            )
+                        )
                     }
                 )
             }
@@ -389,10 +429,10 @@ struct StatCard: View {
         .padding(.vertical, 16)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.theme.primaryColor.opacity(0.08))
+                .fill(Color.theme.surfaceColor.opacity(0.08))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.theme.primaryColor.opacity(0.15), lineWidth: 1)
+                        .stroke(Color.theme.onSurfaceColor.opacity(0.15), lineWidth: 1)
                 )
         )
     }
@@ -484,12 +524,5 @@ struct ImagePicker: UIViewControllerRepresentable {
 }
 
 #Preview {
-    ProfileView(
-        onLogoutSuccess: {
-            
-        },
-        onLogoutFailed: { error in
-            
-        }
-    )
+    ProfileView()
 }

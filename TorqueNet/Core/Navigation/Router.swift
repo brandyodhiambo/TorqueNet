@@ -164,14 +164,7 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
             .navigationBarBackButtonHidden()
         
     case .profile:
-        ProfileView(
-            onLogoutSuccess: {
-                
-            },
-            onLogoutFailed: {error in
-                
-            }
-        )
+        ProfileView()
         .navigationBarBackButtonHidden()
         
     }

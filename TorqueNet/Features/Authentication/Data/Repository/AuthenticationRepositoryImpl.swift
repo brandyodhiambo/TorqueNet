@@ -13,7 +13,7 @@ import FirebaseFirestore
 class AuthenticationRepositoryImpl: AuthenticationRepository {
     static let shared = AuthenticationRepositoryImpl()
 
-    func signUpUser(name: String, email: String, password: String) async -> Result<AuthDataResult, FirebaseAuthError> {
+    func signUpUser(name: String, email: String, password: String,phoneNumber:String) async -> Result<AuthDataResult, FirebaseAuthError> {
         do {
             let result = try await Auth.auth().createUser(withEmail: email, password: password)
             
@@ -28,6 +28,7 @@ class AuthenticationRepositoryImpl: AuthenticationRepository {
                 "uid": result.user.uid,
                 "name": name,
                 "email": email.lowercased(),
+                "phoneNumber": phoneNumber,
                 "createdAt": Timestamp(date: Date()),
             ]
             
@@ -163,5 +164,28 @@ class AuthenticationRepositoryImpl: AuthenticationRepository {
             return .failure(FirebaseAuthError.custom(error.localizedDescription))
         }
     }
+    
+    func changePassword(currentPassword: String, newPassword: String) async -> Result<Bool, FirebaseAuthError> {
+            guard let user = Auth.auth().currentUser,
+                  let email = user.email else {
+                return .failure(.custom("User not found or not logged in"))
+            }
+
+            do {
+                let credential = EmailAuthProvider.credential(withEmail: email, password: currentPassword)
+                try await user.reauthenticate(with: credential)
+                try await user.updatePassword(to: newPassword)
+                return .success(true)
+            } catch let error as NSError {
+                switch AuthErrorCode(rawValue: error.code) {
+                case .wrongPassword:
+                    return .failure(.wrongPassword)
+                case .requiresRecentLogin:
+                    return .failure(.requiresRecentLogin)
+                default:
+                    return .failure(.custom(error.localizedDescription))
+                }
+            }
+        }
     
 }
