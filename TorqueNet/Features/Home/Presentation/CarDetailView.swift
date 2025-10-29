@@ -139,14 +139,15 @@ struct CarDetailView: View {
         }
         .background(Color.theme.surfaceColor)
         .customTopAppBar(
-            title: "",
+            title: "Car Details",
             leadingIcon: "chevron.left",
             navbarTitleDisplayMode: .inline,
             onLeadingTap: {
                 router.pop()
             },
             trailingIcon: "",
-            onTrailingTap: {}
+            onTrailingTap: {},
+            trailingMenu: {}
         )
     }
 }

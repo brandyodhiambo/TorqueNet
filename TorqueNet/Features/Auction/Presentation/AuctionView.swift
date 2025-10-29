@@ -45,10 +45,9 @@ struct AuctionView: View {
     ]
     
     var body: some View {
-        NavigationView {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
-                    
+                
                     // Search Bar
                     HStack(spacing: 12) {
                         HStack {
@@ -208,20 +207,19 @@ struct AuctionView: View {
                     // Bottom Spacing
                     Spacer(minLength: 100)
                 }
+                .background(Color.theme.surfaceColor)
+                .customTopAppBar(
+                    title: "Auctions",
+                    leadingIcon: "",
+                    navbarTitleDisplayMode: .automatic,
+                    onLeadingTap: {},
+                    trailingIcon: "plus",
+                    onTrailingTap: {
+                        router.push(.auctionUpload)
+                    },
+                    trailingMenu: {}
+                )
             }
-            .background(Color.theme.surfaceColor)
-            .customTopAppBar(
-                title: "Auctions",
-                leadingIcon: "",
-                navbarTitleDisplayMode: .inline,
-                onLeadingTap: {},
-                trailingIcon: "plus",
-                onTrailingTap: {
-                    router.push(.auctionUpload)
-                }
-            )
-        }
-       
     }
 }
 
@@ -493,8 +491,9 @@ struct UpcomingAuctionRow: View {
     }
 }
 
-
-
 #Preview {
-    AuctionView()
+    NavigationView{
+        AuctionView()
+    }
+    
 }

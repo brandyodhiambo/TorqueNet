@@ -90,7 +90,8 @@ struct WishListView: View {
                 trailingIcon: "trash.fill",
                 onTrailingTap: {
                     showingDeleteAlert = true
-                }
+                },
+                trailingMenu: {}
             )
             .alert("Clear Wishlist", isPresented: $showingDeleteAlert) {
                 Button("Cancel", role: .cancel) { }

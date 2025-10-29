@@ -26,43 +26,8 @@ struct LiveAuctionsView: View {
     }
     
     var body: some View {
-        NavigationView {
+        ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 0) {
-                // Header with live indicator
-                headerView
-                
-                // Search bar
-                searchBar
-                
-                // Category filter
-                categoryFilter
-                
-                // Live auctions grid
-                auctionsGrid
-            }
-            .navigationBarHidden(true)
-            .background(Color.theme.surfaceColor)
-        }
-    }
-    
-    private var headerView: some View {
-        HStack {
-            Button(action: {
-                router.pop()
-            }) {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
-                    .frame(width: 44, height: 44)
-                    .background(Color.theme.primaryColor)
-                    .clipShape(Circle())
-            }
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Live Auctions")
-                    .font(.custom("Exo2-Bold", size: 28))
-                    .foregroundColor(.theme.onSurfaceColor)
-                
                 HStack(spacing: 6) {
                     Circle()
                         .fill(Color.red)
@@ -74,19 +39,31 @@ struct LiveAuctionsView: View {
                         .font(.custom("Exo2-Regular", size: 14))
                         .foregroundColor(.gray)
                 }
+                
+                // Search bar
+                searchBar
+                
+                // Category filter
+                categoryFilter
+                
+                // Live auctions grid
+                auctionsGrid
             }
-            
-            Spacer()
-            
-            Button(action: refreshAuctions) {
-                Image(systemName: "arrow.clockwise")
-                    .font(.system(size: 20))
-                    .foregroundColor(.theme.primaryColor)
-            }
+            .background(Color.theme.surfaceColor)
+            .customTopAppBar(
+                title: "Live Auctions",
+                leadingIcon: "chevron.left",
+                navbarTitleDisplayMode: .inline,
+                onLeadingTap: {
+                    router.pop()
+                },
+                trailingIcon: "arrow.clockwise",
+                onTrailingTap: {
+                    refreshAuctions()
+                },
+                trailingMenu: {}
+                )
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 10)
-        .padding(.bottom, 16)
     }
     
     private var searchBar: some View {
@@ -242,7 +219,10 @@ struct LiveAuctionCard2: View {
 }
 
 #Preview {
-    LiveAuctionsView()
+    NavigationView{
+        LiveAuctionsView()
+    }
+    
 }
 
 

@@ -76,10 +76,7 @@ struct AuctionUploadView: View {
     }
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color.theme.surfaceColor.ignoresSafeArea()
-                
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 0) {
                     // Progress Header
                     progressHeader
@@ -109,49 +106,31 @@ struct AuctionUploadView: View {
                     // Navigation Buttons
                     navigationButtons
                 }
+                .background(Color.theme.surfaceColor)
+                .customTopAppBar(
+                    title: "Notifications",
+                    leadingIcon: "chevron.left",
+                    onLeadingTap: {
+                        if currentStep > 0 {
+                        currentStep -= 1
+                    } else {
+                        router.pop()
+                    }},
+                    trailingIcon: "bookmark.fill",
+                    onTrailingTap: {
+                        //save
+                    },
+                    trailingMenu: {
+                      
+                    }
+                )
             }
-            
-        }
+        
     }
     
     // MARK: - Progress Header
     private var progressHeader: some View {
         VStack(spacing: 16) {
-            HStack {
-                Button(action: {
-                    if currentStep > 0 {
-                        currentStep -= 1
-                    } else {
-                        router.pop()
-                    }
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(width: 44, height: 44)
-                        .background(Color.theme.primaryColor)
-                        .clipShape(Circle())
-                }
-                
-                Spacer()
-                
-                Text("Create Auction")
-                    .font(.custom("Exo2-SemiBold", size: 20))
-                    .foregroundColor(.theme.onSurfaceColor)
-                
-                Spacer()
-                
-                Button(action: {
-                    // Save draft
-                }) {
-                    Text("Save")
-                        .font(.custom("Exo2-Medium", size: 16))
-                        .foregroundColor(.theme.primaryColor)
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 10)
-            
             // Progress Indicator
             VStack(spacing: 8) {
                 HStack(spacing: 4) {
@@ -919,5 +898,7 @@ struct ImageCell: View {
 
 
 #Preview {
-    AuctionUploadView()
+    NavigationView{
+        AuctionUploadView()
+    }
 }

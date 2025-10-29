@@ -11,6 +11,7 @@ struct NotificationsView: View {
     @State private var notifications: [AuctionNotification] = sampleNotifications
     @State private var selectedFilter: NotificationFilter = .all
     @State private var showingMarkAllAsRead = false
+    @State var isShowContextMenu: Bool = false
     @EnvironmentObject var router: Router
     
     var filteredNotifications: [AuctionNotification] {
@@ -23,59 +24,42 @@ struct NotificationsView: View {
     }
     
     var body: some View {
-        NavigationView {
+        ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 0) {
-                // Header
-                headerView
-                
+                if unreadCount > 0 {
+                    Text("\(unreadCount) unread")
+                        .font(.custom("Exo2-Regular", size: 14))
+                        .foregroundColor(.theme.primaryColor)
+                        .multilineTextAlignment(.leading)
+                }
                 // Filter tabs
                 filterTabs
                 
                 // Notifications list
                 notificationsList
             }
-            .navigationBarHidden(true)
             .background(Color.theme.surfaceColor)
-        }
-    }
-    
-    private var headerView: some View {
-        HStack {
-            Button(action: {
-                router.pop()
-            }) {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
-                    .frame(width: 44, height: 44)
-                    .background(Color.theme.primaryColor)
-                    .clipShape(Circle())
-            }
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Notifications")
-                    .font(.custom("Exo2-Bold", size: 28))
-                    .foregroundColor(.theme.onSurfaceColor)
-                
-                if unreadCount > 0 {
-                    Text("\(unreadCount) unread")
-                        .font(.custom("Exo2-Regular", size: 14))
-                        .foregroundColor(.theme.primaryColor)
+            .customTopAppBar(
+                title: "Notifications",
+                leadingIcon: "chevron.left",
+                onLeadingTap: { router.pop() },
+                trailingMenu: {
+                    Menu {
+                        if unreadCount > 0 {
+                            Button("Mark all read") {
+                                markAllAsRead()
+                            }
+                            .font(.custom("Exo2-Medium", size: 14))
+                            .foregroundColor(.theme.primaryColor)
+                        }
+                        Button("Delete", role: .destructive) { }
+                    } label: {
+                        Label("Menu", systemImage: "ellipsis.circle")
+                    }
                 }
-            }
-            
-            Spacer()
-            
-            if unreadCount > 0 {
-                Button("Mark all read") {
-                    markAllAsRead()
-                }
-                .font(.custom("Exo2-Medium", size: 14))
-                .foregroundColor(.theme.primaryColor)
-            }
+            )
+
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 10)
-        .padding(.bottom, 20)
     }
     
     private var filterTabs: some View {

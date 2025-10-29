@@ -11,7 +11,6 @@ struct ThemeSelectionView: View {
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
-        NavigationView {
             VStack(spacing: 20) {
                 VStack(spacing: 16) {
                     Text("Choose your preferred theme")
@@ -65,7 +64,7 @@ struct ThemeSelectionView: View {
                 }
                     .font(.custom("Exo2-Medium", size: 16))
             )
-        }
+        
     }
 }
 

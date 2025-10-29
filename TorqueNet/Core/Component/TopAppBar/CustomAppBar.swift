@@ -8,17 +8,19 @@
 
 import SwiftUI
 
-struct CustomTopAppBar: ViewModifier {
+struct CustomTopAppBar<Content: View>: ViewModifier {
     let title: String
     let leadingIcon: String?
     let navbarTitleDisplayMode: NavigationBarItem.TitleDisplayMode
     let onLeadingTap: (() -> Void)?
     let trailingIcon: String?
     let onTrailingTap: (() -> Void)?
+    var trailingMenu: Content? = nil
 
-    func body(content: Content) -> some View {
+    func body(content: Self.Content) -> some View {
         content
             .toolbar {
+                // Leading icon
                 if let leadingIcon = leadingIcon {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(action: {
@@ -30,6 +32,7 @@ struct CustomTopAppBar: ViewModifier {
                     }
                 }
 
+                // Trailing icon button
                 if let trailingIcon = trailingIcon {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {
@@ -40,12 +43,18 @@ struct CustomTopAppBar: ViewModifier {
                         }
                     }
                 }
+
+                // Trailing menu (custom content)
+                if let trailingMenu = trailingMenu {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        trailingMenu
+                    }
+                }
             }
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(navbarTitleDisplayMode)
     }
 }
-
 
 
 struct TopAppBar_Previews: View {
@@ -63,7 +72,8 @@ struct TopAppBar_Previews: View {
                         trailingIcon: "gear",
                         onTrailingTap: {
                             print("Settings tapped")
-                        }
+                        },
+                        trailingMenu: {}
                     )
             }
         }

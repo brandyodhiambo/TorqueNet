@@ -8,14 +8,16 @@
 import SwiftUI
 
 
+
 extension View {
-    func customTopAppBar(
+    func customTopAppBar<Content: View>(
         title: String,
         leadingIcon: String? = nil,
         navbarTitleDisplayMode: NavigationBarItem.TitleDisplayMode = .inline,
         onLeadingTap: (() -> Void)? = nil,
         trailingIcon: String? = nil,
-        onTrailingTap: (() -> Void)? = nil
+        onTrailingTap: (() -> Void)? = nil,
+        @ViewBuilder trailingMenu: () -> Content? = { nil }
     ) -> some View {
         self.modifier(CustomTopAppBar(
             title: title,
@@ -23,7 +25,8 @@ extension View {
             navbarTitleDisplayMode: navbarTitleDisplayMode,
             onLeadingTap: onLeadingTap,
             trailingIcon: trailingIcon,
-            onTrailingTap: onTrailingTap
+            onTrailingTap: onTrailingTap,
+            trailingMenu: trailingMenu()
         ))
     }
     

@@ -23,19 +23,51 @@ struct AuctionScheduleScreen: View {
     }()
     
     var body: some View {
-        NavigationView {
+        ScrollView(.vertical,showsIndicators: false) {
             VStack(spacing: 0) {
-                // Header
-                headerView
                 
+                Text(dateFormatter.string(from: currentMonth))
+                    .font(.custom("Exo2-Regular", size: 16))
+                    .foregroundColor(.gray)
                 // Calendar
                 calendarView
                 
                 // Today's auctions (if any)
                 todaysAuctionsView
             }
-            .navigationBarHidden(true)
             .background(Color.theme.surfaceColor)
+            .customTopAppBar(
+                title: "Auction Schedule",
+                leadingIcon: "chevron.left",
+                onLeadingTap: { router.pop() },
+                trailingMenu: {
+                    HStack(spacing: 16) {
+                        // Previous month
+                        Button(action: previousMonth) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 18, weight: .medium))
+                                .foregroundColor(.theme.primaryColor)
+                        }
+                        
+                        // Next month
+                        Button(action: nextMonth) {
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 18, weight: .medium))
+                                .foregroundColor(.theme.primaryColor)
+                        }
+                        
+                        // Today button
+                        Button("Today") {
+                            withAnimation(.easeInOut) {
+                                currentMonth = Date()
+                                selectedDate = Date()
+                            }
+                        }
+                        .font(.custom("Exo2-Medium", size: 14))
+                        .foregroundColor(.theme.primaryColor)
+                    }
+                }
+            )
         }
         .sheet(isPresented: $showingDayDetail) {
             DayDetailView(
@@ -44,61 +76,7 @@ struct AuctionScheduleScreen: View {
             )
         }
     }
-    
-    private var headerView: some View {
-        HStack {
-            Button(action: {
-                router.pop()
-            }) {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
-                    .frame(width: 44, height: 44)
-                    .background(Color.theme.primaryColor)
-                    .clipShape(Circle())
-            }
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Auction Schedule")
-                    .font(.custom("Exo2-Bold", size: 28))
-                    .foregroundColor(.theme.onSurfaceColor)
-                
-                Text(dateFormatter.string(from: currentMonth))
-                    .font(.custom("Exo2-Regular", size: 16))
-                    .foregroundColor(.gray)
-            }
-            
-            Spacer()
-            
-            HStack(spacing: 16) {
-                // Previous month
-                Button(action: previousMonth) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.theme.primaryColor)
-                }
-                
-                // Next month
-                Button(action: nextMonth) {
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.theme.primaryColor)
-                }
-                
-                // Today button
-                Button("Today") {
-                    withAnimation(.easeInOut) {
-                        currentMonth = Date()
-                        selectedDate = Date()
-                    }
-                }
-                .font(.custom("Exo2-Medium", size: 14))
-                .foregroundColor(.theme.primaryColor)
-            }
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 10)
-        .padding(.bottom, 20)
-    }
+
     
     private var calendarView: some View {
         VStack(spacing: 0) {
@@ -377,7 +355,9 @@ struct DayDetailView: View {
 }
 
 #Preview{
-    AuctionScheduleScreen()
+    NavigationView{
+        AuctionScheduleScreen()
+    }
 }
 
 // MARK: - Data Models

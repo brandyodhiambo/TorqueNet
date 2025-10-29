@@ -23,10 +23,7 @@ struct AuctionCarDetailView: View {
     let auctionEndDate = Date().addingTimeInterval(3600 * 5)
     
     var body: some View {
-        NavigationView {
             ZStack {
-                Color.theme.surfaceColor.ignoresSafeArea()
-                
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 0) {
                         // Header Image Section
@@ -57,7 +54,6 @@ struct AuctionCarDetailView: View {
                     }
                 }
                 
-                // Bottom Action Bar
                 VStack {
                     Spacer()
                     bottomActionBar
@@ -65,6 +61,7 @@ struct AuctionCarDetailView: View {
                 .padding(.horizontal, 20)
             }
             .ignoresSafeArea(edges: .top)
+            .background(Color.theme.surfaceColor)
             .padding(.horizontal, 20)
             .onAppear {
                 updateTimeRemaining()
@@ -72,7 +69,7 @@ struct AuctionCarDetailView: View {
             .onReceive(timer) { _ in
                 updateTimeRemaining()
             }
-        }
+        
         .sheet(isPresented: $showBidSheet) {
             BidSheetView(currentBid: 25000, onBidSubmitted: { amount in
                 print("Bid submitted: $\(amount)")
@@ -472,7 +469,7 @@ struct AuctionCarDetailView: View {
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
         .background(
-            Rectangle()
+            RoundedRectangle(cornerRadius: 25)
                 .fill(.ultraThinMaterial)
                 .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: -10)
         )
@@ -693,7 +690,6 @@ struct BidSheetView: View {
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
-        NavigationView {
             VStack(spacing: 24) {
                 VStack(spacing: 16) {
                     Text("Place Your Bid")
@@ -772,7 +768,7 @@ struct BidSheetView: View {
                     presentationMode.wrappedValue.dismiss()
                 }
             )
-        }
+        
     }
 }
 

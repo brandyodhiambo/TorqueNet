@@ -193,7 +193,8 @@ struct SettingsView: View {
                 navbarTitleDisplayMode: .automatic,
                 onLeadingTap: nil,
                 trailingIcon: nil,
-                onTrailingTap: nil
+                onTrailingTap: nil,
+                trailingMenu: {}
             )
             .overlay {
                 CustomAlertDialogView(
