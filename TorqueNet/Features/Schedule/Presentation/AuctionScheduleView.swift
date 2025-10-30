@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AuctionScheduleScreen: View {
+struct AuctionScheduleView: View {
     @State private var selectedDate = Date()
     @State private var currentMonth = Date()
     @State private var scheduledAuctions: [ScheduledAuction] = sampleScheduledAuctions
@@ -356,7 +356,7 @@ struct DayDetailView: View {
 
 #Preview{
     NavigationView{
-        AuctionScheduleScreen()
+        AuctionScheduleView()
     }
 }
 

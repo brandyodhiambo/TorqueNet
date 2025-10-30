@@ -63,61 +63,61 @@ struct ProfileView: View {
                 Spacer()
                     .frame(height: 20)
             }
-            .background(Color.theme.surfaceColor)
-            .customTopAppBar(
-                title: "Profile",
-                leadingIcon: "chevron.left",
-                onLeadingTap: { router.pop() },
-                trailingMenu: {}
-            )
-            .onAppear {
-                Task{
-                    await settingsViewModel.fetchUser(onSuccess: { user in
-                        currentUser = user
-                    }, onFailure: { error in
-                        settingsViewModel.updateIsShowAlertDialog(value: true)
-                        settingsViewModel.updateDialogEntity(
-                            value: DialogEntity(
-                                title: "Unable to fetch user. Please try again later.",
-                                message: error,
-                                icon: "",
-                                confirmButtonText: "",
-                                dismissButtonText: "Okay",
-                                onConfirm: {
-                                    settingsViewModel.updateIsShowAlertDialog(value: false)
-                                },
-                                onDismiss: {
-                                    settingsViewModel.updateIsShowAlertDialog(value: false)
-                                }
-                            )
-                        )
-                    })
-                }
-            }
-            .overlay {
-                CustomAlertDialogView(
-                    isPresented: $settingsViewModel.isShowAlertDialog,
-                    title: settingsViewModel.dialogEntity.title,
-                    text: settingsViewModel.dialogEntity.message,
-                    confirmButtonText: settingsViewModel.dialogEntity.confirmButtonText,
-                    dismissButtonText: settingsViewModel.dialogEntity.dismissButtonText,
-                    imageName: settingsViewModel.dialogEntity.icon,
-                    onDismiss: {
-                        if let onDismiss = settingsViewModel.dialogEntity.onDismiss {
-                            onDismiss()
-                        }
-                    },
-                    onConfirmation: {
-                        if let onConfirm = settingsViewModel.dialogEntity.onConfirm {
-                            onConfirm()
-                        }
-                    }
-                )
-            }
-            .sheet(isPresented: $showImagePicker) {
-                ImagePicker(image: $profileImage)
-            }
             
+        }
+        .background(Color.theme.surfaceColor)
+        .customTopAppBar(
+            title: "Profile",
+            leadingIcon: "chevron.left",
+            onLeadingTap: { router.pop() },
+            trailingMenu: {}
+        )
+        .onAppear {
+            Task{
+                await settingsViewModel.fetchUser(onSuccess: { user in
+                    currentUser = user
+                }, onFailure: { error in
+                    settingsViewModel.updateIsShowAlertDialog(value: true)
+                    settingsViewModel.updateDialogEntity(
+                        value: DialogEntity(
+                            title: "Unable to fetch user. Please try again later.",
+                            message: error,
+                            icon: "",
+                            confirmButtonText: "",
+                            dismissButtonText: "Okay",
+                            onConfirm: {
+                                settingsViewModel.updateIsShowAlertDialog(value: false)
+                            },
+                            onDismiss: {
+                                settingsViewModel.updateIsShowAlertDialog(value: false)
+                            }
+                        )
+                    )
+                })
+            }
+        }
+        .overlay {
+            CustomAlertDialogView(
+                isPresented: $settingsViewModel.isShowAlertDialog,
+                title: settingsViewModel.dialogEntity.title,
+                text: settingsViewModel.dialogEntity.message,
+                confirmButtonText: settingsViewModel.dialogEntity.confirmButtonText,
+                dismissButtonText: settingsViewModel.dialogEntity.dismissButtonText,
+                imageName: settingsViewModel.dialogEntity.icon,
+                onDismiss: {
+                    if let onDismiss = settingsViewModel.dialogEntity.onDismiss {
+                        onDismiss()
+                    }
+                },
+                onConfirmation: {
+                    if let onConfirm = settingsViewModel.dialogEntity.onConfirm {
+                        onConfirm()
+                    }
+                }
+            )
+        }
+        .sheet(isPresented: $showImagePicker) {
+            ImagePicker(image: $profileImage)
         }
         
         
@@ -211,11 +211,6 @@ struct ProfileView: View {
                     icon: "phone.fill"
                 )
                 
-                ProfileDetailItem(
-                    label: "User ID",
-                    value: "22200",
-                    icon: "person.badge.key.fill"
-                )
                 
                 ProfileDetailItem(
                     label: "Member Since",
@@ -276,7 +271,9 @@ struct ProfileView: View {
                     title: "Change Password",
                     subtitle: "Secure your account",
                     iconColor: .green,
-                    action: {}
+                    action: {
+                        router.push(.changePassword)
+                    }
                 )
                 
                 ProfileActionButton(

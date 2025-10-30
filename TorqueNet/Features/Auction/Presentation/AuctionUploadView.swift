@@ -106,25 +106,26 @@ struct AuctionUploadView: View {
                     // Navigation Buttons
                     navigationButtons
                 }
-                .background(Color.theme.surfaceColor)
-                .customTopAppBar(
-                    title: "Notifications",
-                    leadingIcon: "chevron.left",
-                    onLeadingTap: {
-                        if currentStep > 0 {
-                        currentStep -= 1
-                    } else {
-                        router.pop()
-                    }},
-                    trailingIcon: "bookmark.fill",
-                    onTrailingTap: {
-                        //save
-                    },
-                    trailingMenu: {
-                      
-                    }
-                )
+              
             }
+            .background(Color.theme.surfaceColor)
+            .customTopAppBar(
+                title: "Notifications",
+                leadingIcon: "chevron.left",
+                onLeadingTap: {
+                    if currentStep > 0 {
+                    currentStep -= 1
+                } else {
+                    router.pop()
+                }},
+                trailingIcon: "bookmark.fill",
+                onTrailingTap: {
+                    //save
+                },
+                trailingMenu: {
+                  
+                }
+            )
         
     }
     

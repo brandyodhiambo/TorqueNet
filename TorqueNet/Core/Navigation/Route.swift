@@ -15,13 +15,17 @@ enum Route: Hashable {
     
     case home
     case carDetails
+    
     case wishlist
+    
     case auction
     case auctionDetails
     case auctionUpload
     case auctionLiveBids
     case auctionSchedule
+    
     case settings
     case profile
+    case changePassword
     case notification
 }

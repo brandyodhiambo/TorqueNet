@@ -45,7 +45,7 @@ struct SettingsView: View {
                         title: "Password",
                         subtitle: "Update your password",
                         action: {
-                            
+                            router.push(.changePassword)
                         }
                     )
                     
@@ -185,64 +185,65 @@ struct SettingsView: View {
             }
             .padding(.horizontal, 16)
             .padding(.top, 20)
-            .background(Color.theme.surfaceColor)
-            .customTopAppBar(
-                title: "Settings",
-                leadingIcon: nil,
-                navbarTitleDisplayMode: .automatic,
-                onLeadingTap: nil,
-                trailingIcon: nil,
-                onTrailingTap: nil,
-                trailingMenu: {}
-            )
-            .overlay {
-                CustomAlertDialogView(
-                    isPresented: $settingsViewModel.isShowAlertDialog,
-                    title: settingsViewModel.dialogEntity.title,
-                    text: settingsViewModel.dialogEntity.message,
-                    confirmButtonText: settingsViewModel.dialogEntity.confirmButtonText,
-                    dismissButtonText: settingsViewModel.dialogEntity.dismissButtonText,
-                    imageName: settingsViewModel.dialogEntity.icon,
-                    onDismiss: {
-                        if let onDismiss = settingsViewModel.dialogEntity.onDismiss {
-                            onDismiss()
-                        }
-                    },
-                    onConfirmation: {
-                        if let onConfirm = settingsViewModel.dialogEntity.onConfirm {
-                            onConfirm()
-                        }
+          
+        }
+        .background(Color.theme.surfaceColor)
+        .customTopAppBar(
+            title: "Settings",
+            leadingIcon: nil,
+            navbarTitleDisplayMode: .automatic,
+            onLeadingTap: nil,
+            trailingIcon: nil,
+            onTrailingTap: nil,
+            trailingMenu: {}
+        )
+        .overlay {
+            CustomAlertDialogView(
+                isPresented: $settingsViewModel.isShowAlertDialog,
+                title: settingsViewModel.dialogEntity.title,
+                text: settingsViewModel.dialogEntity.message,
+                confirmButtonText: settingsViewModel.dialogEntity.confirmButtonText,
+                dismissButtonText: settingsViewModel.dialogEntity.dismissButtonText,
+                imageName: settingsViewModel.dialogEntity.icon,
+                onDismiss: {
+                    if let onDismiss = settingsViewModel.dialogEntity.onDismiss {
+                        onDismiss()
                     }
-                )
-            }
-            .onAppear {
-                Task{
-                    await settingsViewModel.fetchUser(onSuccess: { user in
-                        currentUser = user
-                    }, onFailure: { error in
-                        settingsViewModel.updateIsShowAlertDialog(value: true)
-                        settingsViewModel.updateDialogEntity(
-                            value: DialogEntity(
-                                title: "Unable to fetch user. Please try again later.",
-                                message: error,
-                                icon: "",
-                                confirmButtonText: "",
-                                dismissButtonText: "Okay",
-                                onConfirm: {
-                                    settingsViewModel.updateIsShowAlertDialog(value: false)
-                                },
-                                onDismiss: {
-                                    settingsViewModel.updateIsShowAlertDialog(value: false)
-                                }
-                            )
-                        )
-                    })
+                },
+                onConfirmation: {
+                    if let onConfirm = settingsViewModel.dialogEntity.onConfirm {
+                        onConfirm()
+                    }
                 }
+            )
+        }
+        .onAppear {
+            Task{
+                await settingsViewModel.fetchUser(onSuccess: { user in
+                    currentUser = user
+                }, onFailure: { error in
+                    settingsViewModel.updateIsShowAlertDialog(value: true)
+                    settingsViewModel.updateDialogEntity(
+                        value: DialogEntity(
+                            title: "Unable to fetch user. Please try again later.",
+                            message: error,
+                            icon: "",
+                            confirmButtonText: "",
+                            dismissButtonText: "Okay",
+                            onConfirm: {
+                                settingsViewModel.updateIsShowAlertDialog(value: false)
+                            },
+                            onDismiss: {
+                                settingsViewModel.updateIsShowAlertDialog(value: false)
+                            }
+                        )
+                    )
+                })
             }
-            .sheet(isPresented: $settingsViewModel.showThemeSelector) {
-                ThemeSelectionView()
-                
-            }
+        }
+        .sheet(isPresented: $settingsViewModel.showThemeSelector) {
+            ThemeSelectionView()
+            
         }
        }
     }

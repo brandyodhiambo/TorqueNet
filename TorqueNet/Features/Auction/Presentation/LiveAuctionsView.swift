@@ -49,21 +49,22 @@ struct LiveAuctionsView: View {
                 // Live auctions grid
                 auctionsGrid
             }
-            .background(Color.theme.surfaceColor)
-            .customTopAppBar(
-                title: "Live Auctions",
-                leadingIcon: "chevron.left",
-                navbarTitleDisplayMode: .inline,
-                onLeadingTap: {
-                    router.pop()
-                },
-                trailingIcon: "arrow.clockwise",
-                onTrailingTap: {
-                    refreshAuctions()
-                },
-                trailingMenu: {}
-                )
+           
         }
+        .background(Color.theme.surfaceColor)
+        .customTopAppBar(
+            title: "Live Auctions",
+            leadingIcon: "chevron.left",
+            navbarTitleDisplayMode: .inline,
+            onLeadingTap: {
+                router.pop()
+            },
+            trailingIcon: "arrow.clockwise",
+            onTrailingTap: {
+                refreshAuctions()
+            },
+            trailingMenu: {}
+            )
     }
     
     private var searchBar: some View {

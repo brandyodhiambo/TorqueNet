@@ -118,7 +118,7 @@ class SettingsViewModel:ObservableObject{
     }
     
     func chnagePassword(
-        onSuccess: (Bool) -> Void,
+        onSuccess: () -> Void,
         onFailure: (String) -> Void
     ) async {
         settingState = .isLoading
@@ -128,7 +128,7 @@ class SettingsViewModel:ObservableObject{
     
         switch result {
         case .success(let userDataResult):
-            onSuccess(userDataResult)
+            onSuccess()
             settingState = .good
         case .failure(let error):
             settingState = .error(error.description)

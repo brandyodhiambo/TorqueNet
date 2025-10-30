@@ -761,6 +761,7 @@ struct BidSheetView: View {
                 }
                 .disabled(bidAmount.isEmpty)
             }
+            .background(Color.theme.surfaceColor)
             .padding()
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(

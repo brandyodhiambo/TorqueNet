@@ -10,7 +10,6 @@ import SwiftUI
 
 class ThemesViewModel: ObservableObject{
     @Published var currentTheme: ThemeModel = .device
-
     func changeTheme(to theme: ThemeModel) {
         LocalState.isDarkModeOn = "\(theme == .dark)"
         currentTheme = theme

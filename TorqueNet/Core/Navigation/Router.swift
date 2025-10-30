@@ -150,7 +150,7 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
         LiveAuctionsView()
             .navigationBarBackButtonHidden()
     case .auctionSchedule:
-        AuctionScheduleScreen()
+        AuctionScheduleView()
             .navigationBarBackButtonHidden()
         
     case .wishlist:
@@ -166,6 +166,11 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
     case .profile:
         ProfileView()
         .navigationBarBackButtonHidden()
+        
+    case .changePassword:
+        ChangePasswordView()
+        .navigationBarBackButtonHidden()
+        
         
     }
 }
