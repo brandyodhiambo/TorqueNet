@@ -45,9 +45,11 @@ struct AuctionView: View {
     ]
     
     var body: some View {
+        NavigationView {
+            
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
-                
+                    
                     // Search Bar
                     HStack(spacing: 12) {
                         HStack {
@@ -90,8 +92,8 @@ struct AuctionView: View {
                                         .padding(.vertical, 8)
                                         .background(
                                             selectedCategory == index
-                                                ? Color.theme.primaryColor
-                                                : Color.gray.opacity(0.1)
+                                            ? Color.theme.primaryColor
+                                            : Color.gray.opacity(0.1)
                                         )
                                         .cornerRadius(20)
                                 }
@@ -220,6 +222,9 @@ struct AuctionView: View {
                     trailingMenu: {}
                 )
             }
+            
+        }
+        
     }
 }
 

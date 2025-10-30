@@ -16,176 +16,175 @@ struct SettingsView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 20) {
-                    VStack(spacing: 12) {
-                        SettingsRowView(
-                            icon: "person.circle.fill",
-                            iconColor: .blue,
-                            title: "Account",
-                            subtitle: currentUser?.email ?? "Loading...",
-                            action: {
-                                router.push(.profile)
-                            }
-                        )
-                        
-                        SettingsRowView(
-                            icon: "paintbrush.pointed.fill",
-                            iconColor: .purple,
-                            title: "Personalisation",
-                            subtitle: "Theme: \(themesViewModel.currentTheme.themName)",
-                            action: {
-                                settingsViewModel.updateShowThemeSelectorDialog(value: true)
-                            }
-                        )
-                        
-                        SettingsRowView(
-                            icon: "lock.circle.fill",
-                            iconColor: .green,
-                            title: "Password",
-                            subtitle: "Update your password",
-                            action: {
-                               
-                            }
-                        )
-                        
-                        SettingsRowView(
-                            icon: "star.circle.fill",
-                            iconColor: .orange,
-                            title: "Rate the app",
-                            subtitle: "Let us know how you feel",
-                            action: {}
-                        )
-                        
-                        SettingsRowView(
-                            icon: "rectangle.portrait.and.arrow.right.fill",
-                            iconColor: .pink,
-                            title: "Sign out",
-                            subtitle: "End your session",
-                            action: {
-                                settingsViewModel.updateIsShowAlertDialog(value: true)
-                                settingsViewModel.updateDialogEntity(
-                                    value: DialogEntity(
-                                        title: "Sign Out",
-                                        message: "Do you really want to sign out?",
-                                        icon: "",
-                                        confirmButtonText: "Okay",
-                                        dismissButtonText: "Cancel",
-                                        onConfirm: {
-                                            Task{
-                                                await settingsViewModel.logoutUser(
-                                                    onSuccess: { logout in
-                                                        settingsViewModel.updateIsShowAlertDialog(value: !logout)
-                                                        router.popToRoot()
-                                                    },
-                                                    onFailure: { error in
-                                                        settingsViewModel.updateIsShowAlertDialog(value: true)
-                                                        settingsViewModel.updateDialogEntity(
-                                                            value: DialogEntity(
-                                                                title: "Unable to sign out this account. Please try again later.",
-                                                                message: error,
-                                                                icon: "",
-                                                                confirmButtonText: "",
-                                                                dismissButtonText: "Okay",
-                                                                onConfirm: {
-                                                                    settingsViewModel.updateIsShowAlertDialog(value: false)
-                                                                },
-                                                                onDismiss: {
-                                                                    settingsViewModel.updateIsShowAlertDialog(value: false)
-                                                                }
-                                                            )
-                                                        )
-                                                    }
-                                                )
-                                            }
-                                        },
-                                        onDismiss: {
-                                            settingsViewModel.updateIsShowAlertDialog(value: false)
-                                        }
-                                    )
-                                )
-                            }
-                        )
-                    }
-                    
-                    VStack(spacing: 8) {
-                        HStack {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(.yellow)
-                                .font(.system(size: 14))
-                            Text("Danger zone")
-                                .font(.custom("Exo2-Medium", size: 14))
-                                .foregroundColor(.secondary)
-                            Spacer()
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 20) {
+                VStack(spacing: 12) {
+                    SettingsRowView(
+                        icon: "person.circle.fill",
+                        iconColor: .blue,
+                        title: "Account",
+                        subtitle: currentUser?.email ?? "Loading...",
+                        action: {
+                            router.push(.profile)
                         }
-                        .padding(.horizontal, 16)
-                        
-                        SettingsRowView(
-                            icon: "trash.circle.fill",
-                            iconColor: .red,
-                            title: "Delete account",
-                            subtitle: "Erase your account details",
-                            action: {
-                                settingsViewModel.updateIsShowAlertDialog(value: true)
-                                settingsViewModel.updateDialogEntity(
-                                    value: DialogEntity(
-                                        title: "Delete Account",
-                                        message: "Once you delete the account you will lose all your data. This action cannot be undone. Are you sure you want to proceed?",
-                                        icon: "",
-                                        confirmButtonText: "Okay",
-                                        dismissButtonText: "Cancel",
-                                        onConfirm: {
-                                            Task{
-                                                await settingsViewModel.deleteAccount(
-                                                    onSuccess: { deleted in
-                                                        settingsViewModel.updateIsShowAlertDialog(value: !deleted)
-                                                    },
-                                                    onFailure: { error in
-                                                        settingsViewModel.updateIsShowAlertDialog(value: true)
-                                                        settingsViewModel.updateDialogEntity(
-                                                            value: DialogEntity(
-                                                                title: "Unable to delete account. Please try again later.",
-                                                                message: error,
-                                                                icon: "",
-                                                                confirmButtonText: "",
-                                                                dismissButtonText: "Okay",
-                                                                onConfirm: {
-                                                                    settingsViewModel.updateIsShowAlertDialog(value: false)
-                                                                },
-                                                                onDismiss: {
-                                                                    settingsViewModel.updateIsShowAlertDialog(value: false)
-                                                                }
-                                                            )
-                                                        )
-                                                    }
-                                                )
-                                            }
-                                        },
-                                        onDismiss: {
-                                            settingsViewModel.updateIsShowAlertDialog(value: false)
-                                        }
-                                    )
-                                )
-                            }
-                        )
-                    }
-                    .padding(.top, 20)
+                    )
                     
-                    VStack(spacing: 16) {
-                        Image(systemName: "lightbulb.max")
-                            .font(.system(size: 40))
-                            .foregroundColor(.secondary.opacity(0.5))
-                        
-                        Text("Learn more about us")
-                            .font(.custom("Exo2-Regular", size: 14))
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.top, 40)
-                    .padding(.bottom, 20)
+                    SettingsRowView(
+                        icon: "paintbrush.pointed.fill",
+                        iconColor: .purple,
+                        title: "Personalisation",
+                        subtitle: "Theme: \(themesViewModel.currentTheme.themName)",
+                        action: {
+                            settingsViewModel.updateShowThemeSelectorDialog(value: true)
+                        }
+                    )
+                    
+                    SettingsRowView(
+                        icon: "lock.circle.fill",
+                        iconColor: .green,
+                        title: "Password",
+                        subtitle: "Update your password",
+                        action: {
+                            
+                        }
+                    )
+                    
+                    SettingsRowView(
+                        icon: "star.circle.fill",
+                        iconColor: .orange,
+                        title: "Rate the app",
+                        subtitle: "Let us know how you feel",
+                        action: {}
+                    )
+                    
+                    SettingsRowView(
+                        icon: "rectangle.portrait.and.arrow.right.fill",
+                        iconColor: .pink,
+                        title: "Sign out",
+                        subtitle: "End your session",
+                        action: {
+                            settingsViewModel.updateIsShowAlertDialog(value: true)
+                            settingsViewModel.updateDialogEntity(
+                                value: DialogEntity(
+                                    title: "Sign Out",
+                                    message: "Do you really want to sign out?",
+                                    icon: "",
+                                    confirmButtonText: "Okay",
+                                    dismissButtonText: "Cancel",
+                                    onConfirm: {
+                                        Task{
+                                            await settingsViewModel.logoutUser(
+                                                onSuccess: { logout in
+                                                    settingsViewModel.updateIsShowAlertDialog(value: !logout)
+                                                    router.popToRoot()
+                                                },
+                                                onFailure: { error in
+                                                    settingsViewModel.updateIsShowAlertDialog(value: true)
+                                                    settingsViewModel.updateDialogEntity(
+                                                        value: DialogEntity(
+                                                            title: "Unable to sign out this account. Please try again later.",
+                                                            message: error,
+                                                            icon: "",
+                                                            confirmButtonText: "",
+                                                            dismissButtonText: "Okay",
+                                                            onConfirm: {
+                                                                settingsViewModel.updateIsShowAlertDialog(value: false)
+                                                            },
+                                                            onDismiss: {
+                                                                settingsViewModel.updateIsShowAlertDialog(value: false)
+                                                            }
+                                                        )
+                                                    )
+                                                }
+                                            )
+                                        }
+                                    },
+                                    onDismiss: {
+                                        settingsViewModel.updateIsShowAlertDialog(value: false)
+                                    }
+                                )
+                            )
+                        }
+                    )
                 }
-                .padding(.horizontal, 16)
+                
+                VStack(spacing: 8) {
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.yellow)
+                            .font(.system(size: 14))
+                        Text("Danger zone")
+                            .font(.custom("Exo2-Medium", size: 14))
+                            .foregroundColor(.secondary)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    
+                    SettingsRowView(
+                        icon: "trash.circle.fill",
+                        iconColor: .red,
+                        title: "Delete account",
+                        subtitle: "Erase your account details",
+                        action: {
+                            settingsViewModel.updateIsShowAlertDialog(value: true)
+                            settingsViewModel.updateDialogEntity(
+                                value: DialogEntity(
+                                    title: "Delete Account",
+                                    message: "Once you delete the account you will lose all your data. This action cannot be undone. Are you sure you want to proceed?",
+                                    icon: "",
+                                    confirmButtonText: "Okay",
+                                    dismissButtonText: "Cancel",
+                                    onConfirm: {
+                                        Task{
+                                            await settingsViewModel.deleteAccount(
+                                                onSuccess: { deleted in
+                                                    settingsViewModel.updateIsShowAlertDialog(value: !deleted)
+                                                },
+                                                onFailure: { error in
+                                                    settingsViewModel.updateIsShowAlertDialog(value: true)
+                                                    settingsViewModel.updateDialogEntity(
+                                                        value: DialogEntity(
+                                                            title: "Unable to delete account. Please try again later.",
+                                                            message: error,
+                                                            icon: "",
+                                                            confirmButtonText: "",
+                                                            dismissButtonText: "Okay",
+                                                            onConfirm: {
+                                                                settingsViewModel.updateIsShowAlertDialog(value: false)
+                                                            },
+                                                            onDismiss: {
+                                                                settingsViewModel.updateIsShowAlertDialog(value: false)
+                                                            }
+                                                        )
+                                                    )
+                                                }
+                                            )
+                                        }
+                                    },
+                                    onDismiss: {
+                                        settingsViewModel.updateIsShowAlertDialog(value: false)
+                                    }
+                                )
+                            )
+                        }
+                    )
+                }
                 .padding(.top, 20)
+                
+                VStack(spacing: 16) {
+                    Image(systemName: "lightbulb.max")
+                        .font(.system(size: 40))
+                        .foregroundColor(.secondary.opacity(0.5))
+                    
+                    Text("Learn more about us")
+                        .font(.custom("Exo2-Regular", size: 14))
+                        .foregroundColor(.secondary)
+                }
+                .padding(.top, 40)
+                .padding(.bottom, 20)
             }
+            .padding(.horizontal, 16)
+            .padding(.top, 20)
             .background(Color.theme.surfaceColor)
             .customTopAppBar(
                 title: "Settings",
@@ -245,6 +244,7 @@ struct SettingsView: View {
                 
             }
         }
+       }
     }
 }
 

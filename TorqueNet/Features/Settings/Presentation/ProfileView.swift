@@ -18,142 +18,111 @@ struct ProfileView: View {
     @State private var isAnimating = false
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color.theme.surfaceColor
-                    .ignoresSafeArea()
-                
-                ScrollView(.vertical, showsIndicators: false) {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 0) {
+                // Decorative Background
+                ZStack(alignment: .top) {
+                    
                     VStack(spacing: 0) {
-                        // Header with Navigation
-                        headerView
-                        
-                        // Decorative Background
-                        ZStack(alignment: .top) {
-                            
-                            VStack(spacing: 0) {
-                                // Camera Button
-                                HStack {
-                                    Spacer()
-                                    ZStack {
-                                        Circle()
-                                            .fill(Color.theme.primaryColor)
-                                            .frame(width: 44, height: 44)
-                                        
-                                        Image(systemName: "camera.fill")
-                                            .font(.system(size: 18, weight: .semibold))
-                                            .foregroundColor(.white)
-                                    }
-                                    .padding(16)
-                                    .onTapGesture {
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                            showImagePicker = true
-                                        }
-                                    }
-                                }
+                        // Camera Button
+                        HStack {
+                            Spacer()
+                            ZStack {
+                                Circle()
+                                    .fill(Color.theme.primaryColor)
+                                    .frame(width: 44, height: 44)
                                 
-                                Spacer()
-                                    .frame(height: 60)
+                                Image(systemName: "camera.fill")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundColor(.white)
                             }
-                            .frame(height: 140)
+                            .padding(16)
+                            .onTapGesture {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    showImagePicker = true
+                                }
+                            }
                         }
-                        .frame(height: 140)
-                        
-                        // Profile Card
-                        profileCardView
-                        
-                        // Stats Section
-                        statsSection
-                        
-                        // Action Buttons
-                        actionsSection
                         
                         Spacer()
-                            .frame(height: 20)
+                            .frame(height: 60)
                     }
+                    .frame(height: 140)
                 }
-                .onAppear {
-                    Task{
-                        await settingsViewModel.fetchUser(onSuccess: { user in
-                            currentUser = user
-                        }, onFailure: { error in
-                            settingsViewModel.updateIsShowAlertDialog(value: true)
-                            settingsViewModel.updateDialogEntity(
-                                value: DialogEntity(
-                                    title: "Unable to fetch user. Please try again later.",
-                                    message: error,
-                                    icon: "",
-                                    confirmButtonText: "",
-                                    dismissButtonText: "Okay",
-                                    onConfirm: {
-                                        settingsViewModel.updateIsShowAlertDialog(value: false)
-                                    },
-                                    onDismiss: {
-                                        settingsViewModel.updateIsShowAlertDialog(value: false)
-                                    }
-                                )
+                .frame(height: 140)
+                
+                // Profile Card
+                profileCardView
+                
+                // Stats Section
+                statsSection
+                
+                // Action Buttons
+                actionsSection
+                
+                Spacer()
+                    .frame(height: 20)
+            }
+            .background(Color.theme.surfaceColor)
+            .customTopAppBar(
+                title: "Profile",
+                leadingIcon: "chevron.left",
+                onLeadingTap: { router.pop() },
+                trailingMenu: {}
+            )
+            .onAppear {
+                Task{
+                    await settingsViewModel.fetchUser(onSuccess: { user in
+                        currentUser = user
+                    }, onFailure: { error in
+                        settingsViewModel.updateIsShowAlertDialog(value: true)
+                        settingsViewModel.updateDialogEntity(
+                            value: DialogEntity(
+                                title: "Unable to fetch user. Please try again later.",
+                                message: error,
+                                icon: "",
+                                confirmButtonText: "",
+                                dismissButtonText: "Okay",
+                                onConfirm: {
+                                    settingsViewModel.updateIsShowAlertDialog(value: false)
+                                },
+                                onDismiss: {
+                                    settingsViewModel.updateIsShowAlertDialog(value: false)
+                                }
                             )
-                        })
-                    }
-                }
-                .overlay {
-                    CustomAlertDialogView(
-                        isPresented: $settingsViewModel.isShowAlertDialog,
-                        title: settingsViewModel.dialogEntity.title,
-                        text: settingsViewModel.dialogEntity.message,
-                        confirmButtonText: settingsViewModel.dialogEntity.confirmButtonText,
-                        dismissButtonText: settingsViewModel.dialogEntity.dismissButtonText,
-                        imageName: settingsViewModel.dialogEntity.icon,
-                        onDismiss: {
-                            if let onDismiss = settingsViewModel.dialogEntity.onDismiss {
-                                onDismiss()
-                            }
-                        },
-                        onConfirmation: {
-                            if let onConfirm = settingsViewModel.dialogEntity.onConfirm {
-                                onConfirm()
-                            }
-                        }
-                    )
-                }
-                .sheet(isPresented: $showImagePicker) {
-                    ImagePicker(image: $profileImage)
+                        )
+                    })
                 }
             }
+            .overlay {
+                CustomAlertDialogView(
+                    isPresented: $settingsViewModel.isShowAlertDialog,
+                    title: settingsViewModel.dialogEntity.title,
+                    text: settingsViewModel.dialogEntity.message,
+                    confirmButtonText: settingsViewModel.dialogEntity.confirmButtonText,
+                    dismissButtonText: settingsViewModel.dialogEntity.dismissButtonText,
+                    imageName: settingsViewModel.dialogEntity.icon,
+                    onDismiss: {
+                        if let onDismiss = settingsViewModel.dialogEntity.onDismiss {
+                            onDismiss()
+                        }
+                    },
+                    onConfirmation: {
+                        if let onConfirm = settingsViewModel.dialogEntity.onConfirm {
+                            onConfirm()
+                        }
+                    }
+                )
+            }
+            .sheet(isPresented: $showImagePicker) {
+                ImagePicker(image: $profileImage)
+            }
+            
         }
+        
+        
     }
     
-    private var headerView: some View {
-        HStack(alignment: .center, spacing: 12) {
-            Button(action: {
-                router.pop()
-            }) {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
-                    .frame(width: 40, height: 40)
-                    .background(
-                        Circle()
-                            .fill(Color.theme.primaryColor)
-                            .shadow(color: Color.theme.primaryColor.opacity(0.3), radius: 8, x: 0, y: 4)
-                    )
-            }
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Profile")
-                    .font(.custom("Exo2-Bold", size: 28))
-                    .foregroundColor(.theme.onSurfaceColor)
-                
-                Text("Manage your account")
-                    .font(.custom("Exo2-Regular", size: 12))
-                    .foregroundColor(.secondary.opacity(0.7))
-            }
-            
-            Spacer()
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
-    }
     
     private var profileCardView: some View {
         VStack(spacing: 20) {
@@ -524,5 +493,8 @@ struct ImagePicker: UIViewControllerRepresentable {
 }
 
 #Preview {
-    ProfileView()
+    NavigationView{
+        ProfileView()
+    }
+   
 }
