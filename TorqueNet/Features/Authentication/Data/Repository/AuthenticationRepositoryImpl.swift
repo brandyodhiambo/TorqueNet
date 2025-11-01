@@ -23,7 +23,6 @@ class AuthenticationRepositoryImpl: AuthenticationRepository {
             
             try await result.user.sendEmailVerification()
             
-            let db = Firestore.firestore()
             let userData: [String: Any] = [
                 "uid": result.user.uid,
                 "name": name,
@@ -33,7 +32,7 @@ class AuthenticationRepositoryImpl: AuthenticationRepository {
             ]
             
             do {
-                try await db.collection("users").document(result.user.uid).setData(userData)
+                try await FirestoreConstants.UserCollection.document(result.user.uid).setData(userData)
                 return .success(result)
             } catch {
                 do {

@@ -8,6 +8,7 @@ import Foundation
 
 @MainActor
 class SettingsViewModel:ObservableObject{
+    @Published var showImagePicker = false
     @Published var showThemeSelector:Bool = false
     @Published var dialogEntity = DialogEntity()
     @Published var isShowAlertDialog = false
@@ -27,6 +28,10 @@ class SettingsViewModel:ObservableObject{
             isFormValid = false
         }
         isChangePasswordEnable = isFormValid
+    }
+    
+    func updateShowImagePickerDialog(value: Bool) {
+        showImagePicker = value
     }
     
     func updateChangePasswordErrors(key: String, value: String) {

@@ -12,10 +12,7 @@ struct ProfileView: View {
     @ObservedObject var settingsViewModel =  SettingsViewModel()
     
     @State var currentUser: User?
-    
-    @State private var showImagePicker = false
     @State private var profileImage: UIImage? = nil
-    @State private var isAnimating = false
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -39,7 +36,7 @@ struct ProfileView: View {
                             .padding(16)
                             .onTapGesture {
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                    showImagePicker = true
+                                    settingsViewModel.updateShowImagePickerDialog(value: true)
                                 }
                             }
                         }
@@ -116,7 +113,7 @@ struct ProfileView: View {
                 }
             )
         }
-        .sheet(isPresented: $showImagePicker) {
+        .sheet(isPresented: $settingsViewModel.showImagePicker) {
             ImagePicker(image: $profileImage)
         }
         
@@ -456,38 +453,7 @@ struct ProfileActionButton: View {
     }
 }
 
-struct ImagePicker: UIViewControllerRepresentable {
-    @Environment(\.presentationMode) var presentationMode
-    @Binding var image: UIImage?
-    
-    func makeUIViewController(context: Context) -> UIImagePickerController {
-        let picker = UIImagePickerController()
-        picker.delegate = context.coordinator
-        picker.sourceType = .photoLibrary
-        return picker
-    }
-    
-    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
-    
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-    
-    class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-        let parent: ImagePicker
-        
-        init(_ parent: ImagePicker) {
-            self.parent = parent
-        }
-        
-        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-            if let image = info[.originalImage] as? UIImage {
-                parent.image = image
-            }
-            parent.presentationMode.wrappedValue.dismiss()
-        }
-    }
-}
+
 
 #Preview {
     NavigationView{

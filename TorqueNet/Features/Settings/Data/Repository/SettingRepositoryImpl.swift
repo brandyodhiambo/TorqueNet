@@ -9,6 +9,8 @@ import Foundation
 import Firebase
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
+import UIKit
 
 class SettingsRepositoryImpl: SettingsRepository {
     static let shared = SettingsRepositoryImpl()
@@ -19,7 +21,7 @@ class SettingsRepositoryImpl: SettingsRepository {
             guard let uid = Auth.auth().currentUser?.uid else {
                 return .failure(.custom("User not found"))
             }
-            let snapshot = try await db.collection("users").document(uid).getDocument()
+            let snapshot = try await FirestoreConstants.UserCollection.document(uid).getDocument()
             guard snapshot.exists else { return .failure(.custom("User not found")) }
             let user = try snapshot.data(as: User.self)
             return .success(user)
@@ -36,5 +38,60 @@ class SettingsRepositoryImpl: SettingsRepository {
             return .failure(.custom(error.localizedDescription))
         }
     }
+    
+    func uploadProfileImage(_ image: UIImage) async -> Result<String, FirebaseAuthError> {
+        do {
+            guard let uid = Auth.auth().currentUser?.uid else {
+                return .failure(.custom("User not found"))
+            }
+            
+            guard let imageData = image.jpegData(compressionQuality: 0.5) else {
+                return .failure(.custom("Failed to compress image"))
+            }
+            
+            let storageRef = Storage.storage().reference()
+            let profileImageRef = storageRef.child("profile_images/\(uid).jpg")
+            
+
+            let metadata = StorageMetadata()
+            metadata.contentType = "image/jpeg"
+            
+            let _ = try await profileImageRef.putDataAsync(imageData, metadata: metadata)
+            
+            let downloadURL = try await profileImageRef.downloadURL()
+            
+            return .success(downloadURL.absoluteString)
+            
+        } catch {
+            return .failure(.custom("Failed to upload image: \(error.localizedDescription)"))
+        }
+    }
+    
+    func updateUserProfileImage(imageUrl: String) async -> Result<Void, FirebaseAuthError> {
+        do {
+            guard let uid = Auth.auth().currentUser?.uid else {
+                return .failure(.custom("User not found"))
+            }
+            
+            try await FirestoreConstants.UserCollection.document(uid).updateData([
+                "profileImageUrl": imageUrl
+            ])
+            
+            return .success(())
+            
+        } catch let error as NSError {
+            switch AuthErrorCode(rawValue: error.code) {
+            case .userDisabled:
+                return .failure(.userDisabled)
+            case .userNotFound:
+                return .failure(.userNotFound)
+            default:
+                return .failure(.custom(error.localizedDescription))
+            }
+        } catch {
+            return .failure(.custom("Failed to update user profile: \(error.localizedDescription)"))
+        }
+    }
 }
+
 
