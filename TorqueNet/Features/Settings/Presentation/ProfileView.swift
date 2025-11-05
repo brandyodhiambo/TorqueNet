@@ -12,7 +12,6 @@ struct ProfileView: View {
     @ObservedObject var settingsViewModel =  SettingsViewModel()
     
     @State var currentUser: User?
-    @State private var profileImage: UIImage? = nil
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -114,17 +113,25 @@ struct ProfileView: View {
             )
         }
         .sheet(isPresented: $settingsViewModel.showImagePicker) {
-            ImagePicker(image: $profileImage)
+            ImagePicker(
+                image: $settingsViewModel.profileImage,
+                onSave: { image in
+                    if let image = image {
+                        settingsViewModel.updateProfileImage(value: image)
+                        Task {
+                            await settingsViewModel.uploadAndSaveProfileImage()
+                        }
+                    }
+                }
+            )
         }
-        
-        
     }
     
     
     private var profileCardView: some View {
         VStack(spacing: 20) {
             ZStack(alignment: .bottomTrailing) {
-                if let image = profileImage {
+                if let image = settingsViewModel.profileImage {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFill()

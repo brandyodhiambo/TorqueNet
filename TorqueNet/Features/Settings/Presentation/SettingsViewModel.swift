@@ -5,6 +5,7 @@
 //  Created by MAC on 27/10/2025.
 //
 import Foundation
+import UIKit
 
 @MainActor
 class SettingsViewModel:ObservableObject{
@@ -14,6 +15,7 @@ class SettingsViewModel:ObservableObject{
     @Published var isShowAlertDialog = false
     @Published var currentPassword: String = ""
     @Published var newPassword: String = ""
+    @Published var profileImage: UIImage? = nil
     @Published var isChangePasswordEnable: Bool = false
     @Published var changePasswordErrors = [String: String]()
     @Published var settingState:FetchState = FetchState.good
@@ -61,6 +63,23 @@ class SettingsViewModel:ObservableObject{
     
     func updateIsShowAlertDialog(value: Bool) {
         isShowAlertDialog = value
+    }
+    
+    func updateProfileImage(value: UIImage?) {
+        profileImage = value
+    }
+    
+    
+    func uploadAndSaveProfileImage() async {
+        settingState = .isLoading
+        let result:  Result<Void, FirebaseAuthError>
+        result = await settingsUseCase.executeUploadAndSaveProfileImage(profileImage!)
+        switch result {
+        case .success:
+            settingState = .good
+        case .failure(let error):
+            settingState = .error(error.description)
+        }
     }
     
     func fetchUser(

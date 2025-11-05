@@ -4,6 +4,7 @@
 //
 //  Created by MAC on 27/10/2025.
 //
+import UIKit
 
 class SettingsUseCase{
     let settingsRepository:SettingsRepository
@@ -16,4 +17,14 @@ class SettingsUseCase{
         return await settingsRepository.fetchUser()
     }
     
+    func executeUploadAndSaveProfileImage(_ image: UIImage) async -> Result<Void, FirebaseAuthError> {
+           let uploadResult = await settingsRepository.uploadProfileImage(image)
+           switch uploadResult {
+           case .success(let imageUrl):
+               let updateResult = await settingsRepository.updateUserProfileImage(imageUrl: imageUrl)
+               return updateResult
+           case .failure(let error):
+               return .failure(error)
+           }
+       }
 }
