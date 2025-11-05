@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct HomeView: View {
+    @ObservedObject var settingsViewModel =  SettingsViewModel()
+    
     @State private var searchText: String = ""
     @State private var selectedBrand = 0
     @EnvironmentObject var router: Router
@@ -15,6 +17,7 @@ struct HomeView: View {
     @State var isLocationAuthorized = false
     @State var isShowRequestLocationAlert = false
     @State private var locationName: String = "Loading..."
+    @State var currentUser: User?
     
     var brands: [Brand] = [
         Brand(image: "benz", title: "Mercedes-Benz"),
@@ -172,6 +175,13 @@ struct HomeView: View {
         }
         .onAppear {
             updateLocationNameIfNeeded()
+            Task{
+                await settingsViewModel.fetchUser(onSuccess: { user in
+                    currentUser = user
+                }, onFailure: { error in
+                    
+                })
+            }
         }
         .background(Color.theme.surfaceColor.ignoresSafeArea(.all))
         .onChange(of: locationManager.authorizationStatus) { newStatus in
@@ -256,15 +266,30 @@ struct HomeView: View {
                 Button(action: {
                     router.push(.profile)
                 }) {
-                    Image("profile")
-                        .resizable()
+                    if currentUser?.profileImageUrl != nil {
+                        CustomImageView(
+                            url: currentUser?.profileImageUrl ?? "",
+                            maxWidth: 40,
+                            height: 40
+                        )
                         .scaledToFill()
-                        .frame(width: 40, height: 40)
                         .clipShape(Circle())
                         .overlay(
                             Circle()
                                 .stroke(Color.theme.primaryColor, lineWidth: 2)
                         )
+                    } else{
+                        Image("profile")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 40, height: 40)
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.theme.primaryColor, lineWidth: 2)
+                            )
+                    }
+                   
                 }
             }
         }

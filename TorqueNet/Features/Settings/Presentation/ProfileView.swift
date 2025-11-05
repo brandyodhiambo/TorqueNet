@@ -131,48 +131,11 @@ struct ProfileView: View {
     private var profileCardView: some View {
         VStack(spacing: 20) {
             ZStack(alignment: .bottomTrailing) {
-                if let image = settingsViewModel.profileImage {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 110, height: 110)
-                        .clipShape(Circle())
-                        .overlay(
-                            Circle()
-                                .stroke(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            .theme.primaryColor,
-                                            .theme.primaryColor.opacity(0.6)
-                                        ]),
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ),
-                                    lineWidth: 3
-                                )
-                        )
-                        .shadow(color: Color.theme.primaryColor.opacity(0.3), radius: 10, x: 0, y: 4)
-                } else {
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 110, height: 110)
-                        .foregroundColor(.gray.opacity(0.3))
-                        .overlay(
-                            Circle()
-                                .stroke(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            .theme.primaryColor.opacity(0.5),
-                                            .theme.primaryColor.opacity(0.2)
-                                        ]),
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ),
-                                    lineWidth: 2
-                                )
-                        )
-                }
+                
+                ProfileImageView(
+                    localImage: settingsViewModel.profileImage,
+                    remoteImageUrl: currentUser?.profileImageUrl
+                )
                 
                 // Status Badge
                 Circle()
@@ -375,6 +338,50 @@ struct ProfileDetailItem: View {
     }
 }
 
+
+struct ProfileImageView: View {
+    var localImage: UIImage?
+    var remoteImageUrl: String?
+    var size: CGFloat = 110
+
+    private var gradientStroke: LinearGradient {
+        LinearGradient(
+            gradient: Gradient(colors: [
+                .theme.primaryColor.opacity(0.8),
+                .theme.primaryColor.opacity(0.4)
+            ]),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    var body: some View {
+        ZStack {
+            if let image = localImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else if let url = remoteImageUrl, !url.isEmpty {
+                CustomImageView(url: url, maxWidth: size, height: size)
+                    .scaledToFill()
+            } else {
+                Image(systemName: "person.circle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(.gray.opacity(0.3))
+            }
+        }
+        .frame(width: size, height: size)
+        .clipShape(Circle())
+        .overlay(
+            Circle()
+                .stroke(gradientStroke, lineWidth: 3)
+        )
+        .shadow(color: Color.theme.primaryColor.opacity(0.3), radius: 10, x: 0, y: 4)
+    }
+}
+
+
 struct StatCard: View {
     let title: String
     let value: String
@@ -466,5 +473,5 @@ struct ProfileActionButton: View {
     NavigationView{
         ProfileView()
     }
-   
+    
 }
