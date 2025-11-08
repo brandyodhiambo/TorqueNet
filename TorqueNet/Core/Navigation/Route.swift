@@ -28,4 +28,5 @@ enum Route: Hashable {
     case profile
     case changePassword
     case notification
+    case editProfile
 }

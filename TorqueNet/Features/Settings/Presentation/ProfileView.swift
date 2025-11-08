@@ -16,11 +16,9 @@ struct ProfileView: View {
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 0) {
-                // Decorative Background
                 ZStack(alignment: .top) {
                     
                     VStack(spacing: 0) {
-                        // Camera Button
                         HStack {
                             Spacer()
                             ZStack {
@@ -47,13 +45,10 @@ struct ProfileView: View {
                 }
                 .frame(height: 140)
                 
-                // Profile Card
                 profileCardView
                 
-                // Stats Section
                 statsSection
                 
-                // Action Buttons
                 actionsSection
                 
                 Spacer()
@@ -137,7 +132,6 @@ struct ProfileView: View {
                     remoteImageUrl: currentUser?.profileImageUrl
                 )
                 
-                // Status Badge
                 Circle()
                     .fill(Color.green)
                     .frame(width: 16, height: 16)
@@ -145,14 +139,12 @@ struct ProfileView: View {
             }
             .padding(.top, -120)
             
-            // User Info
             VStack(spacing: 6) {
                 Text(currentUser?.name ?? "Loading...")
                     .font(.custom("Exo2-Bold", size: 22))
                     .foregroundColor(.theme.onSurfaceColor)
             }
             
-            // Divider with gradient
             LinearGradient(
                 gradient: Gradient(colors: [
                     .clear,
@@ -164,7 +156,6 @@ struct ProfileView: View {
             )
             .frame(height: 1)
             
-            // Profile Details Grid
             VStack(spacing: 12) {
                 ProfileDetailItem(
                     label: "Email",
@@ -230,7 +221,9 @@ struct ProfileView: View {
                     title: "Edit Profile",
                     subtitle: "Update your information",
                     iconColor: .blue,
-                    action: {}
+                    action: {
+                        router.push(.editProfile)
+                    }
                 )
                 
                 ProfileActionButton(

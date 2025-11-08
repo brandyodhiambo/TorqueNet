@@ -171,6 +171,9 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
         ChangePasswordView()
         .navigationBarBackButtonHidden()
         
+    case .editProfile:
+        EditProfileView()
+        .navigationBarBackButtonHidden()
         
     }
 }

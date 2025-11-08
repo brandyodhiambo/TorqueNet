@@ -15,9 +15,14 @@ class SettingsViewModel:ObservableObject{
     @Published var isShowAlertDialog = false
     @Published var currentPassword: String = ""
     @Published var newPassword: String = ""
+    @Published var firstName: String = ""
+    @Published var lastName: String = ""
+    @Published var email: String = ""
+    @Published var phoneNumber: String = ""
     @Published var profileImage: UIImage? = nil
     @Published var isChangePasswordEnable: Bool = false
-    @Published var changePasswordErrors = [String: String]()
+    @Published var isEditProfile: Bool = false
+    @Published var settingErrors = [String: String]()
     @Published var settingState:FetchState = FetchState.good
     
     let settingsUseCase:SettingsUseCase = SettingsUseCase(settingsRepository: SettingsRepositoryImpl.shared)
@@ -26,31 +31,64 @@ class SettingsViewModel:ObservableObject{
     func validateIfChangePasswordIsEnabled(){
         var isFormValid = true
         
-        if !changePasswordErrors.values.allSatisfy({ $0.isEmpty }) || currentPassword.isEmpty || newPassword.isEmpty{
+        if !settingErrors.values.allSatisfy({ $0.isEmpty }) || currentPassword.isEmpty || newPassword.isEmpty{
             isFormValid = false
         }
         isChangePasswordEnable = isFormValid
+    }
+    
+    func validateIfEditProfileIsEnabled(){
+        var isFormValid = true
+        
+        if !settingErrors.values.allSatisfy({ $0.isEmpty }) || firstName.isEmpty || lastName.isEmpty || email.isEmpty || phoneNumber.isEmpty{
+            isFormValid = false
+        }
+        isEditProfile = isFormValid
     }
     
     func updateShowImagePickerDialog(value: Bool) {
         showImagePicker = value
     }
     
-    func updateChangePasswordErrors(key: String, value: String) {
-        changePasswordErrors[key] = value
+    func updateSettingErrors(key: String, value: String) {
+        settingErrors[key] = value
         validateIfChangePasswordIsEnabled()
     }
     
     func updateCurrentPassword(value: String) {
         currentPassword = value
         let error = ValidatorUtils.shared.validatePassword(password: currentPassword)
-        updateChangePasswordErrors(key: "currentPassword", value:  error.first ?? "")
+        updateSettingErrors(key: "currentPassword", value:  error.first ?? "")
     }
     
     func updateNewPassword(value: String) {
         newPassword = value
         let error = ValidatorUtils.shared.validatePassword(password: currentPassword)
-        updateChangePasswordErrors(key: "newPassword", value:  error.first ?? "")
+        updateSettingErrors(key: "newPassword", value:  error.first ?? "")
+    }
+    
+    func updateFirstName(value: String) {
+        firstName = value
+        let error = ValidatorUtils.shared.validateName(name: firstName)
+        updateSettingErrors(key: "firstName", value: error)
+    }
+    
+    func updateLastName(value: String) {
+        lastName = value
+        let error = ValidatorUtils.shared.validateName(name: lastName)
+        updateSettingErrors(key: "lastName", value: error)
+    }
+    
+    func updatePhoneNumber(value: String) {
+        phoneNumber = value
+        let error = ValidatorUtils.shared.validatePhoneNumber(phoneNumber)
+        updateSettingErrors(key: "phoneNumber", value: error)
+    }
+    
+    func updateEmail(value: String) {
+        email = value
+        let error = ValidatorUtils.shared.validateEmail(email: email)
+        updateSettingErrors(key: "email", value:  error)
     }
     
     func updateShowThemeSelectorDialog(value: Bool) {
@@ -141,7 +179,7 @@ class SettingsViewModel:ObservableObject{
         }
     }
     
-    func chnagePassword(
+    func changePassword(
         onSuccess: () -> Void,
         onFailure: (String) -> Void
     ) async {
