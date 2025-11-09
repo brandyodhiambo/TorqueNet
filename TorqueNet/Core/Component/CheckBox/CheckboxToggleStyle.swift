@@ -13,10 +13,11 @@ struct CheckboxToggleStyle: ToggleStyle {
            RoundedRectangle(cornerRadius: 5.0)
                .stroke(lineWidth: 2)
                .frame(width: 25, height: 25)
+               .background(configuration.isOn ? Color.theme.primaryColor: Color.clear)
                .cornerRadius(5.0)
                .overlay {
                    Image(systemName: configuration.isOn ?"checkmark" : "")
-                       .foregroundColor(Color.theme.primaryColor)
+                       .foregroundColor(Color.theme.onPrimaryColor)
                }
                .onTapGesture {
                    withAnimation(.spring()) {

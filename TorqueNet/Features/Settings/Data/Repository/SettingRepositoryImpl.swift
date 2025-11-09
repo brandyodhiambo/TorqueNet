@@ -92,6 +92,35 @@ class SettingsRepositoryImpl: SettingsRepository {
             return .failure(.custom("Failed to update user profile: \(error.localizedDescription)"))
         }
     }
+    
+    func editUser(email: String, phoneNumber: String,name:String,isSeller:Bool) async -> Result<Bool, FirebaseAuthError>{
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return .failure(.custom("User not found"))
+        }
+           
+
+        let userData: [String: Any] = [
+            "name": name,
+            "email": email.lowercased(),
+            "isSeller": isSeller,
+            "phoneNumber": phoneNumber,
+        ]
+        
+        do {
+            try await FirestoreConstants.UserCollection.document(uid).updateData(userData)
+            return .success(true)
+        } catch let error as NSError {
+            switch AuthErrorCode(rawValue: error.code) {
+            case .userDisabled:
+                return .failure(.userDisabled)
+            case .userNotFound:
+                return .failure(.userNotFound)
+            default:
+                return .failure(.custom(error.localizedDescription))
+            }
+        }
+    }
+
 }
 
 

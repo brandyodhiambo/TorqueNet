@@ -15,5 +15,4 @@ protocol AuthenticationRepository{
     func logoutUser() async -> Result<Bool,FirebaseAuthError>
     func deleteAccount() async -> Result<Bool,FirebaseAuthError>
     func changePassword(currentPassword: String, newPassword: String) async -> Result<Bool, FirebaseAuthError>
-
 }

@@ -15,6 +15,7 @@ struct User: Codable, Identifiable, Hashable {
     var email: String
     var phoneNumber: String
     var profileImageUrl: String?
+    var isSeller:Bool = false
     @ServerTimestamp var createdAt: Date?
     
     var initials: String {
@@ -35,6 +36,7 @@ extension User {
         email: "mockuser@gmail.com",
         phoneNumber: "0712345678",
         profileImageUrl: "https://example.com/mock_profile.jpg",
+        isSeller: false,
         createdAt: Date()
     )
 }

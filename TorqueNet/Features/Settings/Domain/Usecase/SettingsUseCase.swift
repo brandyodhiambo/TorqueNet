@@ -27,4 +27,8 @@ class SettingsUseCase{
                return .failure(error)
            }
        }
+    
+    func executeEditUser(email: String, phoneNumber: String,name:String,isSeller:Bool) async -> Result<Bool, FirebaseAuthError> {
+        return await settingsRepository.editUser(email: email, phoneNumber: phoneNumber, name: name, isSeller: isSeller)
+    }
 }

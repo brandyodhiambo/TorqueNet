@@ -55,6 +55,7 @@ struct EditProfileView: View {
                     keyboardType: .emailAddress,
                     errorMessage: settingsViewModel.settingErrors["email"] ?? "",
                     inputFieldStyle: .outlined,
+                    isEditable: false,
                     onTextChange: { text in
                         settingsViewModel.updateEmail(value: text)
                     }
@@ -73,24 +74,37 @@ struct EditProfileView: View {
                     }
                 )
                 
+                HStack{
+                    Toggle(isOn: $settingsViewModel.isSeller) {
+                        Text("Change Profile to Seller")
+                            .font(.custom("Exo2-Medium", size: 15))
+                            .foregroundColor(Color.theme.primaryColor)
+                    }
+                    .toggleStyle(CheckboxToggleStyle())
+                    .foregroundColor(Color.theme.onSurfaceColor)
+                    Spacer()
+                }
+                
+               
+                
                 CustomButtonView(
                     buttonName:"Edit",
                     isDisabled: !settingsViewModel.isEditProfile,
                     onTap: {
-                        /*Task{
-                            await settingsViewModel.editProfile(
+                        Task{
+                            await settingsViewModel.editUser(
                                 onSuccess: {
                                     settingsViewModel.updateIsShowAlertDialog(value: true)
                                     settingsViewModel.updateDialogEntity(
                                         value: DialogEntity(
-                                            title: "Request Password Change Successful!",
-                                            message: "Please check your email for password reset link and proceed to login.",
+                                            title: "Edit Details Successfull",
+                                            message: "You have successfully edited your profile.",
                                             icon: "",
                                             confirmButtonText: "Proceed",
                                             dismissButtonText: "",
                                             onConfirm: {
                                                 settingsViewModel.updateIsShowAlertDialog(value: false)
-                                                router.push(.login)
+                                                router.pop()
                                             },
                                             onDismiss: {
                                                 settingsViewModel.updateIsShowAlertDialog(value: false)
@@ -102,7 +116,7 @@ struct EditProfileView: View {
                                     settingsViewModel.updateIsShowAlertDialog(value: true)
                                     settingsViewModel.updateDialogEntity(
                                         value: DialogEntity(
-                                            title: "Change Password Request Failed.",
+                                            title: "Edit Profile Failed.",
                                             message: error,
                                             icon: "",
                                             confirmButtonText: "",
@@ -117,7 +131,7 @@ struct EditProfileView: View {
                                     )
                                 }
                             )
-                        }*/
+                        }
                     }
                 )
                 
@@ -136,6 +150,11 @@ struct EditProfileView: View {
             Task{
                 await settingsViewModel.fetchUser(onSuccess: { user in
                     currentUser = user
+                    settingsViewModel.updateEmail(value: user.email)
+                    settingsViewModel.updateLastName(value: user.name)
+                    settingsViewModel.updateFirstName(value: user.name)
+                    settingsViewModel.updatePhoneNumber(value: user.phoneNumber)
+                    settingsViewModel.isSeller = user.isSeller
                 }, onFailure: { error in
                     settingsViewModel.updateIsShowAlertDialog(value: true)
                     settingsViewModel.updateDialogEntity(

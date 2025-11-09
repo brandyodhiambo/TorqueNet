@@ -22,6 +22,7 @@ class SettingsViewModel:ObservableObject{
     @Published var profileImage: UIImage? = nil
     @Published var isChangePasswordEnable: Bool = false
     @Published var isEditProfile: Bool = false
+    @Published var isSeller: Bool = false
     @Published var settingErrors = [String: String]()
     @Published var settingState:FetchState = FetchState.good
     
@@ -195,6 +196,25 @@ class SettingsViewModel:ObservableObject{
         case .failure(let error):
             settingState = .error(error.description)
             onFailure("Failed to change password: \(error.localizedDescription)")
+        }
+    }
+    
+    func editUser(
+        onSuccess: () -> Void,
+        onFailure: (String) -> Void
+    ) async {
+        settingState = .isLoading
+        
+        var result:  Result<Bool, FirebaseAuthError>
+        result = await settingsUseCase.executeEditUser(email: email, phoneNumber: phoneNumber, name: firstName+" "+lastName, isSeller:isSeller)
+    
+        switch result {
+        case .success(let userDataResult):
+            onSuccess()
+            settingState = .good
+        case .failure(let error):
+            settingState = .error(error.description)
+            onFailure("Failed to edit user: \(error.localizedDescription)")
         }
     }
     

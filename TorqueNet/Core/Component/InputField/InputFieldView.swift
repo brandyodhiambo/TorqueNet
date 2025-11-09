@@ -19,9 +19,10 @@ struct InputFieldView: View {
     var autoCapitalization: UITextAutocapitalizationType = .none
     var dividerColor: Color = Color.theme.onSurfaceColor
     var errorMessage: String = ""
-    var inputFieldStyle: InputFieldStyle = InputFieldStyle.outlined
+    var inputFieldStyle: InputFieldStyle = .outlined
     var cornerRadius: CGFloat = 12
     var height: CGFloat = 56
+    var isEditable: Bool = true
     var onTextChange: (String) -> Void
     var onSubmit: (() -> Void)? = nil
     
@@ -35,19 +36,27 @@ struct InputFieldView: View {
             }
             
             HStack(spacing: 8) {
-                TextField(placeHolder, text: $text)
-                    .font(.custom("Exo2-Medium", size: 15))
-                    .foregroundColor(foregroundColor)
-                    .keyboardType(keyboardType)
-                    .autocapitalization(autoCapitalization)
-                    .submitLabel(.done)
-                    .onChange(of: text){ newValue in
-                        onTextChange(newValue)
-                    }
-                    .onSubmit {
-                        onSubmit?()
-                    }
-                    .padding(.vertical, 6)
+                if isEditable {
+                    TextField(placeHolder, text: $text)
+                        .font(.custom("Exo2-Medium", size: 15))
+                        .foregroundColor(foregroundColor)
+                        .keyboardType(keyboardType)
+                        .autocapitalization(autoCapitalization)
+                        .submitLabel(.done)
+                        .onChange(of: text) { newValue in
+                            onTextChange(newValue)
+                        }
+                        .onSubmit {
+                            onSubmit?()
+                        }
+                        .padding(.vertical, 6)
+                } else {
+                    Text(text.isEmpty ? placeHolder : text)
+                        .font(.custom("Exo2-Medium", size: 15))
+                        .foregroundColor(text.isEmpty ? .gray : foregroundColor)
+                        .padding(.vertical, 6)
+                        .frame(maxWidth: .infinity, alignment: .init(horizontal: .leading, vertical: .center))
+                }
                 
                 if !image.isEmpty {
                     Image(image)
@@ -70,6 +79,7 @@ struct InputFieldView: View {
                 }
             )
             .cornerRadius(cornerRadius)
+            .opacity(isEditable ? 1 : 0.7) // ✅ visually indicate disabled state
             
             if inputFieldStyle == .filled {
                 Divider()
@@ -86,6 +96,7 @@ struct InputFieldView: View {
         }
     }
 }
+
 
 
 
