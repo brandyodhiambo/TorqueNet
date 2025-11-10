@@ -40,4 +40,11 @@ struct Utils {
           }
       }
     
+    func splitFullName(_ fullName: String) -> (firstName: String, lastName: String) {
+        let components = fullName.components(separatedBy: " ")
+        let first = components.first ?? ""
+        let last = components.dropFirst().joined(separator: " ")
+        return (first, last)
+    }
+    
 }

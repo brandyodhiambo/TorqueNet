@@ -24,6 +24,7 @@ class SettingsViewModel:ObservableObject{
     @Published var isEditProfile: Bool = false
     @Published var isSeller: Bool = false
     @Published var settingErrors = [String: String]()
+    @Published var editErrors = [String: String]()
     @Published var settingState:FetchState = FetchState.good
     
     let settingsUseCase:SettingsUseCase = SettingsUseCase(settingsRepository: SettingsRepositoryImpl.shared)
@@ -41,7 +42,7 @@ class SettingsViewModel:ObservableObject{
     func validateIfEditProfileIsEnabled(){
         var isFormValid = true
         
-        if !settingErrors.values.allSatisfy({ $0.isEmpty }) || firstName.isEmpty || lastName.isEmpty || email.isEmpty || phoneNumber.isEmpty{
+        if !editErrors.values.allSatisfy({ $0.isEmpty }) || firstName.isEmpty || lastName.isEmpty || email.isEmpty || phoneNumber.isEmpty{
             isFormValid = false
         }
         isEditProfile = isFormValid
@@ -54,6 +55,11 @@ class SettingsViewModel:ObservableObject{
     func updateSettingErrors(key: String, value: String) {
         settingErrors[key] = value
         validateIfChangePasswordIsEnabled()
+    }
+    
+    func updateEditErrors(key: String, value: String) {
+        editErrors[key] = value
+        validateIfEditProfileIsEnabled()
     }
     
     func updateCurrentPassword(value: String) {
@@ -71,25 +77,25 @@ class SettingsViewModel:ObservableObject{
     func updateFirstName(value: String) {
         firstName = value
         let error = ValidatorUtils.shared.validateName(name: firstName)
-        updateSettingErrors(key: "firstName", value: error)
+        updateEditErrors(key: "firstName", value: error)
     }
     
     func updateLastName(value: String) {
         lastName = value
         let error = ValidatorUtils.shared.validateName(name: lastName)
-        updateSettingErrors(key: "lastName", value: error)
+        updateEditErrors(key: "lastName", value: error)
     }
     
     func updatePhoneNumber(value: String) {
         phoneNumber = value
         let error = ValidatorUtils.shared.validatePhoneNumber(phoneNumber)
-        updateSettingErrors(key: "phoneNumber", value: error)
+        updateEditErrors(key: "phoneNumber", value: error)
     }
     
     func updateEmail(value: String) {
         email = value
         let error = ValidatorUtils.shared.validateEmail(email: email)
-        updateSettingErrors(key: "email", value:  error)
+        updateEditErrors(key: "email", value:  error)
     }
     
     func updateShowThemeSelectorDialog(value: Bool) {
@@ -137,6 +143,7 @@ class SettingsViewModel:ObservableObject{
         case .failure(let error):
             settingState = .error(error.description)
             onFailure(error.description)
+            print("DEBUG: Error fetching user: \(error)")
         }
     }
     

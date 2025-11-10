@@ -32,6 +32,7 @@ class SettingsRepositoryImpl: SettingsRepository {
             case .userNotFound:
                 return .failure(.userNotFound)
             default:
+                print("DEBUG: fetchUser Error fetching user: \(error)")
                 return .failure(.custom(error.localizedDescription))
             }
         } catch {

@@ -151,8 +151,8 @@ struct EditProfileView: View {
                 await settingsViewModel.fetchUser(onSuccess: { user in
                     currentUser = user
                     settingsViewModel.updateEmail(value: user.email)
-                    settingsViewModel.updateLastName(value: user.name)
-                    settingsViewModel.updateFirstName(value: user.name)
+                    settingsViewModel.updateLastName(value: Utils.shared.splitFullName(user.name).lastName)
+                    settingsViewModel.updateFirstName(value: Utils.shared.splitFullName(user.name).firstName)
                     settingsViewModel.updatePhoneNumber(value: user.phoneNumber)
                     settingsViewModel.isSeller = user.isSeller
                 }, onFailure: { error in

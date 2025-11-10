@@ -28,6 +28,7 @@ class AuthenticationRepositoryImpl: AuthenticationRepository {
                 "name": name,
                 "email": email.lowercased(),
                 "phoneNumber": phoneNumber,
+                "isSeller": false,
                 "createdAt": Timestamp(date: Date()),
             ]
             
