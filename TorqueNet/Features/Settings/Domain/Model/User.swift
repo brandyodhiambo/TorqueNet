@@ -16,6 +16,8 @@ struct User: Codable, Identifiable, Hashable {
     var phoneNumber: String
     var profileImageUrl: String?
     var isSeller:Bool = false
+    var cars:Int
+    var rides:Int
     @ServerTimestamp var createdAt: Date?
     
     var initials: String {
@@ -37,6 +39,8 @@ extension User {
         phoneNumber: "0712345678",
         profileImageUrl: "https://example.com/mock_profile.jpg",
         isSeller: false,
+        cars: 26,
+        rides:1,
         createdAt: Date()
     )
 }

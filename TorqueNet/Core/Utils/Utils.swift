@@ -47,4 +47,12 @@ struct Utils {
         return (first, last)
     }
     
+    func formatReadableDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+
+    
 }
