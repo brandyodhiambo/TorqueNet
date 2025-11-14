@@ -11,8 +11,7 @@ struct SettingsView: View {
     @EnvironmentObject var themesViewModel: ThemesViewModel
     @EnvironmentObject var router:Router
     @ObservedObject var settingsViewModel =  SettingsViewModel()
-    @StateObject var forgotPasswordViewModel = ForgotPasswordViewModel()
-    @State var currentUser: User?
+    @ObservedObject var forgotPasswordViewModel = ForgotPasswordViewModel()
     
     var body: some View {
         NavigationView {
@@ -23,7 +22,7 @@ struct SettingsView: View {
                         icon: "person.circle.fill",
                         iconColor: .blue,
                         title: "Account",
-                        subtitle: currentUser?.email ?? "Loading...",
+                        subtitle: settingsViewModel.currentUser?.email ?? "Loading...",
                         action: {
                             router.push(.profile)
                         }
@@ -220,7 +219,6 @@ struct SettingsView: View {
         .onAppear {
             Task{
                 await settingsViewModel.fetchUser(onSuccess: { user in
-                    currentUser = user
                 }, onFailure: { error in
                     settingsViewModel.updateIsShowAlertDialog(value: true)
                     settingsViewModel.updateDialogEntity(

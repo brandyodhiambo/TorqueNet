@@ -11,7 +11,6 @@ struct ProfileView: View {
     @EnvironmentObject var router: Router
     @ObservedObject var settingsViewModel =  SettingsViewModel()
     
-    @State var currentUser: User?
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -63,49 +62,14 @@ struct ProfileView: View {
             onLeadingTap: { router.pop() },
             trailingMenu: {}
         )
+        .toastView(toast: $settingsViewModel.toast)
         .onAppear {
             Task{
                 await settingsViewModel.fetchUser(onSuccess: { user in
-                    currentUser = user
                 }, onFailure: { error in
-                    settingsViewModel.updateIsShowAlertDialog(value: true)
-                    settingsViewModel.updateDialogEntity(
-                        value: DialogEntity(
-                            title: "Unable to fetch user. Please try again later.",
-                            message: error,
-                            icon: "",
-                            confirmButtonText: "",
-                            dismissButtonText: "Okay",
-                            onConfirm: {
-                                settingsViewModel.updateIsShowAlertDialog(value: false)
-                            },
-                            onDismiss: {
-                                settingsViewModel.updateIsShowAlertDialog(value: false)
-                            }
-                        )
-                    )
+                    settingsViewModel.toast = Toast(style: .error, message: "Unable to fetch user \(error)")
                 })
             }
-        }
-        .overlay {
-            CustomAlertDialogView(
-                isPresented: $settingsViewModel.isShowAlertDialog,
-                title: settingsViewModel.dialogEntity.title,
-                text: settingsViewModel.dialogEntity.message,
-                confirmButtonText: settingsViewModel.dialogEntity.confirmButtonText,
-                dismissButtonText: settingsViewModel.dialogEntity.dismissButtonText,
-                imageName: settingsViewModel.dialogEntity.icon,
-                onDismiss: {
-                    if let onDismiss = settingsViewModel.dialogEntity.onDismiss {
-                        onDismiss()
-                    }
-                },
-                onConfirmation: {
-                    if let onConfirm = settingsViewModel.dialogEntity.onConfirm {
-                        onConfirm()
-                    }
-                }
-            )
         }
         .sheet(isPresented: $settingsViewModel.showImagePicker) {
             ImagePicker(
@@ -129,7 +93,7 @@ struct ProfileView: View {
                 
                 ProfileImageView(
                     localImage: settingsViewModel.profileImage,
-                    remoteImageUrl: currentUser?.profileImageUrl
+                    remoteImageUrl: settingsViewModel.currentUser?.profileImageUrl
                 )
                 
                 Circle()
@@ -140,7 +104,7 @@ struct ProfileView: View {
             .padding(.top, -120)
             
             VStack(spacing: 6) {
-                Text(currentUser?.name ?? "Loading...")
+                Text(settingsViewModel.currentUser?.name ?? "Loading...")
                     .font(.custom("Exo2-Bold", size: 22))
                     .foregroundColor(.theme.onSurfaceColor)
             }
@@ -159,19 +123,20 @@ struct ProfileView: View {
             VStack(spacing: 12) {
                 ProfileDetailItem(
                     label: "Email",
-                    value: currentUser?.email ?? "Loading...",
+                    value: settingsViewModel.currentUser?.email ?? "Loading...",
                     icon: "envelope.fill"
                 )
                 
                 ProfileDetailItem(
                     label: "Phone",
-                    value: currentUser?.phoneNumber ?? "Loading...",
+                    value: settingsViewModel.currentUser?.phoneNumber ?? "Loading...",
                     icon: "phone.fill"
                 )
                 
                 
                 ProfileDetailItem(
                     label: "Member Since",
+                    value: settingsViewModel.currentUser?.createdAt?.description ?? "Loading...",
                     value: Utils.shared.formatReadableDate(currentUser?.createdAt ?? Date()),
                     icon: "calendar.circle.fill"
                 )
