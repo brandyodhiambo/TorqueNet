@@ -10,14 +10,14 @@ import SwiftUI
 struct EditProfileView: View {
     @EnvironmentObject var router: Router
     @ObservedObject var settingsViewModel = SettingsViewModel()
-    @State var currentUser: User? = nil
+   
     
     var body: some View {
         ScrollView(showsIndicators: false){
             VStack(spacing: 20){
                 ProfileImageView(
                     localImage: settingsViewModel.profileImage,
-                    remoteImageUrl: currentUser?.profileImageUrl,
+                    remoteImageUrl: settingsViewModel.currentUser?.profileImageUrl,
                     size: 150
                 )
                 
@@ -94,41 +94,9 @@ struct EditProfileView: View {
                         Task{
                             await settingsViewModel.editUser(
                                 onSuccess: {
-                                    settingsViewModel.updateIsShowAlertDialog(value: true)
-                                    settingsViewModel.updateDialogEntity(
-                                        value: DialogEntity(
-                                            title: "Edit Details Successfull",
-                                            message: "You have successfully edited your profile.",
-                                            icon: "",
-                                            confirmButtonText: "Proceed",
-                                            dismissButtonText: "",
-                                            onConfirm: {
-                                                settingsViewModel.updateIsShowAlertDialog(value: false)
-                                                router.pop()
-                                            },
-                                            onDismiss: {
-                                                settingsViewModel.updateIsShowAlertDialog(value: false)
-                                            }
-                                        )
-                                    )
-                                    
+                                    settingsViewModel.toast = Toast(style: .success, message: "You have successfully edited your profile.")
                                 }, onFailure:{error in
-                                    settingsViewModel.updateIsShowAlertDialog(value: true)
-                                    settingsViewModel.updateDialogEntity(
-                                        value: DialogEntity(
-                                            title: "Edit Profile Failed.",
-                                            message: error,
-                                            icon: "",
-                                            confirmButtonText: "",
-                                            dismissButtonText: "Okay",
-                                            onConfirm: {
-                                                settingsViewModel.updateIsShowAlertDialog(value: false)
-                                            },
-                                            onDismiss: {
-                                                settingsViewModel.updateIsShowAlertDialog(value: false)
-                                            }
-                                        )
-                                    )
+                                    settingsViewModel.toast = Toast(style: .error, message: error)
                                 }
                             )
                         }
@@ -146,56 +114,20 @@ struct EditProfileView: View {
             onLeadingTap: { router.pop() },
             trailingMenu: {}
         )
+        .toastView(toast: $settingsViewModel.toast)
         .onAppear {
             Task{
                 await settingsViewModel.fetchUser(onSuccess: { user in
-                    currentUser = user
                     settingsViewModel.updateEmail(value: user.email)
                     settingsViewModel.updateLastName(value: Utils.shared.splitFullName(user.name).lastName)
                     settingsViewModel.updateFirstName(value: Utils.shared.splitFullName(user.name).firstName)
                     settingsViewModel.updatePhoneNumber(value: user.phoneNumber)
                     settingsViewModel.isSeller = user.isSeller
                 }, onFailure: { error in
-                    settingsViewModel.updateIsShowAlertDialog(value: true)
-                    settingsViewModel.updateDialogEntity(
-                        value: DialogEntity(
-                            title: "Unable to fetch user. Please try again later.",
-                            message: error,
-                            icon: "",
-                            confirmButtonText: "",
-                            dismissButtonText: "Okay",
-                            onConfirm: {
-                                settingsViewModel.updateIsShowAlertDialog(value: false)
-                            },
-                            onDismiss: {
-                                settingsViewModel.updateIsShowAlertDialog(value: false)
-                            }
-                        )
-                    )
+                    settingsViewModel.toast = Toast(style: .error, message: error)
                 })
             }
         }
-        .overlay {
-            CustomAlertDialogView(
-                isPresented: $settingsViewModel.isShowAlertDialog,
-                title: settingsViewModel.dialogEntity.title,
-                text: settingsViewModel.dialogEntity.message,
-                confirmButtonText: settingsViewModel.dialogEntity.confirmButtonText,
-                dismissButtonText: settingsViewModel.dialogEntity.dismissButtonText,
-                imageName: settingsViewModel.dialogEntity.icon,
-                onDismiss: {
-                    if let onDismiss = settingsViewModel.dialogEntity.onDismiss {
-                        onDismiss()
-                    }
-                },
-                onConfirmation: {
-                    if let onConfirm = settingsViewModel.dialogEntity.onConfirm {
-                        onConfirm()
-                    }
-                }
-            )
-        }
-
     }
 }
 

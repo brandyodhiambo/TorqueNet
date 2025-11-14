@@ -12,6 +12,7 @@ struct LiveAuctionsView: View {
     @State private var selectedCategory = "All"
     @State private var liveAuctions: [LiveAuction] = sampleLiveAuctions
     @EnvironmentObject var router: Router
+    @State var toast: Toast? = nil
     
     let categories = ["All", "Art", "Electronics", "Collectibles", "Jewelry", "Vehicles"]
     
@@ -62,9 +63,11 @@ struct LiveAuctionsView: View {
             trailingIcon: "arrow.clockwise",
             onTrailingTap: {
                 refreshAuctions()
+                //toast = Toast(style: .success, message: "Hurray! Auctions refreshed!")
             },
             trailingMenu: {}
             )
+        .toastView(toast: $toast)
     }
     
     private var searchBar: some View {

@@ -71,22 +71,7 @@ struct ChangePasswordView: View {
                                     )
                                     
                                 }, onFailure:{error in
-                                    settingsViewModel.updateIsShowAlertDialog(value: true)
-                                    settingsViewModel.updateDialogEntity(
-                                        value: DialogEntity(
-                                            title: "Change Password Request Failed.",
-                                            message: error,
-                                            icon: "",
-                                            confirmButtonText: "",
-                                            dismissButtonText: "Okay",
-                                            onConfirm: {
-                                                settingsViewModel.updateIsShowAlertDialog(value: false)
-                                            },
-                                            onDismiss: {
-                                                settingsViewModel.updateIsShowAlertDialog(value: false)
-                                            }
-                                        )
-                                    )
+                                    settingsViewModel.toast = Toast(style: .error, message: error.localizedCaseInsensitiveContains("401") ? "Invalid current password" : "Failed to change password")
                                 }
                             )
                         }
@@ -105,6 +90,7 @@ struct ChangePasswordView: View {
             onLeadingTap: { router.pop() },
             trailingMenu: {}
         )
+        .toastView(toast: $settingsViewModel.toast)
         .overlay {
             CustomAlertDialogView(
                 isPresented: $settingsViewModel.isShowAlertDialog,

@@ -23,6 +23,8 @@ class SettingsViewModel:ObservableObject{
     @Published var isChangePasswordEnable: Bool = false
     @Published var isEditProfile: Bool = false
     @Published var isSeller: Bool = false
+    @Published var toast: Toast? = nil
+    @Published var currentUser: User? = nil
     @Published var settingErrors = [String: String]()
     @Published var editErrors = [String: String]()
     @Published var settingState:FetchState = FetchState.good
@@ -139,6 +141,7 @@ class SettingsViewModel:ObservableObject{
         switch result {
         case .success(let userDataResult):
             onSuccess(userDataResult)
+            currentUser = userDataResult
             settingState = .good
         case .failure(let error):
             settingState = .error(error.description)
