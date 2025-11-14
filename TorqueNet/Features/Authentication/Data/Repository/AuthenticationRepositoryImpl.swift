@@ -29,6 +29,8 @@ class AuthenticationRepositoryImpl: AuthenticationRepository {
                 "email": email.lowercased(),
                 "phoneNumber": phoneNumber,
                 "isSeller": false,
+                "cars": 0,
+                "rides": 0,
                 "createdAt": Timestamp(date: Date()),
             ]
             
