@@ -8,54 +8,8 @@
 import SwiftUI
 
 struct AuctionUploadView: View {
-    @ObservedObject var uploadAuctionViewModel = UploadAuctionViewModel()
-    
-    // Key Specs
-    @State private var mileage = ""
-    @State private var year = ""
-    @State private var engine = ""
-    @State private var transmission = ""
-    
-    // Vehicle Details
-    @State private var make = ""
-    @State private var model = ""
-    @State private var drivetrain = ""
-    @State private var exteriorColor = ""
-    @State private var interiorColor = ""
-    @State private var vin = ""
-    @State private var location = ""
-    @State private var seller = ""
-    
-    // Features
-    @State private var performanceFeatures: [String] = []
-    @State private var technologyFeatures: [String] = []
-    @State private var comfortFeatures: [String] = []
-    @State private var newFeature = ""
-    @State private var selectedFeatureCategory = 0
     @EnvironmentObject var router: Router
-    
-    // History
-    @State private var historyEvents: [HistoryEventData] = []
-    
-    // Inspection
-    @State private var exteriorRating = 9.0
-    @State private var exteriorDetails = ""
-    @State private var interiorRating = 9.0
-    @State private var interiorDetailsText = ""
-    @State private var engineRating = 9.0
-    @State private var engineDetails = ""
-    @State private var transmissionRating = 9.0
-    @State private var transmissionDetails = ""
-    @State private var electronicsRating = 9.0
-    @State private var electronicsDetails = ""
-    
-    private let steps = [
-        "Images & Basic Info",
-        "Specifications",
-        "Features",
-        "History & Inspection",
-        "Review & Submit"
-    ]
+    @ObservedObject var uploadAuctionViewModel = UploadAuctionViewModel()
     
     var body: some View {
             ScrollView(.vertical, showsIndicators: false) {
@@ -120,19 +74,18 @@ struct AuctionUploadView: View {
             }
     }
     
-    // MARK: - Progress Header
     private var progressHeader: some View {
         VStack(spacing: 16) {
             // Progress Indicator
             VStack(spacing: 8) {
                 HStack(spacing: 4) {
-                    ForEach(0..<steps.count, id: \.self) { index in
+                    ForEach(0..<uploadAuctionViewModel.steps.count, id: \.self) { index in
                         HStack(spacing: 0) {
                             Circle()
                                 .fill(index <= uploadAuctionViewModel.currentStep ? Color.theme.primaryColor : Color.theme.onSurfaceColor.opacity(0.3))
                                 .frame(width: 8, height: 8)
                             
-                            if index < steps.count - 1 {
+                            if index < uploadAuctionViewModel.steps.count - 1 {
                                 Rectangle()
                                     .fill(index < uploadAuctionViewModel.currentStep ? Color.theme.primaryColor : Color.theme.onSurfaceColor.opacity(0.3))
                                     .frame(height: 2)
@@ -142,7 +95,7 @@ struct AuctionUploadView: View {
                 }
                 
                 
-                Text("\(uploadAuctionViewModel.currentStep + 1) of \(steps.count): \(steps[uploadAuctionViewModel.currentStep])")
+                Text("\(uploadAuctionViewModel.currentStep + 1) of \(uploadAuctionViewModel.steps.count): \(uploadAuctionViewModel.steps[uploadAuctionViewModel.currentStep])")
                     .font(.custom("Exo2-Regular", size: 14))
                     .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
             }
@@ -282,7 +235,6 @@ struct AuctionUploadView: View {
         }
     }
     
-    // MARK: - Step 2: Specifications
     private var specificationsStep: some View {
         VStack(alignment: .leading, spacing: 24) {
             SectionHeader(title: "Key Specifications", subtitle: "Core vehicle specifications")
@@ -292,23 +244,27 @@ struct AuctionUploadView: View {
                     InputFieldView(
                         description: "Mileage",
                         placeHolder: "12,450",
-                        text: $mileage,
+                        text: $uploadAuctionViewModel.mileage,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
                         inputFieldStyle: .outlined,
-                        onTextChange: {text in}
+                        onTextChange: {text in
+                            uploadAuctionViewModel.updateMileage(value: text)
+                        }
                     )
                     
                     InputFieldView(
                         description: "Year",
                         placeHolder: "2025",
-                        text: $year,
+                        text: $uploadAuctionViewModel.year,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
                         inputFieldStyle: .outlined,
-                        onTextChange: {text in}
+                        onTextChange: {text in
+                            uploadAuctionViewModel.updateYear(value: text)
+                        }
                     )
                 }
                 
@@ -316,23 +272,27 @@ struct AuctionUploadView: View {
                     InputFieldView(
                         description: "Engine",
                         placeHolder: "4.4L Twin-Turbo V8",
-                        text: $engine,
+                        text: $uploadAuctionViewModel.engine,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
                         inputFieldStyle: .outlined,
-                        onTextChange: {text in}
+                        onTextChange: {text in
+                            uploadAuctionViewModel.updateYear(value: text)
+                        }
                     )
                     
                     InputFieldView(
                         description: "Transformation",
                         placeHolder: "8-Speed Automatic",
-                        text: $transmission,
+                        text: $uploadAuctionViewModel.transmission,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
                         inputFieldStyle: .outlined,
-                        onTextChange: {text in}
+                        onTextChange: {text in
+                            uploadAuctionViewModel.updateTransmission(value: text)
+                        }
                     )
                 }
             }
@@ -344,35 +304,41 @@ struct AuctionUploadView: View {
                     InputFieldView(
                         description: "Make",
                         placeHolder: "BMW",
-                        text: $make,
+                        text: $uploadAuctionViewModel.make,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
                         inputFieldStyle: .outlined,
-                        onTextChange: {text in}
+                        onTextChange: {text in
+                            uploadAuctionViewModel.updateMake(value: text)
+                        }
                     )
                     
                     InputFieldView(
                         description: "Model",
                         placeHolder: "X5 M Competition",
-                        text: $model,
+                        text: $uploadAuctionViewModel.model,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
                         inputFieldStyle: .outlined,
-                        onTextChange: {text in}
+                        onTextChange: {text in
+                            uploadAuctionViewModel.updateModel(value: text)
+                        }
                     )
                 }
                 
                 InputFieldView(
                     description: "Drivetrain",
                     placeHolder: "All-Wheel Drive",
-                    text: $drivetrain,
+                    text: $uploadAuctionViewModel.drivetrain,
                     foregroundColor: .theme.onSurfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                     keyboardType: .default,
                     inputFieldStyle: .outlined,
-                    onTextChange: {text in}
+                    onTextChange: {text in
+                        uploadAuctionViewModel.updateDriveTrain(value: text)
+                    }
                 )
                 
                 
@@ -380,35 +346,41 @@ struct AuctionUploadView: View {
                     InputFieldView(
                         description: "Exterior Color",
                         placeHolder: "Storm Bay Metallic",
-                        text: $exteriorColor,
+                        text: $uploadAuctionViewModel.exteriorColor,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
                         inputFieldStyle: .outlined,
-                        onTextChange: {text in}
+                        onTextChange: {text in
+                            uploadAuctionViewModel.updateExteriorColor(value: text)
+                        }
                     )
                     
                     InputFieldView(
                         description: "Interior Color",
                         placeHolder: "Black Merino Leather",
-                        text: $interiorColor,
+                        text: $uploadAuctionViewModel.interiorColor,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
                         inputFieldStyle: .outlined,
-                        onTextChange: {text in}
+                        onTextChange: {text in
+                            uploadAuctionViewModel.updateInteriorColor(value: text)
+                        }
                     )
                 }
                 
                 InputFieldView(
                     description: "VIN",
                     placeHolder: "5UXCR6C0XP9D12345",
-                    text: $vin,
+                    text: $uploadAuctionViewModel.vin,
                     foregroundColor: .theme.onSurfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                     keyboardType: .default,
                     inputFieldStyle: .outlined,
-                    onTextChange: {text in}
+                    onTextChange: {text in
+                        uploadAuctionViewModel.updateVin(value: text)
+                    }
                 )
                 
                 
@@ -416,23 +388,27 @@ struct AuctionUploadView: View {
                     InputFieldView(
                         description: "Location",
                         placeHolder: "Los Angeles, CA",
-                        text: $location,
+                        text: $uploadAuctionViewModel.location,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
                         inputFieldStyle: .outlined,
-                        onTextChange: {text in}
+                        onTextChange: {text in
+                            uploadAuctionViewModel.updateLocation(value: text)
+                        }
                     )
                     
                     InputFieldView(
                         description: "Seller",
                         placeHolder: "Premium Auto Gallery",
-                        text: $seller,
+                        text: $uploadAuctionViewModel.seller,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
                         inputFieldStyle: .outlined,
-                        onTextChange: {text in}
+                        onTextChange: {text in
+                            uploadAuctionViewModel.updateSeller(value: text)
+                        }
                     )
                 }
             }
@@ -444,7 +420,7 @@ struct AuctionUploadView: View {
             SectionHeader(title: "Vehicle Features", subtitle: "Add features by category")
             
             // Feature Category Picker
-            Picker("Category", selection: $selectedFeatureCategory) {
+            Picker("Category", selection: $uploadAuctionViewModel.selectedFeatureCategory) {
                 Text("Performance").tag(0)
                 Text("Technology").tag(1)
                 Text("Comfort").tag(2)
@@ -458,7 +434,7 @@ struct AuctionUploadView: View {
             
             // Add Feature Input
             HStack {
-                TextField("Add a feature...", text: $newFeature)
+                TextField("Add a feature...", text: $uploadAuctionViewModel.newFeature)
                     .font(.custom("Exo2-Regular", size: 16))
                     .padding()
                     .background(
@@ -466,38 +442,37 @@ struct AuctionUploadView: View {
                             .fill(.ultraThinMaterial)
                     )
                 
-                Button(action: addFeature) {
+                Button(action: uploadAuctionViewModel.addFeature) {
                     Image(systemName: "plus.circle.fill")
                         .font(.system(size: 24))
                         .foregroundColor(.theme.primaryColor)
                 }
-                .disabled(newFeature.isEmpty)
+                .disabled(uploadAuctionViewModel.newFeature.isEmpty)
             }
             
             // Features Display
             VStack(alignment: .leading, spacing: 16) {
-                if !performanceFeatures.isEmpty {
-                    FeatureGroupEditor(title: "Performance", features: $performanceFeatures)
+                if !uploadAuctionViewModel.performanceFeatures.isEmpty {
+                    FeatureGroupEditor(title: "Performance", features: $uploadAuctionViewModel.performanceFeatures)
                 }
                 
-                if !technologyFeatures.isEmpty {
-                    FeatureGroupEditor(title: "Technology", features: $technologyFeatures)
+                if !uploadAuctionViewModel.technologyFeatures.isEmpty {
+                    FeatureGroupEditor(title: "Technology", features: $uploadAuctionViewModel.technologyFeatures)
                 }
                 
-                if !comfortFeatures.isEmpty {
-                    FeatureGroupEditor(title: "Comfort & Convenience", features: $comfortFeatures)
+                if !uploadAuctionViewModel.comfortFeatures.isEmpty {
+                    FeatureGroupEditor(title: "Comfort & Convenience", features: $uploadAuctionViewModel.comfortFeatures)
                 }
             }
         }
     }
     
-    // MARK: - Step 4: History & Inspection
     private var historyAndInspectionStep: some View {
         VStack(alignment: .leading, spacing: 24) {
             SectionHeader(title: "Vehicle History", subtitle: "Add important history events")
             
             Button(action: {
-                historyEvents.append(HistoryEventData(date: "", event: "", details: ""))
+                uploadAuctionViewModel.historyEvents.append(HistoryEventData(date: "", event: "", details: ""))
             }) {
                 HStack {
                     Image(systemName: "plus.circle")
@@ -512,25 +487,24 @@ struct AuctionUploadView: View {
                 )
             }
             
-            ForEach(historyEvents.indices, id: \.self) { index in
-                HistoryEventEditor(event: $historyEvents[index]) {
-                    historyEvents.remove(at: index)
+            ForEach(uploadAuctionViewModel.historyEvents.indices, id: \.self) { index in
+                HistoryEventEditor(event: $uploadAuctionViewModel.historyEvents[index]) {
+                    uploadAuctionViewModel.historyEvents.remove(at: index)
                 }
             }
             
             SectionHeader(title: "Inspection Report", subtitle: "Rate each category from 1-10")
             
             VStack(spacing: 16) {
-                InspectionRatingEditor(title: "Exterior", rating: $exteriorRating, details: $exteriorDetails)
-                InspectionRatingEditor(title: "Interior", rating: $interiorRating, details: $interiorDetailsText)
-                InspectionRatingEditor(title: "Engine", rating: $engineRating, details: $engineDetails)
-                InspectionRatingEditor(title: "Transmission", rating: $transmissionRating, details: $transmissionDetails)
-                InspectionRatingEditor(title: "Electronics", rating: $electronicsRating, details: $electronicsDetails)
+                InspectionRatingEditor(title: "Exterior", rating: $uploadAuctionViewModel.exteriorRating, details: $uploadAuctionViewModel.exteriorDetails)
+                InspectionRatingEditor(title: "Interior", rating: $uploadAuctionViewModel.interiorRating, details: $uploadAuctionViewModel.interiorDetailsText)
+                InspectionRatingEditor(title: "Engine", rating: $uploadAuctionViewModel.engineRating, details: $uploadAuctionViewModel.engineDetails)
+                InspectionRatingEditor(title: "Transmission", rating: $uploadAuctionViewModel.transmissionRating, details: $uploadAuctionViewModel.transmissionDetails)
+                InspectionRatingEditor(title: "Electronics", rating: $uploadAuctionViewModel.electronicsRating, details: $uploadAuctionViewModel.electronicsDetails)
             }
         }
     }
     
-    // MARK: - Step 5: Review
     private var reviewStep: some View {
         VStack(alignment: .leading, spacing: 24) {
             SectionHeader(title: "Review Your Auction", subtitle: "Verify all information before submitting")
@@ -551,9 +525,9 @@ struct AuctionUploadView: View {
                 
                 ReviewCard(title: "Specifications") {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("\(year) \(make) \(model)")
+                        Text("\(uploadAuctionViewModel.year) \(uploadAuctionViewModel.make) \(uploadAuctionViewModel.model)")
                             .font(.custom("Exo2-Medium", size: 14))
-                        Text("\(mileage) miles • \(engine)")
+                        Text("\(uploadAuctionViewModel.mileage) miles • \(uploadAuctionViewModel.engine)")
                             .font(.custom("Exo2-Regular", size: 12))
                             .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
                     }
@@ -567,9 +541,9 @@ struct AuctionUploadView: View {
                 
                 ReviewCard(title: "Features") {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("\(performanceFeatures.count) Performance features")
-                        Text("\(technologyFeatures.count) Technology features")
-                        Text("\(comfortFeatures.count) Comfort features")
+                        Text("\(uploadAuctionViewModel.performanceFeatures.count) Performance features")
+                        Text("\(uploadAuctionViewModel.technologyFeatures.count) Technology features")
+                        Text("\(uploadAuctionViewModel.comfortFeatures.count) Comfort features")
                     }
                     .font(.custom("Exo2-Regular", size: 14))
                     .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
@@ -578,7 +552,6 @@ struct AuctionUploadView: View {
         }
     }
     
-    // MARK: - Navigation Buttons
     private var navigationButtons: some View {
         HStack(spacing: 16) {
             if uploadAuctionViewModel.currentStep > 0 {
@@ -602,16 +575,16 @@ struct AuctionUploadView: View {
             Spacer()
             
             Button(action: {
-                if uploadAuctionViewModel.currentStep < steps.count - 1 {
+                if uploadAuctionViewModel.currentStep < uploadAuctionViewModel.steps.count - 1 {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         uploadAuctionViewModel.currentStep += 1
                     }
                 } else {
                     // Submit auction
-                    submitAuction()
+                    uploadAuctionViewModel.submitAuction()
                 }
             }) {
-                Text(uploadAuctionViewModel.currentStep == steps.count - 1 ? "Submit Auction" : "Next")
+                Text(uploadAuctionViewModel.currentStep == uploadAuctionViewModel.steps.count - 1 ? "Submit Auction" : "Next")
                     .font(.custom("Exo2-SemiBold", size: 16))
                     .foregroundColor(.white)
                     .padding(.horizontal, 32)
@@ -629,28 +602,6 @@ struct AuctionUploadView: View {
         .background(.ultraThinMaterial)
     }
     
-    // MARK: - Helper Functions    
-    private func addFeature() {
-        guard !newFeature.isEmpty else { return }
-        
-        switch selectedFeatureCategory {
-        case 0:
-            performanceFeatures.append(newFeature)
-        case 1:
-            technologyFeatures.append(newFeature)
-        case 2:
-            comfortFeatures.append(newFeature)
-        default:
-            break
-        }
-        
-        newFeature = ""
-    }
-    
-    private func submitAuction() {
-        // Handle auction submission
-        print("Auction submitted successfully!")
-    }
 }
 
 
@@ -710,12 +661,6 @@ struct FeatureGroupEditor: View {
     }
 }
 
-struct HistoryEventData: Identifiable {
-    let id = UUID()
-    var date: String
-    var event: String
-    var details: String
-}
 
 struct HistoryEventEditor: View {
     @Binding var event: HistoryEventData
