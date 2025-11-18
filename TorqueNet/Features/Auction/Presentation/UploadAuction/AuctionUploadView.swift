@@ -278,7 +278,7 @@ struct AuctionUploadView: View {
                         keyboardType: .default,
                         inputFieldStyle: .outlined,
                         onTextChange: {text in
-                            uploadAuctionViewModel.updateYear(value: text)
+                            uploadAuctionViewModel.updateEngine(value: text)
                         }
                     )
                     
@@ -591,7 +591,7 @@ struct AuctionUploadView: View {
                     .padding(.vertical, 12)
                     .background(
                         RoundedRectangle(cornerRadius: 25)
-                            .fill(!uploadAuctionViewModel.canProceed ? Color.theme.primaryColor: Color.theme.onSurfaceColor.opacity(0.7) )
+                            .fill(uploadAuctionViewModel.canProceed ? Color.theme.primaryColor: Color.theme.onSurfaceColor.opacity(0.7) )
                             .shadow(color: .theme.primaryColor.opacity(0.3), radius: 8, x: 0, y: 4)
                     )
             }

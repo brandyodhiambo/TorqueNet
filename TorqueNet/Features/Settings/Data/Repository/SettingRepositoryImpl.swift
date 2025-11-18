@@ -14,7 +14,6 @@ import UIKit
 
 class SettingsRepositoryImpl: SettingsRepository {
     static let shared = SettingsRepositoryImpl()
-    let db = Firestore.firestore()
     
     func fetchUser() async -> Result<User, FirebaseAuthError> {
         do {
@@ -50,8 +49,7 @@ class SettingsRepositoryImpl: SettingsRepository {
                 return .failure(.custom("Failed to compress image"))
             }
             
-            let storageRef = Storage.storage().reference()
-            let profileImageRef = storageRef.child("profile_images/\(uid).jpg")
+            let profileImageRef = FirestoreConstants.StorageRef.child("profile_images/\(uid).jpg")
             
 
             let metadata = StorageMetadata()
