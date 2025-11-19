@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AuctionUploadView: View {
     @EnvironmentObject var router: Router
-    @ObservedObject var uploadAuctionViewModel = UploadAuctionViewModel()
+    @ObservedObject var uploadAuctionViewModel = AuctionUploadViewModel()
     
     var body: some View {
             ScrollView(.vertical, showsIndicators: false) {
@@ -44,6 +44,7 @@ struct AuctionUploadView: View {
                 }
               
             }
+            .toastView(toast: $uploadAuctionViewModel.toast)
             .background(Color.theme.surfaceColor)
             .customTopAppBar(
                 title: "Upload Auction",
@@ -54,7 +55,7 @@ struct AuctionUploadView: View {
                 } else {
                     router.pop()
                 }},
-                trailingIcon: "bookmark.fill",
+                trailingIcon: "bookmark",
                 onTrailingTap: {
                     //save
                 },
@@ -62,6 +63,7 @@ struct AuctionUploadView: View {
                   
                 }
             )
+            .fullScreenProgressOverlay(isShowing: uploadAuctionViewModel.auctionState == .isLoading )
             .sheet(isPresented: $uploadAuctionViewModel.showingImagePicker) {
                 ImagePicker(
                     image: .constant(nil),
@@ -157,7 +159,7 @@ struct AuctionUploadView: View {
                     text: $uploadAuctionViewModel.lotNumber,
                     foregroundColor: .theme.onSurfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
-                    keyboardType: .default,
+                    keyboardType: .numberPad,
                     inputFieldStyle: .outlined,
                     onTextChange: {text in
                         uploadAuctionViewModel.updateLotNumber(value: text)
@@ -192,7 +194,7 @@ struct AuctionUploadView: View {
                     text: $uploadAuctionViewModel.startingBid,
                     foregroundColor: .theme.surfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
-                    keyboardType: .default,
+                    keyboardType: .numberPad,
                     inputFieldStyle: .outlined,
                     onTextChange: {text in
                         uploadAuctionViewModel.updateStartingBid(value: text)
@@ -472,7 +474,8 @@ struct AuctionUploadView: View {
             SectionHeader(title: "Vehicle History", subtitle: "Add important history events")
             
             Button(action: {
-                uploadAuctionViewModel.historyEvents.append(HistoryEventData(date: "", event: "", details: ""))
+                //MARK: PASS date, events, details
+                uploadAuctionViewModel.addHistoryEvent()
             }) {
                 HStack {
                     Image(systemName: "plus.circle")
@@ -489,7 +492,7 @@ struct AuctionUploadView: View {
             
             ForEach(uploadAuctionViewModel.historyEvents.indices, id: \.self) { index in
                 HistoryEventEditor(event: $uploadAuctionViewModel.historyEvents[index]) {
-                    uploadAuctionViewModel.historyEvents.remove(at: index)
+                    uploadAuctionViewModel.removeHistoryEvent(at: index)
                 }
             }
             
@@ -580,8 +583,16 @@ struct AuctionUploadView: View {
                         uploadAuctionViewModel.currentStep += 1
                     }
                 } else {
-                    // Submit auction
-                    uploadAuctionViewModel.submitAuction()
+                    Task{
+                        await uploadAuctionViewModel.submitAuction(
+                            onSuccess: {
+                                uploadAuctionViewModel.toast = Toast(style: .success, message: "Auction Uploaded successfully")
+                            },
+                            onFailure: {error in
+                                uploadAuctionViewModel.toast = Toast(style: .error, message: error)
+                            }
+                        )
+                    }
                 }
             }) {
                 Text(uploadAuctionViewModel.currentStep == uploadAuctionViewModel.steps.count - 1 ? "Submit Auction" : "Next")

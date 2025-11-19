@@ -12,6 +12,7 @@ import FirebaseStorage
 import Combine
 
 class AuctionUploadRepositoryImpl: AuctionUploadRepository {
+    static let shared = AuctionUploadRepositoryImpl()
     private let storageBasePath = "auction_images"
     
 
@@ -67,7 +68,7 @@ class AuctionUploadRepositoryImpl: AuctionUploadRepository {
         for urlString in imageUrls {
             guard let url = URL(string: urlString) else { continue }
             
-            let storageRef = FirestoreConstants.Storage.reference(forURL: urlString)
+            let storageRef = FirestoreConstants.FirebaseStorage.reference(forURL: urlString)
             try? await storageRef.delete()
         }
     }

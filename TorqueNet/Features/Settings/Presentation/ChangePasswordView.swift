@@ -111,6 +111,7 @@ struct ChangePasswordView: View {
                 }
             )
         }
+        .fullScreenProgressOverlay(isShowing: settingsViewModel.settingState == .isLoading )
     }
 }
 

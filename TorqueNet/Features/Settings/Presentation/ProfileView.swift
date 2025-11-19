@@ -84,6 +84,7 @@ struct ProfileView: View {
                 }
             )
         }
+        .fullScreenProgressOverlay(isShowing: settingsViewModel.settingState == .isLoading )
     }
     
     

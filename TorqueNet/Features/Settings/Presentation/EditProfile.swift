@@ -128,6 +128,7 @@ struct EditProfileView: View {
                 })
             }
         }
+        .fullScreenProgressOverlay(isShowing: settingsViewModel.settingState == .isLoading )
     }
 }
 
