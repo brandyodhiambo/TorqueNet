@@ -15,61 +15,79 @@ class AuctionUploadRepositoryImpl: AuctionUploadRepository {
     static let shared = AuctionUploadRepositoryImpl()
     private let storageBasePath = "auction_images"
     
-
-    func uploadImages(_ images: [UIImage], auctionId: String) async throws -> [String] {
+    
+    func uploadImages(_ images: [UIImage], auctionId: String) async -> Result<[String], AuctionUploadError> {
         var uploadedUrls: [String] = []
-        
+
         for (index, image) in images.enumerated() {
+
             guard let imageData = image.jpegData(compressionQuality: 0.8) else {
-                throw AuctionUploadError.imageCompressionFailed
+                return .failure(.imageCompressionFailed)
             }
-            
+
             let imageName = "\(auctionId)_\(index)_\(UUID().uuidString).jpg"
             let storageRef = FirestoreConstants.StorageRef.child("\(storageBasePath)/\(imageName)")
-            
+
             let metadata = StorageMetadata()
             metadata.contentType = "image/jpeg"
-            
+
             do {
                 _ = try await storageRef.putDataAsync(imageData, metadata: metadata)
                 let downloadUrl = try await storageRef.downloadURL()
                 uploadedUrls.append(downloadUrl.absoluteString)
+
             } catch {
                 if !uploadedUrls.isEmpty {
-                    try? await deleteAuctionImages(uploadedUrls)
+                    await deleteImagesOnFailure(urls: uploadedUrls)
                 }
-                throw AuctionUploadError.imageUploadFailed(error.localizedDescription)
+                return .failure(.imageUploadFailed(error.localizedDescription))
             }
         }
-        
-        return uploadedUrls
+
+        return .success(uploadedUrls)
     }
     
-    func createAuction(_ auction: AuctionUploadModel) async throws -> String {
+    private func deleteImagesOnFailure(urls: [String]) async {
+        for url in urls {
+            if let ref = try? Storage.storage().reference(forURL: url) {
+                try? await ref.delete()
+            }
+        }
+    }
+
+
+    func createAuction(_ auction: AuctionUploadModel) async -> Result<String, AuctionUploadError> {
         do {
             let docRef = FirestoreConstants.AuctionsCollection.document(auction.id)
             try docRef.setData(from: auction)
-            return auction.id
+            return .success(auction.id)
         } catch {
-            throw AuctionUploadError.firestoreWriteFailed(error.localizedDescription)
+            return .failure(.firestoreWriteFailed(error.localizedDescription))
         }
     }
-    
-    func updateAuction(_ auction: AuctionUploadModel) async throws {
+
+    func updateAuction(_ auction: AuctionUploadModel) async -> Result<Bool, AuctionUploadError> {
         do {
             let docRef = FirestoreConstants.AuctionsCollection.document(auction.id)
-            try docRef.setData(from: auction, merge: true)
+            try await docRef.setData(from: auction, merge: true)
+            return .success(true)
         } catch {
-            throw AuctionUploadError.firestoreUpdateFailed(error.localizedDescription)
+            return .failure(.firestoreUpdateFailed(error.localizedDescription))
         }
     }
+
     
-    func deleteAuctionImages(_ imageUrls: [String]) async throws {
+    func deleteAuctionImages(_ imageUrls: [String]) async -> Result<Bool, AuctionUploadError> {
         for urlString in imageUrls {
-            guard let url = URL(string: urlString) else { continue }
-            
             let storageRef = FirestoreConstants.FirebaseStorage.reference(forURL: urlString)
-            try? await storageRef.delete()
+
+            do {
+                try await storageRef.delete()
+            } catch {
+                return .failure(.storageDeleteFailed(error.localizedDescription))
+            }
         }
+        
+        return .success(true)
     }
 }

@@ -12,6 +12,8 @@ import FirebaseFirestore
 import FirebaseStorage
 import Combine
 
+
+//MARK: ADD updateAuction
 class UploadAuctionUseCase {
     private let repository: AuctionUploadRepository
     
@@ -19,7 +21,7 @@ class UploadAuctionUseCase {
         self.repository = repository
     }
     
-    func execute(
+    func executeCreateAuction(
         images: [UIImage],
         carTitle: String,
         subtitle: String,
@@ -54,27 +56,34 @@ class UploadAuctionUseCase {
         transmissionDetails: String,
         electronicsRating: Double,
         electronicsDetails: String
-    ) async throws -> String {
+    ) async -> Result<String, AuctionUploadError> {
         
         guard !images.isEmpty else {
-            throw AuctionUploadError.invalidData("At least one image is required")
+            return .failure(.invalidData("At least one image is required"))
         }
         
         guard images.count >= 3 else {
-            throw AuctionUploadError.invalidData("At least 3 images are required")
+            return .failure(.invalidData("At least 3 images are required"))
         }
         
         guard !carTitle.isEmpty else {
-            throw AuctionUploadError.invalidData("Car title is required")
+            return .failure(.invalidData("Car title is required"))
         }
         
         guard let bidAmount = Double(startingBid), bidAmount > 0 else {
-            throw AuctionUploadError.invalidData("Valid starting bid is required")
+            return .failure(.invalidData("Valid starting bid is required"))
         }
         
         let auctionId = UUID().uuidString
+        let uploadResult = await repository.uploadImages(images, auctionId: auctionId)
         
-        let imageUrls = try await repository.uploadImages(images, auctionId: auctionId)
+        let imageUrls: [String]
+        switch uploadResult {
+        case .success(let urls):
+            imageUrls = urls
+        case .failure(let error):
+            return .failure(error)
+        }
         
         let overallRating = (exteriorRating + interiorRating + engineRating + transmissionRating + electronicsRating) / 5.0
         
@@ -87,11 +96,10 @@ class UploadAuctionUseCase {
             overallRating: overallRating
         )
         
-        let history = historyEvents.map { event in
-            HistoryEventsModel(date: event.date, event: event.event, details: event.details)
+        let history = historyEvents.map {
+            HistoryEventsModel(date: $0.date, event: $0.event, details: $0.details)
         }
         
-        // Create auction model
         let auction = AuctionUploadModel(
             id: auctionId,
             imageUrls: imageUrls,
@@ -126,14 +134,16 @@ class UploadAuctionUseCase {
             bidHistory: []
         )
         
-        // Upload to Firestore
-        do {
-            let documentId = try await repository.createAuction(auction)
-            return documentId
-        } catch {
-            // If Firestore upload fails, delete uploaded images
-            try? await repository.deleteAuctionImages(imageUrls)
-            throw error
+        let createResult = await repository.createAuction(auction)
+        
+        switch createResult {
+        case .success(let documentId):
+            return .success(documentId)
+            
+        case .failure(let error):
+            _ = await repository.deleteAuctionImages(imageUrls)
+            return .failure(error)
         }
     }
 }
+

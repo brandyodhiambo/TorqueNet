@@ -55,7 +55,7 @@ struct AuctionUploadView: View {
                 } else {
                     router.pop()
                 }},
-                trailingIcon: "bookmark",
+                trailingIcon: "",
                 onTrailingTap: {
                     //save
                 },

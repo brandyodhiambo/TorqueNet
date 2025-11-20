@@ -257,60 +257,66 @@ class AuctionUploadViewModel: ObservableObject {
         onSuccess: () -> Void,
         onFailure: (String) -> Void
     ) async {
+        
         auctionState = .isLoading
-        do {
+        
+        //MARK: CREATE A STATE CLASS
+        let result = await uploadUseCase.executeCreateAuction(
+            images: selectedImages,
+            carTitle: carTitle,
+            subtitle: subtitle,
+            lotNumber: lotNumber,
+            rating: rating,
+            startingBid: startingBid,
+            auctionEndDate: auctionEndDate,
+            auctionStatus: auctionStatus,
+            mileage: mileage,
+            year: year,
+            engine: engine,
+            transmission: transmission,
+            make: make,
+            model: model,
+            drivetrain: drivetrain,
+            exteriorColor: exteriorColor,
+            interiorColor: interiorColor,
+            vin: vin,
+            location: location,
+            seller: seller,
+            performanceFeatures: performanceFeatures,
+            technologyFeatures: technologyFeatures,
+            comfortFeatures: comfortFeatures,
+            historyEvents: historyEvents,
+            exteriorRating: exteriorRating,
+            exteriorDetails: exteriorDetails,
+            interiorRating: interiorRating,
+            interiorDetailsText: interiorDetailsText,
+            engineRating: engineRating,
+            engineDetails: engineDetails,
+            transmissionRating: transmissionRating,
+            transmissionDetails: transmissionDetails,
+            electronicsRating: electronicsRating,
+            electronicsDetails: electronicsDetails
+        )
+        
+        switch result {
             
-            let auctionId = try await uploadUseCase.execute(
-                images: selectedImages,
-                carTitle: carTitle,
-                subtitle: subtitle,
-                lotNumber: lotNumber,
-                rating: rating,
-                startingBid: startingBid,
-                auctionEndDate: auctionEndDate,
-                auctionStatus: auctionStatus,
-                mileage: mileage,
-                year: year,
-                engine: engine,
-                transmission: transmission,
-                make: make,
-                model: model,
-                drivetrain: drivetrain,
-                exteriorColor: exteriorColor,
-                interiorColor: interiorColor,
-                vin: vin,
-                location: location,
-                seller: seller,
-                performanceFeatures: performanceFeatures,
-                technologyFeatures: technologyFeatures,
-                comfortFeatures: comfortFeatures,
-                historyEvents: historyEvents,
-                exteriorRating: exteriorRating,
-                exteriorDetails: exteriorDetails,
-                interiorRating: interiorRating,
-                interiorDetailsText: interiorDetailsText,
-                engineRating: engineRating,
-                engineDetails: engineDetails,
-                transmissionRating: transmissionRating,
-                transmissionDetails: transmissionDetails,
-                electronicsRating: electronicsRating,
-                electronicsDetails: electronicsDetails
-            )
-            uploadedAuctionId = auctionId
+        case .success(let auctionId):
+            self.uploadedAuctionId = auctionId
+            self.auctionState = .good
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 self.resetForm()
             }
-            auctionState = .good
+            
             onSuccess()
             
-        } catch let error as AuctionUploadError {
-            auctionState = .error(error.errorDescription?.description ?? "An unexpected error occurred.")
-            onFailure(error.errorDescription?.description ?? "An unexpected error occurred.")
-        } catch {
-            auctionState = .error("An unexpected error occurred: \(error.localizedDescription)")
-            onFailure("An unexpected error occurred: \(error.localizedDescription)")
+        case .failure(let error):
+            let message = error.errorDescription?.description ?? "An unexpected error occurred."
+            self.auctionState = .error(message)
+            onFailure(message)
         }
     }
+
     
     func updateProgress(to value: Double) {
         withAnimation {

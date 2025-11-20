@@ -16,6 +16,7 @@ enum AuctionUploadError: LocalizedError {
     case firestoreWriteFailed(String)
     case firestoreUpdateFailed(String)
     case invalidData(String)
+    case storageDeleteFailed(String)
     case networkError
     
     var errorDescription: String? {
@@ -28,6 +29,8 @@ enum AuctionUploadError: LocalizedError {
             return "Failed to save auction: \(message)"
         case .firestoreUpdateFailed(let message):
             return "Failed to update auction: \(message)"
+        case .storageDeleteFailed(let message):
+            return "Failed to delete previous image: \(message)"
         case .invalidData(let message):
             return "Invalid data: \(message)"
         case .networkError:
