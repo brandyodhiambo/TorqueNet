@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AuctionView: View {
     @EnvironmentObject var router: Router
+    @ObservedObject var settingsViewModel =  SettingsViewModel()
     @State private var searchText = ""
     @State private var selectedCategory = 0
     
@@ -43,6 +44,7 @@ struct AuctionView: View {
         RecommendedCars(image: "car", title: "Red Mazda 2 - Hatchback"),
         RecommendedCars(image: "car", title: "Tesla Model 3"),
     ]
+    
     
     var body: some View {
         NavigationView {
@@ -217,12 +219,25 @@ struct AuctionView: View {
                 leadingIcon: "",
                 navbarTitleDisplayMode: .automatic,
                 onLeadingTap: {},
-                trailingIcon: "plus",
+                trailingIcon: (settingsViewModel.currentUser?.isSeller ?? false) ? "plus" : "",
                 onTrailingTap: {
                     router.push(.auctionUpload)
                 },
                 trailingMenu: {}
             )
+            .onAppear{
+                Task{
+                    await settingsViewModel.fetchUser(onSuccess: { user in
+                        settingsViewModel.updateEmail(value: user.email)
+                        settingsViewModel.updateLastName(value: Utils.shared.splitFullName(user.name).lastName)
+                        settingsViewModel.updateFirstName(value: Utils.shared.splitFullName(user.name).firstName)
+                        settingsViewModel.updatePhoneNumber(value: user.phoneNumber)
+                        settingsViewModel.isSeller = user.isSeller
+                    }, onFailure: { error in
+                        settingsViewModel.toast = Toast(style: .error, message: error)
+                    })
+                }
+            }
             
         }
         
