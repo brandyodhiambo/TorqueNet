@@ -10,22 +10,22 @@ import FirebaseFirestore
 
 struct User: Codable, Identifiable, Hashable {
     @DocumentID var id: String?
-    var uid: String
-    var name: String
-    var email: String
-    var phoneNumber: String
+    var uid: String?
+    var name: String?
+    var email: String?
+    var phoneNumber: String?
     var profileImageUrl: String?
-    var isSeller:Bool = false
+    var isSeller: Bool?
     @ServerTimestamp var createdAt: Date?
     
     var initials: String {
-        let components = name.split(separator: " ")
-        let initials = components.prefix(2).compactMap { $0.first }.map { String($0) }
-        return initials.joined().uppercased()
+        let components = name?.split(separator: " ")
+        let initials = components?.prefix(2).compactMap { $0.first }.map { String($0) }
+        return initials?.joined().uppercased() ?? ""
     }
     
-    var firstName: String {
-        name.components(separatedBy: " ").first ?? name
+    var firstName: String? {
+        name?.components(separatedBy: " ").first ?? name
     }
 }
 

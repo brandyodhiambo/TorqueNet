@@ -63,14 +63,6 @@ struct ProfileView: View {
             trailingMenu: {}
         )
         .toastView(toast: $settingsViewModel.toast)
-        .onAppear {
-            Task{
-                await settingsViewModel.fetchUser(onSuccess: { user in
-                }, onFailure: { error in
-                    settingsViewModel.toast = Toast(style: .error, message: "Unable to fetch user \(error)")
-                })
-            }
-        }
         .sheet(isPresented: $settingsViewModel.showImagePicker) {
             ImagePicker(
                 image: $settingsViewModel.profileImage,

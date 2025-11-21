@@ -216,29 +216,6 @@ struct SettingsView: View {
                 }
             )
         }
-        .onAppear {
-            Task{
-                await settingsViewModel.fetchUser(onSuccess: { user in
-                }, onFailure: { error in
-                    settingsViewModel.updateIsShowAlertDialog(value: true)
-                    settingsViewModel.updateDialogEntity(
-                        value: DialogEntity(
-                            title: "Unable to fetch user. Please try again later.",
-                            message: error,
-                            icon: "",
-                            confirmButtonText: "",
-                            dismissButtonText: "Okay",
-                            onConfirm: {
-                                settingsViewModel.updateIsShowAlertDialog(value: false)
-                            },
-                            onDismiss: {
-                                settingsViewModel.updateIsShowAlertDialog(value: false)
-                            }
-                        )
-                    )
-                })
-            }
-        }
         .sheet(isPresented: $settingsViewModel.showThemeSelector) {
             ThemeSelectionView()
             

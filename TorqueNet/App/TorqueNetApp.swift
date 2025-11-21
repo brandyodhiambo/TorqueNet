@@ -11,13 +11,15 @@ import SwiftUI
 struct TorqueNetApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject var themesViewModel = ThemesViewModel()
-    
+    @StateObject var settingsViewModel =  SettingsViewModel()
+
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(Router())
                 .environmentObject(TabRouter())
                 .environmentObject(themesViewModel)
+                .environmentObject(settingsViewModel)
                 .onAppear {
                     themesViewModel.setAppTheme()
                 }

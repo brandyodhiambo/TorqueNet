@@ -11,18 +11,32 @@ import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
 import UIKit
+import CoreData
 
 class SettingsRepositoryImpl: SettingsRepository {
+    private let context = CoreDataStack.shared.persistentContainer.viewContext
     static let shared = SettingsRepositoryImpl()
+    let fetchRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+
     
-    func fetchUser() async -> Result<User, FirebaseAuthError> {
+    func fetchUser(forceRefresh: Bool) async -> Result<User, FirebaseAuthError> {
         do {
             guard let uid = Auth.auth().currentUser?.uid else {
                 return .failure(.custom("User not found"))
             }
+            
+//            if !forceRefresh,let cachedUser = try getUserFromLocalStorage() {
+//                print("DEBUG: Returning cached user")
+//                return .success(cachedUser)
+//            }
+//            
             let snapshot = try await FirestoreConstants.UserCollection.document(uid).getDocument()
             guard snapshot.exists else { return .failure(.custom("User not found")) }
             let user = try snapshot.data(as: User.self)
+            
+//            try deleteUserById(uid: uid)
+//            try cacheUserToLocalStorage(user:user)
+            
             return .success(user)
         } catch let error as NSError {
             switch AuthErrorCode(rawValue: error.code) {
@@ -99,6 +113,7 @@ class SettingsRepositoryImpl: SettingsRepository {
            
 
         let userData: [String: Any] = [
+            "uid":uid,
             "name": name,
             "email": email.lowercased(),
             "isSeller": isSeller,
@@ -117,6 +132,41 @@ class SettingsRepositoryImpl: SettingsRepository {
             default:
                 return .failure(.custom(error.localizedDescription))
             }
+        }
+    }
+    
+    func cacheUserToLocalStorage(user:User) throws{
+        do {
+            let results = try context.fetch(fetchRequest)
+        
+            let userEntity: UserEntity
+            if let existingEntity = results.first {
+                userEntity = existingEntity
+                print("DEBUG: Updating existing cached user")
+            } else {
+                userEntity = UserEntity(context: context)
+                print("DEBUG: Caching new user")
+            }
+            userEntity.toUserEntity(user)
+            
+            // Save context
+            try context.save()
+            print("DEBUG: User cached successfully")
+        } catch {
+            print("DEBUG: Error caching user: \(error)")
+        }
+    }
+    
+    func getUserFromLocalStorage() throws -> User? {
+        let result = try context.fetch(fetchRequest)
+        return result.first?.toUser()
+    }
+    
+    func deleteUserById(uid: String) throws {
+        fetchRequest.predicate = NSPredicate(format: "id == %@", uid)
+        if let entity = try context.fetch(fetchRequest).first {
+            context.delete(entity)
+            try context.save()
         }
     }
 

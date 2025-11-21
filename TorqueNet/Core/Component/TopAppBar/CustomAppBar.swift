@@ -53,6 +53,7 @@ struct CustomTopAppBar<Content: View>: ViewModifier {
             }
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(navbarTitleDisplayMode)
+         
     }
 }
 

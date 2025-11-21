@@ -130,13 +130,14 @@ class SettingsViewModel:ObservableObject{
     }
     
     func fetchUser(
+        forceRefresh: Bool = false,
         onSuccess: (User) -> Void,
         onFailure: (String) -> Void
     ) async {
         settingState = .isLoading
         
         var result:  Result<User, FirebaseAuthError>
-        result = await settingsUseCase.executeFetchUser()
+        result = await settingsUseCase.executeFetchUser(forceRefresh: forceRefresh)
     
         switch result {
         case .success(let userDataResult):
