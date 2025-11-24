@@ -11,13 +11,15 @@ import SwiftUI
 struct TorqueNetApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject var themesViewModel = ThemesViewModel()
-    @StateObject var settingsViewModel =  SettingsViewModel()
+    @StateObject var settingsViewModel = SettingsViewModel()
+    @StateObject var router = Router()
+    @StateObject var tabRouter = TabRouter()
 
     var body: some Scene {
         WindowGroup {
             RootView()
-                .environmentObject(Router())
-                .environmentObject(TabRouter())
+                .environmentObject(router)
+                .environmentObject(tabRouter)
                 .environmentObject(themesViewModel)
                 .environmentObject(settingsViewModel)
                 .onAppear {

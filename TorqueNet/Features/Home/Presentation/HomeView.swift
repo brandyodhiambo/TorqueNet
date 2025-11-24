@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @ObservedObject var settingsViewModel =  SettingsViewModel()
-//    @EnvironmentObject var settingsViewModel : SettingsViewModel
-    
+    @EnvironmentObject var settingsViewModel : SettingsViewModel
     @State private var searchText: String = ""
     @State private var selectedBrand = 0
     @EnvironmentObject var router: Router

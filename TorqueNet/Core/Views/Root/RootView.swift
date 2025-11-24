@@ -30,6 +30,7 @@ struct RootView: View {
             .navigationDestination(for: Route.self) { route in
                 viewForRoute(route, router: router)
             }
+           // .preferredColorScheme(themesViewModel.currentTheme.colorScheme)
         }
     }
 }

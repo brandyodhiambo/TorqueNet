@@ -9,7 +9,7 @@ import SwiftUI
 
 struct EditProfileView: View {
     @EnvironmentObject var router: Router
-    @ObservedObject var settingsViewModel = SettingsViewModel()
+    @EnvironmentObject var settingsViewModel : SettingsViewModel
    
     
     var body: some View {

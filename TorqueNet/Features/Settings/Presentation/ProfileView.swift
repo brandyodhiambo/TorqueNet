@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @EnvironmentObject var router: Router
-    @ObservedObject var settingsViewModel =  SettingsViewModel()
+    @EnvironmentObject var settingsViewModel : SettingsViewModel
     
     
     var body: some View {
@@ -129,7 +129,7 @@ struct ProfileView: View {
                 
                 ProfileDetailItem(
                     label: "Member Since",
-                    value: settingsViewModel.currentUser?.createdAt?.description ?? "Loading...",
+                    value: Utils.shared.formatDateToHumanReadable(settingsViewModel.currentUser?.createdAt?.description ?? "Loading..."),
                     icon: "calendar.circle.fill"
                 )
             }

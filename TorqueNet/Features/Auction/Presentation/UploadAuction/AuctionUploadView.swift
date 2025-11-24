@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AuctionUploadView: View {
     @EnvironmentObject var router: Router
-    @ObservedObject var uploadAuctionViewModel = AuctionUploadViewModel()
+    @StateObject var uploadAuctionViewModel = AuctionUploadViewModel()
     
     var body: some View {
             ScrollView(.vertical, showsIndicators: false) {

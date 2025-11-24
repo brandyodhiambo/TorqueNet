@@ -10,8 +10,8 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var themesViewModel: ThemesViewModel
     @EnvironmentObject var router:Router
-    @ObservedObject var settingsViewModel =  SettingsViewModel()
-    @ObservedObject var forgotPasswordViewModel = ForgotPasswordViewModel()
+    @EnvironmentObject var settingsViewModel : SettingsViewModel
+    @StateObject var forgotPasswordViewModel = ForgotPasswordViewModel()
     
     var body: some View {
         NavigationView {

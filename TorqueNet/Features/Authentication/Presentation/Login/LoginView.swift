@@ -10,7 +10,7 @@ struct LoginView: View {
     var onLoginSuccess: () -> Void
     var onLoginFailure: (String) -> Void
     @EnvironmentObject var router: Router
-    @ObservedObject var loginViewModel = LoginViewModel()
+    @StateObject var loginViewModel = LoginViewModel()
     
 
     var body: some View {
