@@ -8,6 +8,7 @@ import SwiftUI
 
 struct ThemeSelectionView: View {
     @EnvironmentObject var themesViewModel: ThemesViewModel
+    @EnvironmentObject var settingsViewModel: SettingsViewModel
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
@@ -28,6 +29,7 @@ struct ThemeSelectionView: View {
                             isSelected: themesViewModel.currentTheme == .light
                         ) {
                             themesViewModel.changeTheme(to: .light)
+                            settingsViewModel.updateShowThemeSelectorDialog(value: false)
                         }
                         
                         ThemeOptionView(
@@ -38,6 +40,7 @@ struct ThemeSelectionView: View {
                             isSelected: themesViewModel.currentTheme == .dark
                         ) {
                             themesViewModel.changeTheme(to: .dark)
+                            settingsViewModel.updateShowThemeSelectorDialog(value: false)
                         }
                         
                         ThemeOptionView(
@@ -48,6 +51,7 @@ struct ThemeSelectionView: View {
                             isSelected: themesViewModel.currentTheme == .device
                         ) {
                             themesViewModel.changeTheme(to: .device)
+                            settingsViewModel.updateShowThemeSelectorDialog(value: false)
                         }
                     }
                     .padding(.horizontal, 20)

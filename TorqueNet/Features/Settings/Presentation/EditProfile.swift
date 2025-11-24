@@ -9,7 +9,7 @@ import SwiftUI
 
 struct EditProfileView: View {
     @EnvironmentObject var router: Router
-    @ObservedObject var settingsViewModel = SettingsViewModel()
+    @EnvironmentObject var settingsViewModel : SettingsViewModel
    
     
     var body: some View {
@@ -94,8 +94,15 @@ struct EditProfileView: View {
                         Task{
                             await settingsViewModel.editUser(
                                 onSuccess: {
+                                    Task{
+                                        await settingsViewModel.fetchUser(
+                                            forceRefresh: true,
+                                            onSuccess: { user in},
+                                            onFailure: {error in})
+                                    }
                                     settingsViewModel.toast = Toast(style: .success, message: "You have successfully edited your profile.")
-                                }, onFailure:{error in
+                                },
+                                onFailure:{error in
                                     settingsViewModel.toast = Toast(style: .error, message: error)
                                 }
                             )
@@ -118,16 +125,17 @@ struct EditProfileView: View {
         .onAppear {
             Task{
                 await settingsViewModel.fetchUser(onSuccess: { user in
-                    settingsViewModel.updateEmail(value: user.email)
-                    settingsViewModel.updateLastName(value: Utils.shared.splitFullName(user.name).lastName)
-                    settingsViewModel.updateFirstName(value: Utils.shared.splitFullName(user.name).firstName)
-                    settingsViewModel.updatePhoneNumber(value: user.phoneNumber)
-                    settingsViewModel.isSeller = user.isSeller
+                    settingsViewModel.updateEmail(value: user.email ?? "")
+                    settingsViewModel.updateLastName(value: Utils.shared.splitFullName(user.name ?? "").lastName)
+                    settingsViewModel.updateFirstName(value: Utils.shared.splitFullName(user.name ?? "").firstName)
+                    settingsViewModel.updatePhoneNumber(value: user.phoneNumber ?? "")
+                    settingsViewModel.isSeller = user.isSeller ?? false
                 }, onFailure: { error in
                     settingsViewModel.toast = Toast(style: .error, message: error)
                 })
             }
         }
+        .fullScreenProgressOverlay(isShowing: settingsViewModel.settingState == .isLoading )
     }
 }
 

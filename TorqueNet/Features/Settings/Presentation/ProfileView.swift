@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @EnvironmentObject var router: Router
-    @ObservedObject var settingsViewModel =  SettingsViewModel()
+    @EnvironmentObject var settingsViewModel : SettingsViewModel
     
     
     var body: some View {
@@ -63,14 +63,6 @@ struct ProfileView: View {
             trailingMenu: {}
         )
         .toastView(toast: $settingsViewModel.toast)
-        .onAppear {
-            Task{
-                await settingsViewModel.fetchUser(onSuccess: { user in
-                }, onFailure: { error in
-                    settingsViewModel.toast = Toast(style: .error, message: "Unable to fetch user \(error)")
-                })
-            }
-        }
         .sheet(isPresented: $settingsViewModel.showImagePicker) {
             ImagePicker(
                 image: $settingsViewModel.profileImage,
@@ -84,6 +76,7 @@ struct ProfileView: View {
                 }
             )
         }
+        .fullScreenProgressOverlay(isShowing: settingsViewModel.settingState == .isLoading )
     }
     
     
@@ -136,8 +129,7 @@ struct ProfileView: View {
                 
                 ProfileDetailItem(
                     label: "Member Since",
-                    value: settingsViewModel.currentUser?.createdAt?.description ?? "Loading...",
-                    value: Utils.shared.formatReadableDate(currentUser?.createdAt ?? Date()),
+                    value: Utils.shared.formatDateToHumanReadable(settingsViewModel.currentUser?.createdAt?.description ?? "Loading..."),
                     icon: "calendar.circle.fill"
                 )
             }

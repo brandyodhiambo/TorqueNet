@@ -9,7 +9,7 @@ import UIKit
 
 
 protocol SettingsRepository {
-    func fetchUser() async -> Result<User, FirebaseAuthError>
+    func fetchUser(forceRefresh: Bool) async -> Result<User, FirebaseAuthError>
     func uploadProfileImage(_ image: UIImage) async -> Result<String, FirebaseAuthError>
     func updateUserProfileImage(imageUrl: String) async -> Result<Void, FirebaseAuthError>
     func editUser(email: String, phoneNumber: String,name:String,isSeller:Bool) async -> Result<Bool, FirebaseAuthError>

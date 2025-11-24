@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ChangePasswordView: View {
     @EnvironmentObject var router: Router
-    @ObservedObject var settingsViewModel =  SettingsViewModel()
+    @EnvironmentObject var settingsViewModel : SettingsViewModel
 
     var body: some View {
         ScrollView(.vertical,showsIndicators: false){
@@ -111,6 +111,7 @@ struct ChangePasswordView: View {
                 }
             )
         }
+        .fullScreenProgressOverlay(isShowing: settingsViewModel.settingState == .isLoading )
     }
 }
 

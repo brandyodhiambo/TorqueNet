@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @ObservedObject var settingsViewModel =  SettingsViewModel()
-    
+    @EnvironmentObject var settingsViewModel : SettingsViewModel
     @State private var searchText: String = ""
     @State private var selectedBrand = 0
     @EnvironmentObject var router: Router
@@ -174,13 +173,21 @@ struct HomeView: View {
             }
         }
         .onAppear {
-            updateLocationNameIfNeeded()
             Task{
-                await settingsViewModel.fetchUser(onSuccess: { user in
-                    currentUser = user
-                }, onFailure: { error in
-                    
-                })
+                updateLocationNameIfNeeded()
+                
+                await settingsViewModel.fetchUser(
+                    forceRefresh: true,
+                    onSuccess: { user in
+                        currentUser = user
+                        print("DEBUG: fetchUser user: \(user)")
+                    },
+                    onFailure: { error in
+                        print("DEBUG: fetchUser error: \(error)")
+
+                    }
+                )
+                
             }
         }
         .background(Color.theme.surfaceColor.ignoresSafeArea(.all))

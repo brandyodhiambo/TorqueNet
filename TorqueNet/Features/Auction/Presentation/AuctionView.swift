@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AuctionView: View {
     @EnvironmentObject var router: Router
+    @EnvironmentObject var settingsViewModel:  SettingsViewModel
     @State private var searchText = ""
     @State private var selectedCategory = 0
     
@@ -43,6 +44,7 @@ struct AuctionView: View {
         RecommendedCars(image: "car", title: "Red Mazda 2 - Hatchback"),
         RecommendedCars(image: "car", title: "Tesla Model 3"),
     ]
+    
     
     var body: some View {
         NavigationView {
@@ -217,7 +219,7 @@ struct AuctionView: View {
                 leadingIcon: "",
                 navbarTitleDisplayMode: .automatic,
                 onLeadingTap: {},
-                trailingIcon: "plus",
+                trailingIcon: (settingsViewModel.currentUser?.isSeller ?? false) ? "plus" : "",
                 onTrailingTap: {
                     router.push(.auctionUpload)
                 },

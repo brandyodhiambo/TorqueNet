@@ -13,8 +13,8 @@ class SettingsUseCase{
         self.settingsRepository = settingsRepository
     }
     
-    func executeFetchUser() async -> Result<User, FirebaseAuthError>{
-        return await settingsRepository.fetchUser()
+    func executeFetchUser(forceRefresh: Bool = false) async -> Result<User, FirebaseAuthError>{
+        return await settingsRepository.fetchUser(forceRefresh: forceRefresh)
     }
     
     func executeUploadAndSaveProfileImage(_ image: UIImage) async -> Result<Void, FirebaseAuthError> {
