@@ -155,9 +155,9 @@ struct ProfileView: View {
                 .padding(.horizontal, 20)
             
             HStack(spacing: 12) {
-                StatCard(title: "Total Cars", value: "3", icon: "car.fill")
-                StatCard(title: "Rides", value: "42", icon: "road.lanes")
-                StatCard(title: "Rating", value: "4.8", icon: "star.fill")
+                StatCard(title: "Total Cars", value: currentUser?.cars.description ?? "0", icon: "car.fill")
+                StatCard(title: "Rides", value: currentUser?.rides.description ?? "0", icon: "road.lanes")
+                StatCard(title: "Seller", value: currentUser?.isSeller == true ? "Yes" : "No", icon: "star.fill")
             }
             .padding(.horizontal, 16)
         }
