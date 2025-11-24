@@ -13,7 +13,7 @@ class CoreDataStack: ObservableObject {
     
     lazy var persistentContainer: NSPersistentContainer = {
         
-        let container = NSPersistentContainer(name: "TorqueNetCoreData")
+        let container = NSPersistentContainer(name: "TorqueNetCoreDataModel")
         
         container.loadPersistentStores { _, error in
             if let error {
