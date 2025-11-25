@@ -12,7 +12,9 @@ extension UserEntity {
             email: self.email ?? "",
             phoneNumber: self.phoneNumber ?? "",
             profileImageUrl: self.profileImageUrl,
-            isSeller: self.isSeller
+            isSeller: self.isSeller,
+            cars: Int(self.cars ?? "0"),
+            rides:  Int(self.rides ?? "0")
         )
     }
     
@@ -23,5 +25,7 @@ extension UserEntity {
         self.phoneNumber = user.phoneNumber
         self.profileImageUrl = user.profileImageUrl
         self.isSeller = user.isSeller ?? false
+        self.cars = user.cars?.description ?? "0"
+        self.rides = user.rides?.description ?? "0"
     }
 }
