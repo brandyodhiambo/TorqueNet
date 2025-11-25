@@ -7,6 +7,7 @@
 
 
 import SwiftUI
+import Kingfisher
 
 struct CustomImageView: View {
     let url: String
@@ -14,28 +15,40 @@ struct CustomImageView: View {
     var height: CGFloat = 256
     
     var body: some View {
-         AsyncImage(url: URL(string: url)) { phase in
-             switch phase {
-             case .failure:
-                 Image(systemName: "photo")
-                     //.font(.largeTitle)
-                     .resizable()
-                     .scaledToFill()
-                     .foregroundColor(Color.theme.surfaceColor)
-
-             case .success(let image):
-                 image
-                     .resizable()
-                     .scaledToFill()
-             default:
-                 ProgressView()
-             }
-         }
-         .frame(maxWidth: maxWidth)
-         .frame( height: height)
-         //.clipShape(.rect(cornerRadius: 25))
-     }
+        KFImage(URL(string: url))
+            .placeholder {
+                ProgressView()
+            }
+            .onFailure { _ in
+                print("Image failed to load: \(url)")
+            }
+            .resizable()
+            .scaledToFill()
+            .frame(maxWidth: maxWidth)
+            .frame(height: height)
+            .background(Color.theme.surfaceColor)
+            .clipShape(RoundedRectangle(cornerRadius: 25))
+            .overlay(
+                KFOverlay(url: url)
+            )
+    }
 }
+
+struct KFOverlay: View {
+    let url: String
+    var body: some View {
+        KFImage(URL(string: url))
+            .resizable()
+            .scaledToFit()
+            .opacity(0)
+            .overlay(
+                Image(systemName: "profile")
+                    .foregroundColor(.gray)
+                    .opacity(0.7)
+            )
+    }
+}
+
 
 #Preview {
     CustomImageView(url: "https://hws.dev/paul3.jpg")
