@@ -27,14 +27,14 @@ jobs:
       - name: Clean Build Folder
         run: |
           xcodebuild clean \
-            -workspace project.xcworkspace \
+            -workspace TorqueNet/TorqueNet.xcworkspace \
             -scheme TorqueNet \
             -configuration Debug
 
       - name: Build iOS App (Debug)
         run: |
           xcodebuild \
-            -workspace TorqueNet.xcworkspace \
+            -workspace TorqueNet/TorqueNet.xcworkspace \
             -scheme TorqueNet \
             -sdk iphonesimulator \
             -configuration Debug \
