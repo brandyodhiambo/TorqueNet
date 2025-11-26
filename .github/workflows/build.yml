@@ -24,12 +24,6 @@ jobs:
       - name: Select Xcode Version
         run: sudo xcode-select -switch /Applications/Xcode.app
 
-      - name: Install Dependencies (CocoaPods)
-        if: exists('Podfile')
-        run: |
-          sudo gem install cocoapods
-          pod install
-
       - name: Clean Build Folder
         run: |
           xcodebuild clean \
