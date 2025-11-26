@@ -20,11 +20,11 @@ struct HomeView: View {
     
     var brands: [Brand] = [
         Brand(image: "benz", title: "Mercedes-Benz"),
-        Brand(image: "benz", title: "Tesla"),
-        Brand(image: "benz", title: "Audi"),
-        Brand(image: "benz", title: "BMW"),
-        Brand(image: "benz", title: "Porsche"),
-        Brand(image: "benz", title: "Toyota")
+        Brand(image: "tesla", title: "Tesla"),
+        Brand(image: "audi", title: "Audi"),
+        Brand(image: "bmw", title: "BMW"),
+        Brand(image: "porsche", title: "Porsche"),
+        Brand(image: "toyota", title: "Toyota")
     ]
     
     var featuredCars: [FeaturedCar] = [
@@ -484,7 +484,7 @@ struct EnhancedBrandView: View {
         VStack(spacing: 8) {
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(isSelected ? Color.theme.primaryColor.opacity(0.1) : Color.theme.surfaceColor)
+                    .fill(Color.theme.surfaceColor)
                     .frame(width: 80, height: 80)
                     .shadow(color: Color.theme.onSurfaceColor.opacity(0.08), radius: 12, x: 0, y: 4)
                     .overlay(
@@ -494,8 +494,9 @@ struct EnhancedBrandView: View {
                 
                 Image(brand.image)
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
                     .frame(width: 40, height: 40)
+                    //.clipShape(RoundedRectangle(cornerRadius: 16))
             }
             
             Text(brand.title)

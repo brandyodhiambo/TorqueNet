@@ -20,6 +20,7 @@
 		0477CF9C2E40BCFC00A9DB5F /* Exo2-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0477CF8A2E40BCFC00A9DB5F /* Exo2-ExtraLight.ttf */; };
 		0477D0832E40EBCB00A9DB5F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0477D0822E40EBCB00A9DB5F /* GoogleService-Info.plist */; };
 		0477D0912E40EDB400A9DB5F /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 0477D0902E40EDB400A9DB5F /* Lottie */; };
+		04C07A602ED5AF6400969093 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 04C07A5F2ED5AF6400969093 /* Kingfisher */; };
 		04C7F2C42EABBABF007C148C /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = 04C7F2C32EABBABF007C148C /* FirebaseAI */; };
 		04C7F2C62EABBABF007C148C /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 04C7F2C52EABBABF007C148C /* FirebaseAnalytics */; };
 		04C7F2C82EABBABF007C148C /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = 04C7F2C72EABBABF007C148C /* FirebaseAnalyticsCore */; };
@@ -125,6 +126,7 @@
 				04C7F2EC2EABBABF007C148C /* FirebaseStorage in Frameworks */,
 				04C7F2C82EABBABF007C148C /* FirebaseAnalyticsCore in Frameworks */,
 				04C7F2C42EABBABF007C148C /* FirebaseAI in Frameworks */,
+				04C07A602ED5AF6400969093 /* Kingfisher in Frameworks */,
 				04C7F2CA2EABBABF007C148C /* FirebaseAnalyticsIdentitySupport in Frameworks */,
 				04C7F2D22EABBABF007C148C /* FirebaseAuthCombine-Community in Frameworks */,
 				323D74D82E958A8200EC7543 /* GoogleSignInSwift in Frameworks */,
@@ -239,6 +241,7 @@
 				04C7F2E92EABBABF007C148C /* FirebaseRemoteConfig */,
 				04C7F2EB2EABBABF007C148C /* FirebaseStorage */,
 				04C7F2ED2EABBABF007C148C /* FirebaseStorageCombine-Community */,
+				04C07A5F2ED5AF6400969093 /* Kingfisher */,
 			);
 			productName = TorqueNet;
 			productReference = 04356D5F2E40B85B00D1C0A6 /* TorqueNet.app */;
@@ -326,6 +329,7 @@
 				0477D08F2E40EDB400A9DB5F /* XCRemoteSwiftPackageReference "lottie-spm" */,
 				323D74D42E958A8200EC7543 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				04C7F2C22EABBABF007C148C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				04C07A5E2ED5AF6400969093 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 04356D602E40B85B00D1C0A6 /* Products */;
@@ -720,6 +724,14 @@
 				minimumVersion = 4.5.2;
 			};
 		};
+		04C07A5E2ED5AF6400969093 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.6.2;
+			};
+		};
 		04C7F2C22EABBABF007C148C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -743,6 +755,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0477D08F2E40EDB400A9DB5F /* XCRemoteSwiftPackageReference "lottie-spm" */;
 			productName = Lottie;
+		};
+		04C07A5F2ED5AF6400969093 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04C07A5E2ED5AF6400969093 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
 		};
 		04C7F2C32EABBABF007C148C /* FirebaseAI */ = {
 			isa = XCSwiftPackageProductDependency;

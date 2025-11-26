@@ -1,0 +1,41 @@
+name: Build
+
+on:
+ pull_request:
+    branches: [ main, develop ]
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_ios_app:
+    name: Build iOS App
+    runs-on: macos-latest
+    env:
+      TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Select Xcode Version
+        run: sudo xcode-select -switch /Applications/Xcode.app
+
+      - name: Clean Build Folder
+        run: |
+          xcodebuild clean \
+            -workspace TorqueNet.xcodeproj/project.xcworkspace \
+            -scheme TorqueNet \
+            -configuration Debug
+
+      - name: Build iOS App (Debug)
+        run: |
+          xcodebuild \
+            -workspace TorqueNet.xcodeproj/project.xcworkspace \
+            -scheme TorqueNet \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,name=iPhone 15" \
+            build \
+            | xcpretty

@@ -16,8 +16,8 @@ struct User: Codable, Identifiable, Hashable {
     var phoneNumber: String?
     var profileImageUrl: String?
     var isSeller: Bool?
-    var cars:Int
-    var rides:Int
+    var cars:Int?
+    var rides:Int?
     @ServerTimestamp var createdAt: Date?
     
     var initials: String {
