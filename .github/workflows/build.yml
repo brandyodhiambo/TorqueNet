@@ -27,7 +27,7 @@ jobs:
       - name: Clean Build Folder
         run: |
           xcodebuild clean \
-            -workspace TorqueNet.xcworkspace \
+            -workspace project.xcworkspace \
             -scheme TorqueNet \
             -configuration Debug
 
