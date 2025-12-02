@@ -9,69 +9,9 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var settingsViewModel : SettingsViewModel
-    @State private var searchText: String = ""
-    @State private var selectedBrand = 0
     @EnvironmentObject var router: Router
     @StateObject var locationManager = LocationManager()
-    @State var isLocationAuthorized = false
-    @State var isShowRequestLocationAlert = false
-    @State private var locationName: String = "Loading..."
-    @State var currentUser: User?
-    
-    var brands: [Brand] = [
-        Brand(image: "benz", title: "Mercedes-Benz"),
-        Brand(image: "tesla", title: "Tesla"),
-        Brand(image: "audi", title: "Audi"),
-        Brand(image: "bmw", title: "BMW"),
-        Brand(image: "porsche", title: "Porsche"),
-        Brand(image: "toyota", title: "Toyota")
-    ]
-    
-    var featuredCars: [FeaturedCar] = [
-        FeaturedCar(
-            image: "car",
-            title: "2023 Mercedes S-Class",
-            price: 89000,
-            location: "Nairobi, Kenya",
-            mileage: "12,000 km",
-            year: "2023",
-            condition: "Excellent",
-            isNew: true,
-            rating: 4.9,
-            reviewCount: 124
-        ),
-        FeaturedCar(
-            image: "car",
-            title: "BMW X5 M Competition",
-            price: 76500,
-            location: "Mombasa, Kenya",
-            mileage: "25,000 km",
-            year: "2022",
-            condition: "Very Good",
-            isNew: false,
-            rating: 4.8,
-            reviewCount: 89
-        ),
-        FeaturedCar(
-            image: "car",
-            title: "Tesla Model S Plaid",
-            price: 95000,
-            location: "Kisumu, Kenya",
-            mileage: "8,000 km",
-            year: "2023",
-            condition: "Like New",
-            isNew: true,
-            rating: 4.9,
-            reviewCount: 156
-        )
-    ]
-    
-    var quickActions: [QuickAction] = [
-        QuickAction(icon: "car.2", title: "Compare", color: .blue),
-        QuickAction(icon: "wallet.bifold", title: "Live Offers", color: .red),
-        QuickAction(icon: "bell", title: "Alerts", color: .orange),
-        QuickAction(icon: "calendar", title: "Schedule", color: .green)
-    ]
+    @StateObject var homeViewModel = HomeViewModel()
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -92,7 +32,7 @@ struct HomeView: View {
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
-                            ForEach(quickActions) { action in
+                            ForEach(homeViewModel.quickActions) { action in
                                 QuickActionCard(action: action){
                                     if(action.title == "Schedule"){
                                         router.push(.auctionSchedule)
@@ -123,12 +63,14 @@ struct HomeView: View {
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
-                            ForEach(Array(brands.enumerated()), id: \.offset) { index, brand in
+                            ForEach(Array(homeViewModel.brands.enumerated()), id: \.offset) { index, brand in
                                 EnhancedBrandView(
                                     brand: brand,
-                                    isSelected: selectedBrand == index
+                                    isSelected: homeViewModel.selectedBrandIndex == index
                                 ) {
-                                    selectedBrand = index
+                                    homeViewModel.isShowTopBrandUrl = true
+                                    homeViewModel.selectedBrandIndex = index
+                                    homeViewModel.selectedBrand = brand
                                 }
                             }
                         }
@@ -143,7 +85,7 @@ struct HomeView: View {
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
-                            ForEach(featuredCars) { car in
+                            ForEach(homeViewModel.featuredCars) { car in
                                 EnhancedCarCard(car: car) {
                                     router.push(.carDetails)
                                 }
@@ -159,7 +101,7 @@ struct HomeView: View {
                         .padding(.horizontal, 16)
                     
                     LazyVStack(spacing: 12) {
-                        ForEach(featuredCars.prefix(2)) { car in
+                        ForEach(homeViewModel.featuredCars.prefix(2)) { car in
                             RecentlyViewedRow(car: car) {
                                 router.push(.carDetails)
                             }
@@ -179,7 +121,7 @@ struct HomeView: View {
                 await settingsViewModel.fetchUser(
                     forceRefresh: true,
                     onSuccess: { user in
-                        currentUser = user
+                        homeViewModel.currentUser = user
                         print("DEBUG: fetchUser user: \(user)")
                     },
                     onFailure: { error in
@@ -191,17 +133,23 @@ struct HomeView: View {
             }
         }
         .background(Color.theme.surfaceColor.ignoresSafeArea(.all))
+        .sheet(isPresented: $homeViewModel.isShowTopBrandUrl) {
+            if let link = homeViewModel.selectedBrand?.link,
+               let url = URL(string: link) {
+                SafariView(url: url)
+            }
+        }
         .onChange(of: locationManager.authorizationStatus) { newStatus in
             Task {
                 if newStatus == .authorizedWhenInUse || newStatus == .authorizedAlways {
-                    isLocationAuthorized = true
+                    homeViewModel.isLocationAuthorized = true
                     locationManager.startUpdatingLocation()
                 } else {
-                    isLocationAuthorized = false
+                    homeViewModel.isLocationAuthorized = false
                 }
             }
         }
-        .alert(isPresented: $isShowRequestLocationAlert) {
+        .alert(isPresented: $homeViewModel.isShowRequestLocationAlert) {
             Alert(
                 title: Text("Location permision is required to proceed"),
                 message: Text("Please enable location access in settings to proceed."),
@@ -220,9 +168,9 @@ struct HomeView: View {
         Utils.shared.getCityAndCountry(latitude: locationManager.latitude, longitude: locationManager.longitude) { name in
             DispatchQueue.main.async {
                 if let name = name {
-                    locationName = name
+                    homeViewModel.locationName = name
                 } else {
-                    locationName = "Location not found"
+                    homeViewModel.locationName = "Location not found"
                 }
             }
         }
@@ -241,7 +189,7 @@ struct HomeView: View {
                     Text("Your location")
                         .font(.custom("Exo2-Regular", size: 12))
                         .foregroundColor(Color.theme.onSurfaceColor.opacity(0.6))
-                    Text(locationName)
+                    Text(homeViewModel.locationName)
                         .font(.custom("Exo2-SemiBold", size: 14))
                         .foregroundColor(Color.theme.onSurfaceColor)
                 }
@@ -273,9 +221,9 @@ struct HomeView: View {
                 Button(action: {
                     router.push(.profile)
                 }) {
-                    if currentUser?.profileImageUrl != nil {
+                    if homeViewModel.currentUser?.profileImageUrl != nil {
                         CustomImageView(
-                            url: currentUser?.profileImageUrl ?? "",
+                            url: homeViewModel.currentUser?.profileImageUrl ?? "",
                             maxWidth: 40,
                             height: 40
                         )
@@ -335,7 +283,7 @@ struct HomeView: View {
                         .foregroundColor(.gray)
                         .font(.system(size: 16))
                     
-                    TextField("Search cars, brands, models...", text: $searchText)
+                    TextField("Search cars, brands, models...", text: $homeViewModel.searchText)
                         .font(.custom("Exo2-Regular", size: 16))
                 }
                 .padding(.horizontal, 16)
@@ -357,7 +305,7 @@ struct HomeView: View {
             }
             
             // Search suggestions
-            if !searchText.isEmpty {
+            if !homeViewModel.searchText.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         ForEach(["Mercedes", "BMW", "Tesla", "Audi"], id: \.self) { suggestion in
