@@ -219,7 +219,6 @@ struct AuctionView: View {
                 leadingIcon: "",
                 navbarTitleDisplayMode: .automatic,
                 onLeadingTap: {},
-              //  trailingIcon: "",
                 onTrailingTap: {},
                 trailingMenu: {
                     if(settingsViewModel.currentUser?.isSeller ?? false){
@@ -229,7 +228,9 @@ struct AuctionView: View {
                             }
                             .font(.custom("Exo2-Medium", size: 14))
                             .foregroundColor(.theme.primaryColor)
-                            Button("Upload Car") { }
+                            Button("Upload Car") {
+                                router.push(.uploadCar)
+                            }
                         } label: {
                             Label("Menu", systemImage: "plus")
                         }

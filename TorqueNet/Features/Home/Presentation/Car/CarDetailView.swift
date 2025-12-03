@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct CarDetailView: View {
     @EnvironmentObject var router:Router
     var body: some View {
@@ -196,10 +194,8 @@ struct CarSpecCard: View {
     }
 }
 
-struct CarDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView{
-            CarDetailView()
-        }
+#Preview {
+    NavigationView{
+        CarDetailView()
     }
 }
