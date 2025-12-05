@@ -11,68 +11,8 @@ import SwiftUI
 
 @MainActor
 class AuctionUploadViewModel: ObservableObject {
-    // UI State
-    @Published var currentStep = 0
-    @Published var showingImagePicker = false
-    @Published var isUploading = false
-    @Published var uploadProgress: Double = 0.0
-    @Published var errorMessage: String?
-    @Published var showError = false
-    @Published var uploadSuccess = false
-    @Published var uploadedAuctionId: String?
-    @Published var auctionState:FetchState = FetchState.good
-    @Published var toast: Toast? = nil
-    
-    // Form Data
-    @Published var selectedImages: [UIImage] = []
-    @Published var activeImageIndex: Int? = nil
-    
-    // Basic Info
-    @Published var carTitle = ""
-    @Published var subtitle = ""
-    @Published var lotNumber = ""
-    @Published var rating = 4.8
-    @Published var startingBid = ""
-    @Published var auctionEndDate = Date().addingTimeInterval(7 * 24 * 3600)
-    @Published var auctionStatus: UploadAuctionStatus = .upcoming
-    
-    // Key Specs
-    @Published var mileage = ""
-    @Published var year = ""
-    @Published var engine = ""
-    @Published var transmission = ""
-    
-    // Features
-    @Published var performanceFeatures: [String] = []
-    @Published var technologyFeatures: [String] = []
-    @Published var comfortFeatures: [String] = []
-    @Published var newFeature = ""
-    @Published var selectedFeatureCategory = 0
-    
-    // Vehicle Details
-    @Published var make = ""
-    @Published var model = ""
-    @Published var drivetrain = ""
-    @Published var exteriorColor = ""
-    @Published var interiorColor = ""
-    @Published var vin = ""
-    @Published var location = ""
-    @Published var seller = ""
-    
-    // History
-    @Published var historyEvents: [HistoryEventData] = []
-    
-    // Inspection
-    @Published var exteriorRating = 9.0
-    @Published var exteriorDetails = ""
-    @Published var interiorRating = 9.0
-    @Published var interiorDetailsText = ""
-    @Published var engineRating = 9.0
-    @Published var engineDetails = ""
-    @Published var transmissionRating = 9.0
-    @Published var transmissionDetails = ""
-    @Published var electronicsRating = 9.0
-    @Published var electronicsDetails = ""
+    @Published var ui = AuctionUploadUIState()
+    @Published var form = AuctionFormState()
     
     let steps = [
         "Images & Basic Info",
@@ -86,283 +26,249 @@ class AuctionUploadViewModel: ObservableObject {
     
     
     var canProceed: Bool {
-        switch currentStep {
-        case 0:
-            return canProceedFromBasicInfo
-        case 1:
-            return canProceedFromSpecifications
-        case 2:
-            return true // Features are optional
-        case 3:
-            return true // History and inspection are optional
-        case 4:
-            return true // Review step
+        switch ui.currentStep {
+        case 0: return form.selectedImages.count >= 3 &&
+                    !form.carTitle.isEmpty &&
+                    !form.subtitle.isEmpty &&
+                    !form.lotNumber.isEmpty &&
+                    !form.startingBid.isEmpty &&
+                    Double(form.startingBid) != nil
+
+        case 1: return !form.year.isEmpty &&
+                    !form.mileage.isEmpty &&
+                    !form.engine.isEmpty &&
+                    !form.transmission.isEmpty
         default:
-            return false
+            return true
         }
     }
+
     
     private var canProceedFromBasicInfo: Bool {
-        selectedImages.count >= 3 &&
-        !carTitle.isEmpty &&
-        !subtitle.isEmpty &&
-        !lotNumber.isEmpty &&
-        !startingBid.isEmpty &&
-        Double(startingBid) != nil
+        form.selectedImages.count >= 3 &&
+        !form.carTitle.isEmpty &&
+        !form.subtitle.isEmpty &&
+        !form.lotNumber.isEmpty &&
+        !form.startingBid.isEmpty &&
+        Double(form.startingBid) != nil
     }
     
     private var canProceedFromSpecifications: Bool {
-        !year.isEmpty &&
-        !mileage.isEmpty &&
-        !engine.isEmpty &&
-        !transmission.isEmpty
+        !form.year.isEmpty &&
+        !form.mileage.isEmpty &&
+        !form.engine.isEmpty &&
+        !form.transmission.isEmpty
     }
     
-    
-    
     func addImage(image: UIImage) {
-        if let index = activeImageIndex, index < selectedImages.count {
-            selectedImages[index] = image
+        if let index = form.activeImageIndex, index < form.selectedImages.count {
+            form.selectedImages[index] = image
         } else {
-            selectedImages.append(image)
+            form.selectedImages.append(image)
         }
-        activeImageIndex = nil
+        form.activeImageIndex = nil
     }
     
     func removeImage(at index: Int) {
-        guard index < selectedImages.count else { return }
-        selectedImages.remove(at: index)
+        guard index < form.selectedImages.count else { return }
+        form.selectedImages.remove(at: index)
     }
     
     func updateCarTitle(value: String) {
-        carTitle = value
+        form.carTitle = value
     }
     
     func updateSubtitle(value: String) {
-        subtitle = value
+        form.subtitle = value
     }
     
     func updateLotNumber(value: String) {
-        lotNumber = value
+        form.lotNumber = value
     }
     
     func updateStartingBid(value: String) {
-        startingBid = value
+        form.startingBid = value
     }
     
     func updateRating(value: Double) {
-        rating = value
+        form.rating = value
     }
     
     func updateAuctionEndDate(value: Date) {
-        auctionEndDate = value
+        form.auctionEndDate = value
     }
     
     func updateAuctionStatus(value: UploadAuctionStatus) {
-        auctionStatus = value
+        form.auctionStatus = value
     }
     
     func updateMileage(value: String) {
-        mileage = value
+        form.mileage = value
     }
     
     func updateYear(value: String) {
-        year = value
+        form.year = value
     }
     
     func updateEngine(value: String) {
-        engine = value
+        form.engine = value
     }
     
     func updateTransmission(value: String) {
-        transmission = value
+        form.transmission = value
     }
     
     func updateMake(value: String) {
-        make = value
+        form.make = value
     }
     
     func updateModel(value: String) {
-        model = value
+        form.model = value
     }
     
     func updateDriveTrain(value: String) {
-        drivetrain = value
+        form.drivetrain = value
     }
     // exterior, interior,vin,location seller
     func updateExteriorColor(value: String) {
-        exteriorColor = value
+        form.exteriorColor = value
     }
     
     func updateInteriorColor(value: String) {
-        interiorColor = value
+        form.interiorColor = value
     }
     
     func updateVin(value: String) {
-        vin = value
+        form.vin = value
     }
     
     func updateLocation(value: String) {
-        location = value
+        form.location = value
     }
     
     func updateSeller(value: String) {
-        seller = value
+        form.seller = value
     }
     
     
     func addFeature() {
-        guard !newFeature.isEmpty else { return }
+        guard !form.newFeature.isEmpty else { return }
         
-        switch selectedFeatureCategory {
+        switch form.selectedFeatureCategory {
         case 0:
-            performanceFeatures.append(newFeature)
+            form.performanceFeatures.append(form.newFeature)
         case 1:
-            technologyFeatures.append(newFeature)
+            form.technologyFeatures.append(form.newFeature)
         case 2:
-            comfortFeatures.append(newFeature)
+            form.comfortFeatures.append(form.newFeature)
         default:
             break
         }
         
-        newFeature = ""
+        form.newFeature = ""
     }
     
     func removeFeature(from category: Int, at index: Int) {
         switch category {
         case 0:
-            guard index < performanceFeatures.count else { return }
-            performanceFeatures.remove(at: index)
+            guard index < form.performanceFeatures.count else { return }
+            form.performanceFeatures.remove(at: index)
         case 1:
-            guard index < technologyFeatures.count else { return }
-            technologyFeatures.remove(at: index)
+            guard index < form.technologyFeatures.count else { return }
+            form.technologyFeatures.remove(at: index)
         case 2:
-            guard index < comfortFeatures.count else { return }
-            comfortFeatures.remove(at: index)
+            guard index < form.comfortFeatures.count else { return }
+            form.comfortFeatures.remove(at: index)
         default:
             break
         }
     }
     
     func addHistoryEvent() {
-        historyEvents.append(HistoryEventData(date: "", event: "", details: ""))
+        form.historyEvents.append(HistoryEventData(date: "", event: "", details: ""))
     }
     
     func removeHistoryEvent(at index: Int) {
-        guard index < historyEvents.count else { return }
-        historyEvents.remove(at: index)
+        guard index < form.historyEvents.count else { return }
+        form.historyEvents.remove(at: index)
     }
     
-    func submitAuction(
-        onSuccess: () -> Void,
-        onFailure: (String) -> Void
-    ) async {
+    func submitAuction(onSuccess: () -> Void, onFailure: (String) -> Void) async {
         
-        auctionState = .isLoading
+        ui.auctionState = .isLoading
         
-        //MARK: CREATE A STATE CLASS
         let result = await uploadUseCase.executeCreateAuction(
-            images: selectedImages,
-            carTitle: carTitle,
-            subtitle: subtitle,
-            lotNumber: lotNumber,
-            rating: rating,
-            startingBid: startingBid,
-            auctionEndDate: auctionEndDate,
-            auctionStatus: auctionStatus,
-            mileage: mileage,
-            year: year,
-            engine: engine,
-            transmission: transmission,
-            make: make,
-            model: model,
-            drivetrain: drivetrain,
-            exteriorColor: exteriorColor,
-            interiorColor: interiorColor,
-            vin: vin,
-            location: location,
-            seller: seller,
-            performanceFeatures: performanceFeatures,
-            technologyFeatures: technologyFeatures,
-            comfortFeatures: comfortFeatures,
-            historyEvents: historyEvents,
-            exteriorRating: exteriorRating,
-            exteriorDetails: exteriorDetails,
-            interiorRating: interiorRating,
-            interiorDetailsText: interiorDetailsText,
-            engineRating: engineRating,
-            engineDetails: engineDetails,
-            transmissionRating: transmissionRating,
-            transmissionDetails: transmissionDetails,
-            electronicsRating: electronicsRating,
-            electronicsDetails: electronicsDetails
+            images: form.selectedImages,
+            carTitle: form.carTitle,
+            subtitle: form.subtitle,
+            lotNumber: form.lotNumber,
+            rating: form.rating,
+            startingBid: form.startingBid,
+            auctionEndDate: form.auctionEndDate,
+            auctionStatus: form.auctionStatus,
+            mileage: form.mileage,
+            year: form.year,
+            engine: form.engine,
+            transmission: form.transmission,
+            make: form.make,
+            model: form.model,
+            drivetrain: form.drivetrain,
+            exteriorColor: form.exteriorColor,
+            interiorColor: form.interiorColor,
+            vin: form.vin,
+            location: form.location,
+            seller: form.seller,
+            performanceFeatures: form.performanceFeatures,
+            technologyFeatures: form.technologyFeatures,
+            comfortFeatures: form.comfortFeatures,
+            historyEvents: form.historyEvents,
+            exteriorRating: form.exteriorRating,
+            exteriorDetails: form.exteriorDetails,
+            interiorRating: form.interiorRating,
+            interiorDetailsText: form.interiorDetailsText,
+            engineRating: form.engineRating,
+            engineDetails: form.engineDetails,
+            transmissionRating: form.transmissionRating,
+            transmissionDetails: form.transmissionDetails,
+            electronicsRating: form.electronicsRating,
+            electronicsDetails: form.electronicsDetails
         )
-        
+
         switch result {
-            
-        case .success(let auctionId):
-            self.uploadedAuctionId = auctionId
-            self.auctionState = .good
-            
+        case .success(let id):
+            ui.auctionState = .good
+            ui.uploadSuccess = true
+            ui.uploadSuccess = true
+            ui.showError = false
+            ui.errorMessage = nil
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 self.resetForm()
             }
-            
             onSuccess()
-            
+
         case .failure(let error):
             let message = error.errorDescription?.description ?? "An unexpected error occurred."
-            self.auctionState = .error(message)
+            ui.auctionState = .error(message)
+            ui.errorMessage = message
+            ui.showError = true
             onFailure(message)
         }
     }
 
+
     
     func updateProgress(to value: Double) {
         withAnimation {
-            uploadProgress = value
+            ui.uploadProgress = value
         }
     }
     
     func resetForm() {
-        currentStep = 0
-        selectedImages = []
-        carTitle = ""
-        subtitle = ""
-        lotNumber = ""
-        rating = 4.8
-        startingBid = ""
-        auctionEndDate = Date().addingTimeInterval(7 * 24 * 3600)
-        auctionStatus = .upcoming
-        mileage = ""
-        year = ""
-        engine = ""
-        transmission = ""
-        make = ""
-        model = ""
-        drivetrain = ""
-        exteriorColor = ""
-        interiorColor = ""
-        vin = ""
-        location = ""
-        seller = ""
-        performanceFeatures = []
-        technologyFeatures = []
-        comfortFeatures = []
-        historyEvents = []
-        exteriorRating = 9.0
-        exteriorDetails = ""
-        interiorRating = 9.0
-        interiorDetailsText = ""
-        engineRating = 9.0
-        engineDetails = ""
-        transmissionRating = 9.0
-        transmissionDetails = ""
-        electronicsRating = 9.0
-        electronicsDetails = ""
-        uploadSuccess = false
-        uploadedAuctionId = nil
+        ui = AuctionUploadUIState()
+        form = AuctionFormState()
     }
+
     
     func saveDraft() {
         // Implement draft saving to SwiftData or coreData

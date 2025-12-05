@@ -14,101 +14,90 @@ import Firebase
 
 @MainActor
 class RegisterViewModel: ObservableObject {
-    @Published var dialogEntity = DialogEntity()
-    @Published var isShowAlertDialog = false
-    @Published var firstName: String = ""
-    @Published var lastName: String = ""
-    @Published var email: String = ""
-    @Published var phoneNumber: String = ""
-    @Published var password: String = ""
-    @Published var confirmPassword: String = ""
-    @Published var isRegisterEnabled: Bool = false
-    @Published var registerErrors = [String: String]()
-    @Published var registeState: FetchState = FetchState.good
-    
+    @Published var uiState = RegisterState()
     
     let authUseCase: AuthUseCase = AuthUseCase(authRepository: AuthenticationRepositoryImpl.shared)
     
     func validateIfRegisterIsEnabled(){
         var isFormValid = true
         
-        if !registerErrors.values.allSatisfy({ $0.isEmpty }) || email.isEmpty || password.isEmpty || firstName.isEmpty || lastName.isEmpty || phoneNumber.isEmpty || confirmPassword.isEmpty{
+        if !uiState.registerErrors.values.allSatisfy({ $0.isEmpty }) || uiState.email.isEmpty || uiState.password.isEmpty || uiState.firstName.isEmpty || uiState.lastName.isEmpty || uiState.phoneNumber.isEmpty || uiState.confirmPassword.isEmpty{
             isFormValid = false
         }
         
-        isRegisterEnabled = isFormValid
+        uiState.isRegisterEnabled = isFormValid
     }
     
     func updateRegisterErrors(key: String, value: String) {
-        registerErrors[key] = value
+        uiState.registerErrors[key] = value
         validateIfRegisterIsEnabled()
     }
     
     func updateFirstName(value: String) {
-        firstName = value
-        let error = ValidatorUtils.shared.validateName(name: firstName)
+        uiState.firstName = value
+        let error = ValidatorUtils.shared.validateName(name: uiState.firstName)
         updateRegisterErrors(key: "firstName", value: error)
     }
     
     func updateLastName(value: String) {
-        lastName = value
-        let error = ValidatorUtils.shared.validateName(name: lastName)
+        uiState.lastName = value
+        let error = ValidatorUtils.shared.validateName(name: uiState.lastName)
         updateRegisterErrors(key: "lastName", value: error)
     }
     
     func updatePhoneNumber(value: String) {
-        phoneNumber = value
-        let error = ValidatorUtils.shared.validatePhoneNumber(phoneNumber)
+        uiState.phoneNumber = value
+        let error = ValidatorUtils.shared.validatePhoneNumber(uiState.phoneNumber)
         updateRegisterErrors(key: "phoneNumber", value: error)
     }
     
     func updateEmail(value: String) {
-        email = value
-        let error = ValidatorUtils.shared.validateEmail(email: email)
+        uiState.email = value
+        let error = ValidatorUtils.shared.validateEmail(email: uiState.email)
         updateRegisterErrors(key: "email", value:  error)
     }
     
     func updatePassword(value: String) {
-        password = value
-        let error = ValidatorUtils.shared.validatePassword(password: password)
+        uiState.password = value
+        let error = ValidatorUtils.shared.validatePassword(password: uiState.password)
         updateRegisterErrors(key: "password", value: error.first ?? "")
     }
     
     func updateConfirmPassword(value: String) {
-        confirmPassword = value
-        let error = ValidatorUtils.shared.validateConfirmPassword(password: password, confirmPassword: confirmPassword)
+        uiState.confirmPassword = value
+        let error = ValidatorUtils.shared.validateConfirmPassword(password: uiState.password, confirmPassword: uiState.confirmPassword)
         updateRegisterErrors(key: "confirmPassword", value: error)
     }
     
     func updateDialogEntity(value: DialogEntity) {
-        dialogEntity = value
+        uiState.dialogEntity = value
     }
     
     func updateIsShowAlertDialog(value: Bool) {
-        isShowAlertDialog = value
+        uiState.isShowAlertDialog = value
     }
     
     func registerUser(
         onSuccess: () -> Void,
         onFailure: (String) -> Void
     ) async {
-        registeState = .isLoading
+        uiState.registeState = .isLoading
         
         var result:  Result<AuthDataResult, FirebaseAuthError>
         result = await authUseCase.executeRegiserUser(
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            password: password,
-            phoneNumber: phoneNumber
+            firstName: uiState.firstName,
+            lastName: uiState.lastName,
+            email: uiState.email,
+            password: uiState.password,
+            phoneNumber: uiState.phoneNumber
         )
         switch result {
         case .success(let authDataResult):
             print("DEBUG: Regiter success. User OpenId: \(authDataResult.user.uid)")
             onSuccess()
-            registeState = .good
+            uiState.registeState = .good
         case .failure(let error):
-            registeState = .error(error.description)
+            uiState.registeState = .error(error.description)
             onFailure(error.description)
         }
         

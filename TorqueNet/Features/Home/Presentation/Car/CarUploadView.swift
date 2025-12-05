@@ -78,7 +78,6 @@ struct CarUploadView: View {
                                         .scaledToFill()
                                         .frame(width: 120, height: 120)
                                         .clipShape(RoundedRectangle(cornerRadius: 12))
-                                    
                                     Button(action: {
                                         loadedImages.remove(at: index)
                                         selectedImages.remove(at: index)
@@ -101,8 +100,30 @@ struct CarUploadView: View {
                         .fontWeight(.bold)
                         .foregroundColor(Color.theme.onSurfaceColor)
                     
-                    CustomTextField(placeholder: "Car Name (e.g., Red Mazda 6)", text: $carName)
-                    CustomTextField(placeholder: "Model/Trim (e.g., Elite Estate)", text: $carModel)
+                    InputFieldView(
+                        description: "Car Name",
+                        placeHolder: "Red Mazda 6",
+                        text: $carName,
+                        foregroundColor: .theme.onSurfaceColor,
+                        backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                        keyboardType: .default,
+                        inputFieldStyle: .outlined,
+                        onTextChange: {text in
+                        }
+                    )
+                    
+                    InputFieldView(
+                        description: "Model",
+                        placeHolder: "Elite Estate",
+                        text: $carModel,
+                        foregroundColor: .theme.onSurfaceColor,
+                        backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                        keyboardType: .default,
+                        inputFieldStyle: .outlined,
+                        onTextChange: {text in
+                        }
+                    )
+                    
                     
                     HStack(spacing: 12) {
                         VStack(alignment: .leading, spacing: 8) {
@@ -119,9 +140,17 @@ struct CarUploadView: View {
                             Slider(value: $rating, in: 0...5, step: 0.1)
                                 .tint(.theme.primaryColor)
                         }
-                        
-                        CustomTextField(placeholder: "Reviews (e.g., 100)", text: $numberOfReviews)
-                            .keyboardType(.numberPad)
+                        InputFieldView(
+                            description: "Review",
+                            placeHolder: "100",
+                            text: $numberOfReviews,
+                            foregroundColor: .theme.onSurfaceColor,
+                            backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                            keyboardType: .numberPad,
+                            inputFieldStyle: .outlined,
+                            onTextChange: {text in
+                            }
+                        )
                     }
                 }
                 
@@ -160,8 +189,29 @@ struct CarUploadView: View {
                         }
                         
                         VStack(spacing: 8) {
-                            CustomTextField(placeholder: "Owner Name", text: $ownerName)
-                            CustomTextField(placeholder: "Role/Title", text: $ownerRole)
+                            InputFieldView(
+                                description: "Owner Name",
+                                placeHolder: "John Doe",
+                                text: $ownerName,
+                                foregroundColor: .theme.onSurfaceColor,
+                                backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                                keyboardType: .default,
+                                inputFieldStyle: .outlined,
+                                onTextChange: {text in
+                                }
+                            )
+                            
+                            InputFieldView(
+                                description: "Role/Title",
+                                placeHolder: "Software Engineer",
+                                text: $ownerRole,
+                                foregroundColor: .theme.onSurfaceColor,
+                                backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                                keyboardType: .default,
+                                inputFieldStyle: .outlined,
+                                onTextChange: {text in
+                                }
+                            )
                         }
                     }
                 }
@@ -174,10 +224,29 @@ struct CarUploadView: View {
                         .foregroundColor(Color.theme.onSurfaceColor)
                     
                     HStack(spacing: 12) {
-                        CustomTextField(placeholder: "Passengers", text: $passengers)
-                            .keyboardType(.numberPad)
-                        CustomTextField(placeholder: "Doors", text: $doors)
-                            .keyboardType(.numberPad)
+                        InputFieldView(
+                            description: "Passengers",
+                            placeHolder: "4",
+                            text: $passengers,
+                            foregroundColor: .theme.onSurfaceColor,
+                            backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                            keyboardType: .numberPad,
+                            inputFieldStyle: .outlined,
+                            onTextChange: {text in
+                            }
+                        )
+                     
+                        InputFieldView(
+                            description: "Doors",
+                            placeHolder: "4",
+                            text: $doors,
+                            foregroundColor: .theme.onSurfaceColor,
+                            backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                            keyboardType: .numberPad,
+                            inputFieldStyle: .outlined,
+                            onTextChange: {text in
+                            }
+                        )
                     }
                     
                     Toggle(isOn: $hasAirConditioner) {
@@ -226,9 +295,41 @@ struct CarUploadView: View {
                         .fontWeight(.bold)
                         .foregroundColor(Color.theme.onSurfaceColor)
                     
-                    CustomTextField(placeholder: "Max Power (e.g., 320 Hp)", text: $maxPower)
-                    CustomTextField(placeholder: "0-60 Mph (e.g., 5.4 Sec)", text: $zeroToSixty)
-                    CustomTextField(placeholder: "Top Speed (e.g., 187 Mph)", text: $topSpeed)
+                    InputFieldView(
+                        description: "Max Power",
+                        placeHolder: "320 Hp",
+                        text: $maxPower,
+                        foregroundColor: .theme.onSurfaceColor,
+                        backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                        keyboardType: .default,
+                        inputFieldStyle: .outlined,
+                        onTextChange: {text in
+                        }
+                    )
+                    
+                    InputFieldView(
+                        description: "0-60 Mph",
+                        placeHolder: "5.4 Sec",
+                        text: $zeroToSixty,
+                        foregroundColor: .theme.onSurfaceColor,
+                        backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                        keyboardType: .default,
+                        inputFieldStyle: .outlined,
+                        onTextChange: {text in
+                        }
+                    )
+
+                    InputFieldView(
+                        description: "Top Speed",
+                        placeHolder: "187 Mph",
+                        text: $topSpeed,
+                        foregroundColor: .theme.onSurfaceColor,
+                        backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                        keyboardType: .default,
+                        inputFieldStyle: .outlined,
+                        onTextChange: {text in
+                        }
+                    )
                 }
                 
                 // Submit Button
@@ -324,27 +425,6 @@ struct CarUploadView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             router.pop()
         }
-    }
-}
-
-// MARK: - Custom TextField Component
-
-struct CustomTextField: View {
-    let placeholder: String
-    @Binding var text: String
-    var keyboardType: UIKeyboardType = .default
-    
-    var body: some View {
-        TextField(placeholder, text: $text)
-            .font(.custom("Exo2-Regular", size: 14))
-            .padding()
-            .background(Color.theme.surfaceColor)
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.theme.onSurfaceColor.opacity(0.2), lineWidth: 1)
-            )
-            .keyboardType(keyboardType)
     }
 }
 
