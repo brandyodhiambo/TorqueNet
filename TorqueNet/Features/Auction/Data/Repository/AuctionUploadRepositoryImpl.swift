@@ -16,7 +16,7 @@ class AuctionUploadRepositoryImpl: AuctionUploadRepository {
     private let storageBasePath = "auction_images"
     
     
-    func uploadImages(_ images: [UIImage], auctionId: String) async -> Result<[String], AuctionUploadError> {
+    func uploadImages(_ images: [UIImage], auctionId: String) async -> Result<[String], UploadError> {
         var uploadedUrls: [String] = []
 
         for (index, image) in images.enumerated() {
@@ -56,7 +56,7 @@ class AuctionUploadRepositoryImpl: AuctionUploadRepository {
     }
 
 
-    func createAuction(_ auction: AuctionUploadModel) async -> Result<String, AuctionUploadError> {
+    func createAuction(_ auction: AuctionUploadModel) async -> Result<String, UploadError> {
         do {
             let docRef = FirestoreConstants.AuctionsCollection.document(auction.id)
             try docRef.setData(from: auction)
@@ -66,7 +66,7 @@ class AuctionUploadRepositoryImpl: AuctionUploadRepository {
         }
     }
 
-    func updateAuction(_ auction: AuctionUploadModel) async -> Result<Bool, AuctionUploadError> {
+    func updateAuction(_ auction: AuctionUploadModel) async -> Result<Bool, UploadError> {
         do {
             let docRef = FirestoreConstants.AuctionsCollection.document(auction.id)
             try await docRef.setData(from: auction, merge: true)
@@ -77,7 +77,7 @@ class AuctionUploadRepositoryImpl: AuctionUploadRepository {
     }
 
     
-    func deleteAuctionImages(_ imageUrls: [String]) async -> Result<Bool, AuctionUploadError> {
+    func deleteAuctionImages(_ imageUrls: [String]) async -> Result<Bool, UploadError> {
         for urlString in imageUrls {
             let storageRef = FirestoreConstants.FirebaseStorage.reference(forURL: urlString)
 

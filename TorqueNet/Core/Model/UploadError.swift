@@ -10,7 +10,7 @@ import Firebase
 import FirebaseFirestore
 import FirebaseStorage
 
-enum AuctionUploadError: LocalizedError {
+enum UploadError: LocalizedError {
     case imageCompressionFailed
     case imageUploadFailed(String)
     case firestoreWriteFailed(String)

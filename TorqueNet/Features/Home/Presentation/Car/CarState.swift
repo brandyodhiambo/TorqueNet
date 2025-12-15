@@ -34,4 +34,7 @@ struct CarUiState{
     
     let fuelPolicies = ["Full to Full", "Same to Same", "Empty to Empty"]
     let transmissionTypes = ["Manual", "Automatic", "Semi-Automatic"]
+    var isButtonEnable: Bool = false
+    var carErrors = [String: String]()
+    var carState: FetchState = FetchState.good
 }
