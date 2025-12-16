@@ -6,42 +6,16 @@
 //
 
 import SwiftUI
-
 import PhotosUI
 
 struct CarUploadView: View {
     @EnvironmentObject var router: Router
-    @State private var carName = ""
-    @State private var carModel = ""
-    @State private var rating = 4.8
-    @State private var numberOfReviews = ""
-    @State private var ownerName = ""
-    @State private var ownerRole = ""
-    @State private var passengers = ""
-    @State private var doors = ""
-    @State private var hasAirConditioner = true
-    @State private var fuelPolicy = "Full to Full"
-    @State private var transmission = "Manual"
-    @State private var maxPower = ""
-    @State private var zeroToSixty = ""
-    @State private var topSpeed = ""
-    
-    @State private var selectedImages: [PhotosPickerItem] = []
-    @State private var loadedImages: [UIImage] = []
-    @State private var profileImage: PhotosPickerItem?
-    @State private var loadedProfileImage: UIImage?
-    
-    @State private var showAlert = false
-    @State private var alertMessage = ""
-    
-    let fuelPolicies = ["Full to Full", "Same to Same", "Empty to Empty"]
-    let transmissionTypes = ["Manual", "Automatic", "Semi-Automatic"]
+    @StateObject var carViewModel = CarViewModel()
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading, spacing: 24) {
                 
-                // Image Upload Section
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Car Images")
                         .font(.custom("Exo2-Medium", size: 16))
@@ -50,7 +24,7 @@ struct CarUploadView: View {
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
-                            PhotosPicker(selection: $selectedImages, maxSelectionCount: 5, matching: .images) {
+                            PhotosPicker(selection: $carViewModel.carUiState.selectedImages, maxSelectionCount: 5, matching: .images) {
                                 VStack {
                                     Image(systemName: "plus.circle.fill")
                                         .font(.system(size: 40))
@@ -67,20 +41,20 @@ struct CarUploadView: View {
                                         .stroke(Color.theme.primaryColor.opacity(0.3), style: StrokeStyle(lineWidth: 2, dash: [5]))
                                 )
                             }
-                            .onChange(of: selectedImages) { newItems in
-                                loadImages(from: newItems)
+                            .onChange(of: carViewModel.carUiState.selectedImages) { newItems in
+                                carViewModel.loadImages(from: newItems)
                             }
                             
-                            ForEach(loadedImages.indices, id: \.self) { index in
+                            ForEach(carViewModel.carUiState.loadedImages.indices, id: \.self) { index in
                                 ZStack(alignment: .topTrailing) {
-                                    Image(uiImage: loadedImages[index])
+                                    Image(uiImage: carViewModel.carUiState.loadedImages[index])
                                         .resizable()
                                         .scaledToFill()
                                         .frame(width: 120, height: 120)
                                         .clipShape(RoundedRectangle(cornerRadius: 12))
                                     Button(action: {
-                                        loadedImages.remove(at: index)
-                                        selectedImages.remove(at: index)
+                                        carViewModel.carUiState.loadedImages.remove(at: index)
+                                        carViewModel.carUiState.selectedImages.remove(at: index)
                                     }) {
                                         Image(systemName: "xmark.circle.fill")
                                             .foregroundColor(.red)
@@ -93,7 +67,6 @@ struct CarUploadView: View {
                     }
                 }
                 
-                // Basic Information Section
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Basic Information")
                         .font(.custom("Exo2-Medium", size: 16))
@@ -103,24 +76,28 @@ struct CarUploadView: View {
                     InputFieldView(
                         description: "Car Name",
                         placeHolder: "Red Mazda 6",
-                        text: $carName,
+                        text: $carViewModel.carUiState.carName,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
+                        errorMessage: carViewModel.carUiState.carErrors["carName"] ?? "",
                         inputFieldStyle: .outlined,
                         onTextChange: {text in
+                            carViewModel.updateCarName(value: text)
                         }
                     )
                     
                     InputFieldView(
                         description: "Model",
                         placeHolder: "Elite Estate",
-                        text: $carModel,
+                        text: $carViewModel.carUiState.carModel,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
+                        errorMessage: carViewModel.carUiState.carErrors["carModel"] ?? "",
                         inputFieldStyle: .outlined,
                         onTextChange: {text in
+                            carViewModel.updateCarModel(value: text)
                         }
                     )
                     
@@ -133,28 +110,29 @@ struct CarUploadView: View {
                             HStack {
                                 Image(systemName: "star.fill")
                                     .foregroundColor(.yellow)
-                                Text(String(format: "%.1f", rating))
+                                Text(String(format: "%.1f", carViewModel.carUiState.rating))
                                     .font(.custom("Exo2-SemiBold", size: 16))
                                     .foregroundColor(.theme.onSurfaceColor)
                             }
-                            Slider(value: $rating, in: 0...5, step: 0.1)
+                            Slider(value: $carViewModel.carUiState.rating, in: 0...5, step: 0.1)
                                 .tint(.theme.primaryColor)
                         }
                         InputFieldView(
                             description: "Review",
                             placeHolder: "100",
-                            text: $numberOfReviews,
+                            text: $carViewModel.carUiState.numberOfReviews,
                             foregroundColor: .theme.onSurfaceColor,
                             backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                             keyboardType: .numberPad,
+                            errorMessage: carViewModel.carUiState.carErrors["numberOfReviews"] ?? "",
                             inputFieldStyle: .outlined,
                             onTextChange: {text in
+                                carViewModel.updateNumberOfReviews(value: text)
                             }
                         )
                     }
                 }
                 
-                // Owner Information Section
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Owner Information")
                         .font(.custom("Exo2-Medium", size: 16))
@@ -162,8 +140,8 @@ struct CarUploadView: View {
                         .foregroundColor(Color.theme.onSurfaceColor)
                     
                     HStack(spacing: 16) {
-                        PhotosPicker(selection: $profileImage, matching: .images) {
-                            if let loadedProfileImage {
+                        PhotosPicker(selection: $carViewModel.carUiState.profileImage, matching: .images) {
+                            if let loadedProfileImage = carViewModel.carUiState.loadedProfileImage {
                                 Image(uiImage: loadedProfileImage)
                                     .resizable()
                                     .scaledToFill()
@@ -184,39 +162,42 @@ struct CarUploadView: View {
                                 }
                             }
                         }
-                        .onChange(of: profileImage) { newItem in
-                            loadProfileImage(from: newItem)
+                        .onChange(of: carViewModel.carUiState.profileImage) { newItem in
+                            carViewModel.loadProfileImage(from: newItem)
                         }
                         
                         VStack(spacing: 8) {
                             InputFieldView(
                                 description: "Owner Name",
                                 placeHolder: "John Doe",
-                                text: $ownerName,
+                                text: $carViewModel.carUiState.ownerName,
                                 foregroundColor: .theme.onSurfaceColor,
                                 backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                                 keyboardType: .default,
+                                errorMessage: carViewModel.carUiState.carErrors["ownerName"] ?? "",
                                 inputFieldStyle: .outlined,
                                 onTextChange: {text in
+                                    carViewModel.updateOwnerName(value: text)
                                 }
                             )
                             
                             InputFieldView(
                                 description: "Role/Title",
                                 placeHolder: "Software Engineer",
-                                text: $ownerRole,
+                                text: $carViewModel.carUiState.ownerRole,
                                 foregroundColor: .theme.onSurfaceColor,
                                 backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                                 keyboardType: .default,
+                                errorMessage: carViewModel.carUiState.carErrors["ownerRole"] ?? "",
                                 inputFieldStyle: .outlined,
                                 onTextChange: {text in
+                                    carViewModel.updateOwnerRole(value: text)
                                 }
                             )
                         }
                     }
                 }
                 
-                // Car Information Section
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Car Information")
                         .font(.custom("Exo2-Medium", size: 16))
@@ -227,29 +208,33 @@ struct CarUploadView: View {
                         InputFieldView(
                             description: "Passengers",
                             placeHolder: "4",
-                            text: $passengers,
+                            text: $carViewModel.carUiState.passengers,
                             foregroundColor: .theme.onSurfaceColor,
                             backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                             keyboardType: .numberPad,
+                            errorMessage: carViewModel.carUiState.carErrors["passengers"] ?? "",
                             inputFieldStyle: .outlined,
                             onTextChange: {text in
+                                carViewModel.updatePassengers(value: text)
                             }
                         )
-                     
+                        
                         InputFieldView(
                             description: "Doors",
                             placeHolder: "4",
-                            text: $doors,
+                            text: $carViewModel.carUiState.doors,
                             foregroundColor: .theme.onSurfaceColor,
                             backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                             keyboardType: .numberPad,
+                            errorMessage: carViewModel.carUiState.carErrors["doors"] ?? "",
                             inputFieldStyle: .outlined,
                             onTextChange: {text in
+                                carViewModel.updateDoors(value: text)
                             }
                         )
                     }
                     
-                    Toggle(isOn: $hasAirConditioner) {
+                    Toggle(isOn: $carViewModel.carUiState.hasAirConditioner) {
                         HStack(spacing: 8) {
                             Image(systemName: "snowflake")
                                 .foregroundColor(.theme.primaryColor)
@@ -267,8 +252,8 @@ struct CarUploadView: View {
                         Text("Fuel Policy")
                             .font(.custom("Exo2-Regular", size: 14))
                             .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
-                        Picker("Fuel Policy", selection: $fuelPolicy) {
-                            ForEach(fuelPolicies, id: \.self) { policy in
+                        Picker("Fuel Policy", selection: $carViewModel.carUiState.fuelPolicy) {
+                            ForEach(carViewModel.carUiState.fuelPolicies, id: \.self) { policy in
                                 Text(policy).tag(policy)
                             }
                         }
@@ -279,8 +264,8 @@ struct CarUploadView: View {
                         Text("Transmission")
                             .font(.custom("Exo2-Regular", size: 14))
                             .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
-                        Picker("Transmission", selection: $transmission) {
-                            ForEach(transmissionTypes, id: \.self) { type in
+                        Picker("Transmission", selection: $carViewModel.carUiState.transmission) {
+                            ForEach(carViewModel.carUiState.transmissionTypes, id: \.self) { type in
                                 Text(type).tag(type)
                             }
                         }
@@ -288,7 +273,6 @@ struct CarUploadView: View {
                     }
                 }
                 
-                // Car Specifications Section
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Car Specifications")
                         .font(.custom("Exo2-Medium", size: 16))
@@ -298,52 +282,62 @@ struct CarUploadView: View {
                     InputFieldView(
                         description: "Max Power",
                         placeHolder: "320 Hp",
-                        text: $maxPower,
+                        text: $carViewModel.carUiState.maxPower,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
+                        errorMessage: carViewModel.carUiState.carErrors["maxPower"] ?? "",
                         inputFieldStyle: .outlined,
                         onTextChange: {text in
+                            carViewModel.updateMaxPower(value: text)
                         }
                     )
                     
                     InputFieldView(
                         description: "0-60 Mph",
                         placeHolder: "5.4 Sec",
-                        text: $zeroToSixty,
+                        text: $carViewModel.carUiState.zeroToSixty,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
+                        errorMessage: carViewModel.carUiState.carErrors["zeroToSixty"] ?? "",
                         inputFieldStyle: .outlined,
                         onTextChange: {text in
+                            carViewModel.updateZeroToSixty(value: text)
                         }
                     )
-
+                    
                     InputFieldView(
                         description: "Top Speed",
                         placeHolder: "187 Mph",
-                        text: $topSpeed,
+                        text: $carViewModel.carUiState.topSpeed,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
+                        errorMessage: carViewModel.carUiState.carErrors["topSpeed"] ?? "",
                         inputFieldStyle: .outlined,
                         onTextChange: {text in
+                            carViewModel.updateTopSpeed(value: text)
                         }
                     )
                 }
                 
-                // Submit Button
-                Button(action: submitCarDetails) {
-                    Text("Upload Car")
-                        .font(.custom("Exo2-SemiBold", size: 18))
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.theme.primaryColor)
-                        .cornerRadius(12)
-                }
-                .padding(.vertical)
+                CustomButtonView(
+                    buttonName:"Upload Car",
+                    isDisabled: !carViewModel.carUiState.isButtonEnable,
+                    onTap: {
+                        Task{
+                            await carViewModel.uploadCar(
+                                onSuccess:{
+                                    carViewModel.carUiState.toast = Toast(style: .success, message: "You have successfully uploaded a car.")
+                                },
+                                onFailure:{ error in
+                                    carViewModel.carUiState.toast = Toast(style: .error, message: error)
+                                }
+                            )
+                        }
+                    }
+                )
             }
             .padding()
         }
@@ -359,72 +353,8 @@ struct CarUploadView: View {
             onTrailingTap: {},
             trailingMenu: {}
         )
-        .alert("Upload Status", isPresented: $showAlert) {
-            Button("OK", role: .cancel) { }
-        } message: {
-            Text(alertMessage)
-        }
-    }
-    
-    // MARK: - Helper Functions
-    
-    private func loadImages(from items: [PhotosPickerItem]) {
-        loadedImages.removeAll()
-        for item in items {
-            item.loadTransferable(type: Data.self) { result in
-                switch result {
-                case .success(let data):
-                    if let data = data, let image = UIImage(data: data) {
-                        DispatchQueue.main.async {
-                            loadedImages.append(image)
-                        }
-                    }
-                case .failure(let error):
-                    print("Error loading image: \(error)")
-                }
-            }
-        }
-    }
-    
-    private func loadProfileImage(from item: PhotosPickerItem?) {
-        guard let item = item else { return }
-        item.loadTransferable(type: Data.self) { result in
-            switch result {
-            case .success(let data):
-                if let data = data, let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        loadedProfileImage = image
-                    }
-                }
-            case .failure(let error):
-                print("Error loading profile image: \(error)")
-            }
-        }
-    }
-    
-    private func submitCarDetails() {
-        // Validate required fields
-        guard !carName.isEmpty, !carModel.isEmpty, !ownerName.isEmpty else {
-            alertMessage = "Please fill in all required fields"
-            showAlert = true
-            return
-        }
-        
-        guard loadedImages.count > 0 else {
-            alertMessage = "Please add at least one car image"
-            showAlert = true
-            return
-        }
-        
-        // Here you would typically send the data to your backend
-        // For now, we'll just show a success message
-        alertMessage = "Car details uploaded successfully!"
-        showAlert = true
-        
-        // Optionally navigate back after a delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            router.pop()
-        }
+        .fullScreenProgressOverlay(isShowing: carViewModel.carUiState.carState == .isLoading )
+        .toastView(toast: $carViewModel.carUiState.toast)
     }
 }
 

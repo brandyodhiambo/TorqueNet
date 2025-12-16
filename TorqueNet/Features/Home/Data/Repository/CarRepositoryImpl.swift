@@ -16,41 +16,72 @@ class CarRepositoryImpl: CarRepository {
     static let shared = CarRepositoryImpl()
     private let storageBasePath = "car_images"
     
-    func uploadCar(_ car: CarModel, carImages: [UIImage], profileImage: UIImage?) async  -> Result<String, UploadError> {
-        do {
-            let carImageUrls = try await uploadImages(carImages, path: "cars/\(UUID().uuidString)")
-            var profileImageUrl: String?
-            if let profileImage = profileImage {
-                profileImageUrl = try await uploadImage(profileImage, path: "profiles/\(UUID().uuidString)")
+    func uploadCar(
+        _ car: CarModel,
+        carImages: [UIImage],
+        profileImage: UIImage?
+    ) async -> Result<String, UploadError> {
+
+        let imageUploadResult = await uploadImages(
+            carImages,
+            path: "cars/\(UUID().uuidString)"
+        )
+
+        let carImageUrls: [String]
+        switch imageUploadResult {
+        case .success(let urls):
+            carImageUrls = urls
+        case .failure(let error):
+            return .failure(error)
+        }
+
+        var profileImageUrl: String?
+        if let profileImage = profileImage {
+            let profileResult = await uploadImage(
+                profileImage,
+                path: "profiles/\(UUID().uuidString)"
+            )
+
+            switch profileResult {
+            case .success(let url):
+                profileImageUrl = url
+            case .failure(let error):
+                return .failure(error)
             }
-            var carData = car
-            let carDict: [String: Any] = [
-                "id": FirestoreConstants.CarsCollection.document().documentID,
-                "carName": carData.carName,
-                "carModel": carData.carModel,
-                "rating": carData.rating,
-                "numberOfReviews": carData.numberOfReviews,
-                "ownerName": carData.ownerName,
-                "ownerRole": carData.ownerRole,
-                "ownerProfileImageUrl": profileImageUrl ?? "",
-                "carImageUrls": carImageUrls,
-                "passengers": carData.passengers,
-                "doors": carData.doors,
-                "hasAirConditioner": carData.hasAirConditioner,
-                "fuelPolicy": carData.fuelPolicy,
-                "transmission": carData.transmission,
-                "maxPower": carData.maxPower,
-                "zeroToSixty": carData.zeroToSixty,
-                "topSpeed": carData.topSpeed,
-                "createdAt": Timestamp(date: carData.createdAt)
-            ]
-            let docRef = FirestoreConstants.CarsCollection.document()
-            try docRef.setData(carDict)
+        }
+        
+
+        let docRef = FirestoreConstants.CarsCollection.document()
+
+        let carDict: [String: Any] = [
+            "id": docRef.documentID,
+            "carName": car.carName,
+            "carModel": car.carModel,
+            "rating": car.rating,
+            "numberOfReviews": car.numberOfReviews,
+            "ownerName": car.ownerName,
+            "ownerRole": car.ownerRole,
+            "ownerProfileImageUrl": profileImageUrl ?? "",
+            "carImageUrls": carImageUrls, // ✅ now [String]
+            "passengers": car.passengers,
+            "doors": car.doors,
+            "hasAirConditioner": car.hasAirConditioner,
+            "fuelPolicy": car.fuelPolicy,
+            "transmission": car.transmission,
+            "maxPower": car.maxPower,
+            "zeroToSixty": car.zeroToSixty,
+            "topSpeed": car.topSpeed,
+            "createdAt": Timestamp(date: car.createdAt)
+        ]
+
+        do {
+            try await docRef.setData(carDict)
             return .success(docRef.documentID)
         } catch {
             return .failure(.firestoreWriteFailed(error.localizedDescription))
         }
     }
+
     
     func uploadImages(_ images: [UIImage], path: String) async  -> Result<[String], UploadError> {
         var uploadedUrls: [String] = []
@@ -91,19 +122,24 @@ class CarRepositoryImpl: CarRepository {
         }
     }
     
-    func uploadImage(_ image: UIImage, path: String) async throws -> String {
+    func uploadImage(_ image: UIImage, path: String) async -> Result<String, UploadError> {
+        var profileImageUrl: String = ""
         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
-            throw NSError(domain: "ImageError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert image to data"])
+            return .failure(.imageCompressionFailed)
         }
         
         let storageRef = FirestoreConstants.StorageRef.child(path)
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpeg"
         
-        _ = try await storageRef.putDataAsync(imageData, metadata: metadata)
-        let downloadURL = try await storageRef.downloadURL()
-        
-        return downloadURL.absoluteString
+        do{
+            _ = try await storageRef.putDataAsync(imageData, metadata: metadata)
+            let downloadURL = try await storageRef.downloadURL()
+            profileImageUrl = downloadURL.absoluteString
+        } catch {
+            return .failure(.imageUploadFailed(error.localizedDescription))
+        }
+        return .success(profileImageUrl)
         
     }
     

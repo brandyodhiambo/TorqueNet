@@ -56,7 +56,7 @@ class UploadAuctionUseCase {
         transmissionDetails: String,
         electronicsRating: Double,
         electronicsDetails: String
-    ) async -> Result<String, AuctionUploadError> {
+    ) async -> Result<String, UploadError> {
         
         guard !images.isEmpty else {
             return .failure(.invalidData("At least one image is required"))

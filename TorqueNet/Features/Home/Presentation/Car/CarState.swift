@@ -36,5 +36,10 @@ struct CarUiState{
     let transmissionTypes = ["Manual", "Automatic", "Semi-Automatic"]
     var isButtonEnable: Bool = false
     var carErrors = [String: String]()
+    
     var carState: FetchState = FetchState.good
+    var uploadSuccess: Bool = false
+    var toast: Toast? = nil
+    var errorMessage: String? = nil
+    var showError: Bool = false
 }

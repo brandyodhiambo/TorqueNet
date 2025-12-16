@@ -5,6 +5,8 @@
 //  Created by MAC on 15/12/2025.
 //
 
+import Foundation
+
 struct CarModel: Codable, Identifiable {
     var id: String?
     let carName: String
