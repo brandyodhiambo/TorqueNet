@@ -20,7 +20,7 @@ struct AuctionUploadView: View {
                     // Content
                     ScrollView(.vertical, showsIndicators: false) {
                         VStack(spacing: 24) {
-                            switch uploadAuctionViewModel.currentStep {
+                            switch uploadAuctionViewModel.ui.currentStep {
                             case 0:
                                 imagesAndBasicInfoStep
                             case 1:
@@ -44,14 +44,14 @@ struct AuctionUploadView: View {
                 }
               
             }
-            .toastView(toast: $uploadAuctionViewModel.toast)
+            .toastView(toast: $uploadAuctionViewModel.ui.toast)
             .background(Color.theme.surfaceColor)
             .customTopAppBar(
                 title: "Upload Auction",
                 leadingIcon: "chevron.left",
                 onLeadingTap: {
-                    if uploadAuctionViewModel.currentStep > 0 {
-                        uploadAuctionViewModel.currentStep -= 1
+                    if uploadAuctionViewModel.ui.currentStep > 0 {
+                        uploadAuctionViewModel.ui.currentStep -= 1
                 } else {
                     router.pop()
                 }},
@@ -63,8 +63,8 @@ struct AuctionUploadView: View {
                   
                 }
             )
-            .fullScreenProgressOverlay(isShowing: uploadAuctionViewModel.auctionState == .isLoading )
-            .sheet(isPresented: $uploadAuctionViewModel.showingImagePicker) {
+            .fullScreenProgressOverlay(isShowing: uploadAuctionViewModel.ui.auctionState == .isLoading )
+            .sheet(isPresented: $uploadAuctionViewModel.ui.showingImagePicker) {
                 ImagePicker(
                     image: .constant(nil),
                     onSave: { image in
@@ -84,12 +84,12 @@ struct AuctionUploadView: View {
                     ForEach(0..<uploadAuctionViewModel.steps.count, id: \.self) { index in
                         HStack(spacing: 0) {
                             Circle()
-                                .fill(index <= uploadAuctionViewModel.currentStep ? Color.theme.primaryColor : Color.theme.onSurfaceColor.opacity(0.3))
+                                .fill(index <= uploadAuctionViewModel.ui.currentStep ? Color.theme.primaryColor : Color.theme.onSurfaceColor.opacity(0.3))
                                 .frame(width: 8, height: 8)
                             
                             if index < uploadAuctionViewModel.steps.count - 1 {
                                 Rectangle()
-                                    .fill(index < uploadAuctionViewModel.currentStep ? Color.theme.primaryColor : Color.theme.onSurfaceColor.opacity(0.3))
+                                    .fill(index < uploadAuctionViewModel.ui.currentStep ? Color.theme.primaryColor : Color.theme.onSurfaceColor.opacity(0.3))
                                     .frame(height: 2)
                             }
                         }
@@ -97,7 +97,7 @@ struct AuctionUploadView: View {
                 }
                 
                 
-                Text("\(uploadAuctionViewModel.currentStep + 1) of \(uploadAuctionViewModel.steps.count): \(uploadAuctionViewModel.steps[uploadAuctionViewModel.currentStep])")
+                Text("\(uploadAuctionViewModel.ui.currentStep + 1) of \(uploadAuctionViewModel.steps.count): \(uploadAuctionViewModel.steps[uploadAuctionViewModel.ui.currentStep])")
                     .font(.custom("Exo2-Regular", size: 14))
                     .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
             }
@@ -116,9 +116,9 @@ struct AuctionUploadView: View {
                         ForEach(0..<6, id: \.self) { index in
                             ImageCell(
                                 index: index,
-                                selectedImages: $uploadAuctionViewModel.selectedImages,
-                                showingImagePicker: $uploadAuctionViewModel.showingImagePicker,
-                                activeImageIndex: $uploadAuctionViewModel.activeImageIndex
+                                selectedImages: $uploadAuctionViewModel.form.selectedImages,
+                                showingImagePicker: $uploadAuctionViewModel.ui.showingImagePicker,
+                                activeImageIndex: $uploadAuctionViewModel.form.activeImageIndex
                             )
                         }
                     }
@@ -130,7 +130,7 @@ struct AuctionUploadView: View {
                 InputFieldView(
                     description: "Car Title",
                     placeHolder: "2023 BMW X5 M Competition",
-                    text: $uploadAuctionViewModel.carTitle,
+                    text: $uploadAuctionViewModel.form.carTitle,
                     foregroundColor: .theme.onSurfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                     keyboardType: .default,
@@ -143,7 +143,7 @@ struct AuctionUploadView: View {
                 InputFieldView(
                     description: "Subtitle",
                     placeHolder: "Elite Performance SUV",
-                    text: $uploadAuctionViewModel.subtitle,
+                    text: $uploadAuctionViewModel.form.subtitle,
                     foregroundColor: .theme.onSurfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                     keyboardType: .default,
@@ -156,7 +156,7 @@ struct AuctionUploadView: View {
                 InputFieldView(
                     description: "Lot Number",
                     placeHolder: "2847",
-                    text: $uploadAuctionViewModel.lotNumber,
+                    text: $uploadAuctionViewModel.form.lotNumber,
                     foregroundColor: .theme.onSurfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                     keyboardType: .numberPad,
@@ -173,10 +173,10 @@ struct AuctionUploadView: View {
                         .foregroundColor(.theme.onSurfaceColor)
                     
                     HStack {
-                        Slider(value: $uploadAuctionViewModel.rating, in: 1...5, step: 0.1)
+                        Slider(value: $uploadAuctionViewModel.form.rating, in: 1...5, step: 0.1)
                             .accentColor(.theme.primaryColor)
                         
-                        Text(String(format: "%.1f", uploadAuctionViewModel.rating))
+                        Text(String(format: "%.1f", uploadAuctionViewModel.form.rating))
                             .font(.custom("Exo2-SemiBold", size: 16))
                             .foregroundColor(.theme.primaryColor)
                             .frame(width: 40)
@@ -191,7 +191,7 @@ struct AuctionUploadView: View {
                 InputFieldView(
                     description: "Starting Bid ($)",
                     placeHolder: "85500",
-                    text: $uploadAuctionViewModel.startingBid,
+                    text: $uploadAuctionViewModel.form.startingBid,
                     foregroundColor: .theme.surfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                     keyboardType: .numberPad,
@@ -207,7 +207,7 @@ struct AuctionUploadView: View {
                         .font(.custom("Exo2-Medium", size: 16))
                         .foregroundColor(.theme.onSurfaceColor)
                     
-                    DatePicker("", selection: $uploadAuctionViewModel.auctionEndDate, displayedComponents: [.date, .hourAndMinute])
+                    DatePicker("", selection: $uploadAuctionViewModel.form.auctionEndDate, displayedComponents: [.date, .hourAndMinute])
                         .datePickerStyle(.compact)
                 }
                 .padding()
@@ -221,7 +221,7 @@ struct AuctionUploadView: View {
                         .font(.custom("Exo2-Medium", size: 16))
                         .foregroundColor(.theme.onSurfaceColor)
                     
-                    Picker("Status", selection: $uploadAuctionViewModel.auctionStatus) {
+                    Picker("Status", selection: $uploadAuctionViewModel.form.auctionStatus) {
                         ForEach(UploadAuctionStatus.allCases, id: \.self) { status in
                             Text(status.rawValue).tag(status)
                         }
@@ -246,7 +246,7 @@ struct AuctionUploadView: View {
                     InputFieldView(
                         description: "Mileage",
                         placeHolder: "12,450",
-                        text: $uploadAuctionViewModel.mileage,
+                        text: $uploadAuctionViewModel.form.mileage,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
@@ -259,7 +259,7 @@ struct AuctionUploadView: View {
                     InputFieldView(
                         description: "Year",
                         placeHolder: "2025",
-                        text: $uploadAuctionViewModel.year,
+                        text: $uploadAuctionViewModel.form.year,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
@@ -274,7 +274,7 @@ struct AuctionUploadView: View {
                     InputFieldView(
                         description: "Engine",
                         placeHolder: "4.4L Twin-Turbo V8",
-                        text: $uploadAuctionViewModel.engine,
+                        text: $uploadAuctionViewModel.form.engine,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
@@ -287,7 +287,7 @@ struct AuctionUploadView: View {
                     InputFieldView(
                         description: "Transformation",
                         placeHolder: "8-Speed Automatic",
-                        text: $uploadAuctionViewModel.transmission,
+                        text: $uploadAuctionViewModel.form.transmission,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
@@ -306,7 +306,7 @@ struct AuctionUploadView: View {
                     InputFieldView(
                         description: "Make",
                         placeHolder: "BMW",
-                        text: $uploadAuctionViewModel.make,
+                        text: $uploadAuctionViewModel.form.make,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
@@ -319,7 +319,7 @@ struct AuctionUploadView: View {
                     InputFieldView(
                         description: "Model",
                         placeHolder: "X5 M Competition",
-                        text: $uploadAuctionViewModel.model,
+                        text: $uploadAuctionViewModel.form.model,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
@@ -333,7 +333,7 @@ struct AuctionUploadView: View {
                 InputFieldView(
                     description: "Drivetrain",
                     placeHolder: "All-Wheel Drive",
-                    text: $uploadAuctionViewModel.drivetrain,
+                    text: $uploadAuctionViewModel.form.drivetrain,
                     foregroundColor: .theme.onSurfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                     keyboardType: .default,
@@ -348,7 +348,7 @@ struct AuctionUploadView: View {
                     InputFieldView(
                         description: "Exterior Color",
                         placeHolder: "Storm Bay Metallic",
-                        text: $uploadAuctionViewModel.exteriorColor,
+                        text: $uploadAuctionViewModel.form.exteriorColor,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
@@ -361,7 +361,7 @@ struct AuctionUploadView: View {
                     InputFieldView(
                         description: "Interior Color",
                         placeHolder: "Black Merino Leather",
-                        text: $uploadAuctionViewModel.interiorColor,
+                        text: $uploadAuctionViewModel.form.interiorColor,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
@@ -375,7 +375,7 @@ struct AuctionUploadView: View {
                 InputFieldView(
                     description: "VIN",
                     placeHolder: "5UXCR6C0XP9D12345",
-                    text: $uploadAuctionViewModel.vin,
+                    text: $uploadAuctionViewModel.form.vin,
                     foregroundColor: .theme.onSurfaceColor,
                     backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                     keyboardType: .default,
@@ -390,7 +390,7 @@ struct AuctionUploadView: View {
                     InputFieldView(
                         description: "Location",
                         placeHolder: "Los Angeles, CA",
-                        text: $uploadAuctionViewModel.location,
+                        text: $uploadAuctionViewModel.form.location,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
@@ -403,7 +403,7 @@ struct AuctionUploadView: View {
                     InputFieldView(
                         description: "Seller",
                         placeHolder: "Premium Auto Gallery",
-                        text: $uploadAuctionViewModel.seller,
+                        text: $uploadAuctionViewModel.form.seller,
                         foregroundColor: .theme.onSurfaceColor,
                         backgroundColor: .theme.onSurfaceColor.opacity(0.1),
                         keyboardType: .default,
@@ -422,7 +422,7 @@ struct AuctionUploadView: View {
             SectionHeader(title: "Vehicle Features", subtitle: "Add features by category")
             
             // Feature Category Picker
-            Picker("Category", selection: $uploadAuctionViewModel.selectedFeatureCategory) {
+            Picker("Category", selection: $uploadAuctionViewModel.form.selectedFeatureCategory) {
                 Text("Performance").tag(0)
                 Text("Technology").tag(1)
                 Text("Comfort").tag(2)
@@ -436,7 +436,7 @@ struct AuctionUploadView: View {
             
             // Add Feature Input
             HStack {
-                TextField("Add a feature...", text: $uploadAuctionViewModel.newFeature)
+                TextField("Add a feature...", text: $uploadAuctionViewModel.form.newFeature)
                     .font(.custom("Exo2-Regular", size: 16))
                     .padding()
                     .background(
@@ -449,21 +449,21 @@ struct AuctionUploadView: View {
                         .font(.system(size: 24))
                         .foregroundColor(.theme.primaryColor)
                 }
-                .disabled(uploadAuctionViewModel.newFeature.isEmpty)
+                .disabled(uploadAuctionViewModel.form.newFeature.isEmpty)
             }
             
             // Features Display
             VStack(alignment: .leading, spacing: 16) {
-                if !uploadAuctionViewModel.performanceFeatures.isEmpty {
-                    FeatureGroupEditor(title: "Performance", features: $uploadAuctionViewModel.performanceFeatures)
+                if !uploadAuctionViewModel.form.performanceFeatures.isEmpty {
+                    FeatureGroupEditor(title: "Performance", features: $uploadAuctionViewModel.form.performanceFeatures)
                 }
                 
-                if !uploadAuctionViewModel.technologyFeatures.isEmpty {
-                    FeatureGroupEditor(title: "Technology", features: $uploadAuctionViewModel.technologyFeatures)
+                if !uploadAuctionViewModel.form.technologyFeatures.isEmpty {
+                    FeatureGroupEditor(title: "Technology", features: $uploadAuctionViewModel.form.technologyFeatures)
                 }
                 
-                if !uploadAuctionViewModel.comfortFeatures.isEmpty {
-                    FeatureGroupEditor(title: "Comfort & Convenience", features: $uploadAuctionViewModel.comfortFeatures)
+                if !uploadAuctionViewModel.form.comfortFeatures.isEmpty {
+                    FeatureGroupEditor(title: "Comfort & Convenience", features: $uploadAuctionViewModel.form.comfortFeatures)
                 }
             }
         }
@@ -490,8 +490,8 @@ struct AuctionUploadView: View {
                 )
             }
             
-            ForEach(uploadAuctionViewModel.historyEvents.indices, id: \.self) { index in
-                HistoryEventEditor(event: $uploadAuctionViewModel.historyEvents[index]) {
+            ForEach(uploadAuctionViewModel.form.historyEvents.indices, id: \.self) { index in
+                HistoryEventEditor(event: $uploadAuctionViewModel.form.historyEvents[index]) {
                     uploadAuctionViewModel.removeHistoryEvent(at: index)
                 }
             }
@@ -499,11 +499,11 @@ struct AuctionUploadView: View {
             SectionHeader(title: "Inspection Report", subtitle: "Rate each category from 1-10")
             
             VStack(spacing: 16) {
-                InspectionRatingEditor(title: "Exterior", rating: $uploadAuctionViewModel.exteriorRating, details: $uploadAuctionViewModel.exteriorDetails)
-                InspectionRatingEditor(title: "Interior", rating: $uploadAuctionViewModel.interiorRating, details: $uploadAuctionViewModel.interiorDetailsText)
-                InspectionRatingEditor(title: "Engine", rating: $uploadAuctionViewModel.engineRating, details: $uploadAuctionViewModel.engineDetails)
-                InspectionRatingEditor(title: "Transmission", rating: $uploadAuctionViewModel.transmissionRating, details: $uploadAuctionViewModel.transmissionDetails)
-                InspectionRatingEditor(title: "Electronics", rating: $uploadAuctionViewModel.electronicsRating, details: $uploadAuctionViewModel.electronicsDetails)
+                InspectionRatingEditor(title: "Exterior", rating: $uploadAuctionViewModel.form.exteriorRating, details: $uploadAuctionViewModel.form.exteriorDetails)
+                InspectionRatingEditor(title: "Interior", rating: $uploadAuctionViewModel.form.interiorRating, details: $uploadAuctionViewModel.form.interiorDetailsText)
+                InspectionRatingEditor(title: "Engine", rating: $uploadAuctionViewModel.form.engineRating, details: $uploadAuctionViewModel.form.engineDetails)
+                InspectionRatingEditor(title: "Transmission", rating: $uploadAuctionViewModel.form.transmissionRating, details: $uploadAuctionViewModel.form.transmissionDetails)
+                InspectionRatingEditor(title: "Electronics", rating: $uploadAuctionViewModel.form.electronicsRating, details: $uploadAuctionViewModel.form.electronicsDetails)
             }
         }
     }
@@ -515,12 +515,12 @@ struct AuctionUploadView: View {
             VStack(spacing: 20) {
                 ReviewCard(title: "Basic Information") {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("\(uploadAuctionViewModel.carTitle) - \(uploadAuctionViewModel.subtitle)")
+                        Text("\(uploadAuctionViewModel.form.carTitle) - \(uploadAuctionViewModel.form.subtitle)")
                             .font(.custom("Exo2-SemiBold", size: 16))
-                        Text("Lot #\(uploadAuctionViewModel.lotNumber) • Rating: \(String(format: "%.1f", uploadAuctionViewModel.rating))")
+                        Text("Lot #\(uploadAuctionViewModel.form.lotNumber) • Rating: \(String(format: "%.1f", uploadAuctionViewModel.form.rating))")
                             .font(.custom("Exo2-Regular", size: 14))
                             .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
-                        Text("Starting Bid: $\(uploadAuctionViewModel.startingBid)")
+                        Text("Starting Bid: $\(uploadAuctionViewModel.form.startingBid)")
                             .font(.custom("Exo2-Medium", size: 14))
                             .foregroundColor(.theme.primaryColor)
                     }
@@ -528,25 +528,25 @@ struct AuctionUploadView: View {
                 
                 ReviewCard(title: "Specifications") {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("\(uploadAuctionViewModel.year) \(uploadAuctionViewModel.make) \(uploadAuctionViewModel.model)")
+                        Text("\(uploadAuctionViewModel.form.year) \(uploadAuctionViewModel.form.make) \(uploadAuctionViewModel.form.model)")
                             .font(.custom("Exo2-Medium", size: 14))
-                        Text("\(uploadAuctionViewModel.mileage) miles • \(uploadAuctionViewModel.engine)")
+                        Text("\(uploadAuctionViewModel.form.mileage) miles • \(uploadAuctionViewModel.form.engine)")
                             .font(.custom("Exo2-Regular", size: 12))
                             .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
                     }
                 }
                 
                 ReviewCard(title: "Images") {
-                    Text("\(uploadAuctionViewModel.selectedImages.count) photos uploaded")
+                    Text("\(uploadAuctionViewModel.form.selectedImages.count) photos uploaded")
                         .font(.custom("Exo2-Regular", size: 14))
                         .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
                 }
                 
                 ReviewCard(title: "Features") {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("\(uploadAuctionViewModel.performanceFeatures.count) Performance features")
-                        Text("\(uploadAuctionViewModel.technologyFeatures.count) Technology features")
-                        Text("\(uploadAuctionViewModel.comfortFeatures.count) Comfort features")
+                        Text("\(uploadAuctionViewModel.form.performanceFeatures.count) Performance features")
+                        Text("\(uploadAuctionViewModel.form.technologyFeatures.count) Technology features")
+                        Text("\(uploadAuctionViewModel.form.comfortFeatures.count) Comfort features")
                     }
                     .font(.custom("Exo2-Regular", size: 14))
                     .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
@@ -557,10 +557,10 @@ struct AuctionUploadView: View {
     
     private var navigationButtons: some View {
         HStack(spacing: 16) {
-            if uploadAuctionViewModel.currentStep > 0 {
+            if uploadAuctionViewModel.ui.currentStep > 0 {
                 Button(action: {
                     withAnimation(.easeInOut(duration: 0.3)) {
-                        uploadAuctionViewModel.currentStep -= 1
+                        uploadAuctionViewModel.ui.currentStep -= 1
                     }
                 }) {
                     Text("Previous")
@@ -578,24 +578,24 @@ struct AuctionUploadView: View {
             Spacer()
             
             Button(action: {
-                if uploadAuctionViewModel.currentStep < uploadAuctionViewModel.steps.count - 1 {
+                if uploadAuctionViewModel.ui.currentStep < uploadAuctionViewModel.steps.count - 1 {
                     withAnimation(.easeInOut(duration: 0.3)) {
-                        uploadAuctionViewModel.currentStep += 1
+                        uploadAuctionViewModel.ui.currentStep += 1
                     }
                 } else {
                     Task{
                         await uploadAuctionViewModel.submitAuction(
                             onSuccess: {
-                                uploadAuctionViewModel.toast = Toast(style: .success, message: "Auction Uploaded successfully")
+                                uploadAuctionViewModel.ui.toast = Toast(style: .success, message: "Auction Uploaded successfully")
                             },
                             onFailure: {error in
-                                uploadAuctionViewModel.toast = Toast(style: .error, message: error)
+                                uploadAuctionViewModel.ui.toast = Toast(style: .error, message: error)
                             }
                         )
                     }
                 }
             }) {
-                Text(uploadAuctionViewModel.currentStep == uploadAuctionViewModel.steps.count - 1 ? "Submit Auction" : "Next")
+                Text(uploadAuctionViewModel.ui.currentStep == uploadAuctionViewModel.steps.count - 1 ? "Submit Auction" : "Next")
                     .font(.custom("Exo2-SemiBold", size: 16))
                     .foregroundColor(.white)
                     .padding(.horizontal, 32)

@@ -24,42 +24,45 @@ struct NotificationsView: View {
     }
     
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(spacing: 0) {
-                if unreadCount > 0 {
-                    Text("\(unreadCount) unread")
-                        .font(.custom("Exo2-Regular", size: 14))
-                        .foregroundColor(.theme.primaryColor)
-                        .multilineTextAlignment(.leading)
-                }
-                // Filter tabs
-                filterTabs
-                
-                // Notifications list
-                notificationsList
-            }
-            .background(Color.theme.surfaceColor)
-            .customTopAppBar(
-                title: "Notifications",
-                leadingIcon: "chevron.left",
-                onLeadingTap: { router.pop() },
-                trailingMenu: {
-                    Menu {
-                        if unreadCount > 0 {
-                            Button("Mark all read") {
-                                markAllAsRead()
-                            }
-                            .font(.custom("Exo2-Medium", size: 14))
+        VStack {
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 0) {
+                    if unreadCount > 0 {
+                        Text("\(unreadCount) unread")
+                            .font(.custom("Exo2-Regular", size: 14))
                             .foregroundColor(.theme.primaryColor)
-                        }
-                        Button("Delete", role: .destructive) { }
-                    } label: {
-                        Label("Menu", systemImage: "ellipsis.circle")
+                            .multilineTextAlignment(.leading)
                     }
+                    // Filter tabs
+                    filterTabs
+                    
+                    // Notifications list
+                    notificationsList
                 }
-            )
 
+            }
         }
+        .background(Color.theme.surfaceColor)
+        .customTopAppBar(
+            title: "Notifications",
+            leadingIcon: "chevron.left",
+            onLeadingTap: { router.pop() },
+            trailingMenu: {
+                Menu {
+                    if unreadCount > 0 {
+                        Button("Mark all read") {
+                            markAllAsRead()
+                        }
+                        .font(.custom("Exo2-Medium", size: 14))
+                        .foregroundColor(.theme.primaryColor)
+                    }
+                    Button("Delete", role: .destructive) { }
+                } label: {
+                    Label("Menu", systemImage: "ellipsis.circle")
+                }
+            }
+        )
+       
     }
     
     private var filterTabs: some View {

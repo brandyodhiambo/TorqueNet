@@ -42,10 +42,10 @@ struct RegisterView: View {
                         InputFieldView(
                             description: "First Name",
                             placeHolder: "John",
-                            text: $registerViewModel.firstName,
+                            text: $registerViewModel.uiState.firstName,
                             foregroundColor: Color.theme.onSurfaceColor,
                             keyboardType: .default,
-                            errorMessage: registerViewModel.registerErrors["firstName"] ?? "",
+                            errorMessage: registerViewModel.uiState.registerErrors["firstName"] ?? "",
                             inputFieldStyle: .outlined,
                             onTextChange: { text in
                                 registerViewModel.updateFirstName(value: text)
@@ -55,10 +55,10 @@ struct RegisterView: View {
                         InputFieldView(
                             description: "Last Name",
                             placeHolder: "Doe",
-                            text: $registerViewModel.lastName,
+                            text: $registerViewModel.uiState.lastName,
                             foregroundColor: Color.theme.onSurfaceColor,
                             keyboardType: .default,
-                            errorMessage: registerViewModel.registerErrors["lastName"] ?? "",
+                            errorMessage: registerViewModel.uiState.registerErrors["lastName"] ?? "",
                             inputFieldStyle: .outlined,
                             onTextChange: { text in
                                 registerViewModel.updateLastName(value: text)
@@ -68,10 +68,10 @@ struct RegisterView: View {
                         InputFieldView(
                             description: "Email",
                             placeHolder: "johndoe@gmail.com",
-                            text: $registerViewModel.email,
+                            text: $registerViewModel.uiState.email,
                             foregroundColor: Color.theme.onSurfaceColor,
                             keyboardType: .emailAddress,
-                            errorMessage: registerViewModel.registerErrors["email"] ?? "",
+                            errorMessage: registerViewModel.uiState.registerErrors["email"] ?? "",
                             inputFieldStyle: .outlined,
                             onTextChange: { text in
                                 registerViewModel.updateEmail(value: text)
@@ -81,10 +81,10 @@ struct RegisterView: View {
                         InputFieldView(
                             description: "Phone Number",
                             placeHolder: "07---------",
-                            text: $registerViewModel.phoneNumber,
+                            text: $registerViewModel.uiState.phoneNumber,
                             foregroundColor: Color.theme.onSurfaceColor,
                             keyboardType: .numberPad,
-                            errorMessage: registerViewModel.registerErrors["phoneNumber"] ?? "",
+                            errorMessage: registerViewModel.uiState.registerErrors["phoneNumber"] ?? "",
                             inputFieldStyle: .outlined,
                             onTextChange: { text in
                                 registerViewModel.updatePhoneNumber(value: text)
@@ -94,9 +94,9 @@ struct RegisterView: View {
                         PasswordInputFieldView(
                             description: "Password",
                             placeHolder: "********",
-                            text: $registerViewModel.password,
+                            text: $registerViewModel.uiState.password,
                             foregroundColor: Color.theme.onSurfaceColor,
-                            errorMessage: registerViewModel.registerErrors["password"] ?? "",
+                            errorMessage: registerViewModel.uiState.registerErrors["password"] ?? "",
                             inputFieldStyle: .outlined,
                             onTextChange: { text in
                                 registerViewModel.updatePassword(value: text)
@@ -106,9 +106,9 @@ struct RegisterView: View {
                         PasswordInputFieldView(
                             description: "Confirm Password",
                             placeHolder: "********",
-                            text: $registerViewModel.confirmPassword,
+                            text: $registerViewModel.uiState.confirmPassword,
                             foregroundColor: Color.theme.onSurfaceColor,
-                            errorMessage: registerViewModel.registerErrors["confirmPassword"] ?? "",
+                            errorMessage: registerViewModel.uiState.registerErrors["confirmPassword"] ?? "",
                             inputFieldStyle: .outlined,
                             onTextChange: { text in
                                 registerViewModel.updateConfirmPassword(value: text)
@@ -118,7 +118,7 @@ struct RegisterView: View {
                         
                         CustomButtonView(
                             buttonName:"Sign Up",
-                            isDisabled: !registerViewModel.isRegisterEnabled,
+                            isDisabled: !registerViewModel.uiState.isRegisterEnabled,
                             onTap: {
                                 Task {
                                     await registerViewModel.registerUser(
@@ -210,19 +210,19 @@ struct RegisterView: View {
         }
         .overlay {
             CustomAlertDialogView(
-                isPresented: $registerViewModel.isShowAlertDialog,
-                title: registerViewModel.dialogEntity.title,
-                text: registerViewModel.dialogEntity.message,
-                confirmButtonText: registerViewModel.dialogEntity.confirmButtonText,
-                dismissButtonText: registerViewModel.dialogEntity.dismissButtonText,
-                imageName: registerViewModel.dialogEntity.icon,
+                isPresented: $registerViewModel.uiState.isShowAlertDialog,
+                title: registerViewModel.uiState.dialogEntity.title,
+                text: registerViewModel.uiState.dialogEntity.message,
+                confirmButtonText: registerViewModel.uiState.dialogEntity.confirmButtonText,
+                dismissButtonText: registerViewModel.uiState.dialogEntity.dismissButtonText,
+                imageName: registerViewModel.uiState.dialogEntity.icon,
                 onDismiss: {
-                    if let onDismiss = registerViewModel.dialogEntity.onDismiss {
+                    if let onDismiss = registerViewModel.uiState.dialogEntity.onDismiss {
                         onDismiss()
                     }
                 },
                 onConfirmation: {
-                    if let onConfirm = registerViewModel.dialogEntity.onConfirm {
+                    if let onConfirm = registerViewModel.uiState.dialogEntity.onConfirm {
                         onConfirm()
                     }
                 }
@@ -230,7 +230,7 @@ struct RegisterView: View {
         }
         .background(Color.theme.surfaceColor)
         .ignoresSafeArea(edges: .all)
-        .fullScreenProgressOverlay(isShowing: registerViewModel.registeState == .isLoading )
+        .fullScreenProgressOverlay(isShowing: registerViewModel.uiState.registeState == .isLoading )
         
     }
 }

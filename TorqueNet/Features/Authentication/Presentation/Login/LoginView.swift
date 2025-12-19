@@ -12,6 +12,7 @@ struct LoginView: View {
     @EnvironmentObject var router: Router
     @StateObject var loginViewModel = LoginViewModel()
     
+    
 
     var body: some View {
         VStack(spacing: 0) {
@@ -41,10 +42,10 @@ struct LoginView: View {
                 InputFieldView(
                     description: "Email",
                     placeHolder: "johndoe@gmail.com",
-                    text: $loginViewModel.email,
+                    text: $loginViewModel.uiState.email,
                     foregroundColor: Color.theme.onSurfaceColor,
                     keyboardType: .emailAddress,
-                    errorMessage: loginViewModel.loginErrors["email"] ?? "",
+                    errorMessage: loginViewModel.uiState.loginErrors["email"] ?? "",
                     inputFieldStyle: .outlined,
                     onTextChange: { text in
                         loginViewModel.updateEmail(value: text)
@@ -55,9 +56,9 @@ struct LoginView: View {
                 PasswordInputFieldView(
                     description: "Password",
                     placeHolder: "********",
-                    text: $loginViewModel.password,
+                    text: $loginViewModel.uiState.password,
                     foregroundColor: Color.theme.onSurfaceColor,
-                    errorMessage: loginViewModel.loginErrors["password"] ?? "",
+                    errorMessage: loginViewModel.uiState.loginErrors["password"] ?? "",
                     inputFieldStyle: .outlined,
                     onTextChange: { text in
                         loginViewModel.updatePassword(value: text)
@@ -66,7 +67,7 @@ struct LoginView: View {
                 )
 
                 HStack {
-                    Toggle(isOn: $loginViewModel.rememberMe) {
+                    Toggle(isOn: $loginViewModel.uiState.rememberMe) {
                         Text("Remember me")
                             .font(.custom("Exo2-Medium", size: 15))
                             .foregroundColor(Color.theme.primaryColor)
@@ -84,11 +85,11 @@ struct LoginView: View {
 
                 CustomButtonView(
                     buttonName:"Sign In",
-                    isDisabled: !loginViewModel.isLoginEnable,
+                    isDisabled: !loginViewModel.uiState.isLoginEnable,
                     onTap: {
                         Task{
                             await loginViewModel.loginUser(onSuccess: {
-                                if loginViewModel.rememberMe {
+                                if loginViewModel.uiState.rememberMe {
                                     onLoginSuccess()
                                 }
                                 router.push(.dashboard)
@@ -158,19 +159,19 @@ struct LoginView: View {
         }
         .overlay {
             CustomAlertDialogView(
-                isPresented: $loginViewModel.isShowAlertDialog,
-                title: loginViewModel.dialogEntity.title,
-                text: loginViewModel.dialogEntity.message,
-                confirmButtonText: loginViewModel.dialogEntity.confirmButtonText,
-                dismissButtonText: loginViewModel.dialogEntity.dismissButtonText,
-                imageName: loginViewModel.dialogEntity.icon,
+                isPresented: $loginViewModel.uiState.isShowAlertDialog,
+                title: loginViewModel.uiState.dialogEntity.title,
+                text: loginViewModel.uiState.dialogEntity.message,
+                confirmButtonText: loginViewModel.uiState.dialogEntity.confirmButtonText,
+                dismissButtonText: loginViewModel.uiState.dialogEntity.dismissButtonText,
+                imageName: loginViewModel.uiState.dialogEntity.icon,
                 onDismiss: {
-                    if let onDismiss = loginViewModel.dialogEntity.onDismiss {
+                    if let onDismiss = loginViewModel.uiState.dialogEntity.onDismiss {
                         onDismiss()
                     }
                 },
                 onConfirmation: {
-                    if let onConfirm = loginViewModel.dialogEntity.onConfirm {
+                    if let onConfirm = loginViewModel.uiState.dialogEntity.onConfirm {
                         onConfirm()
                     }
                 }
@@ -178,7 +179,7 @@ struct LoginView: View {
         }
         .background(Color.theme.surfaceColor)
         .ignoresSafeArea(edges: .all)
-        .fullScreenProgressOverlay(isShowing: loginViewModel.loginState == .isLoading )
+        .fullScreenProgressOverlay(isShowing: loginViewModel.uiState.loginState == .isLoading )
     }
 }
 
