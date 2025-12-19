@@ -23,6 +23,7 @@ struct CarUiState{
     var maxPower = ""
     var zeroToSixty = ""
     var topSpeed = ""
+    var fetchedCars: [CarModel] = []
     
     var selectedImages: [PhotosPickerItem] = []
     var loadedImages: [UIImage] = []

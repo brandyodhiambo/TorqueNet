@@ -17,4 +17,8 @@ class UploadCarUseCase {
     func execute(car: CarModel, carImages: [UIImage], profileImage: UIImage?) async -> Result<String, UploadError> {
         return await repository.uploadCar(car, carImages: carImages, profileImage: profileImage)
     }
+    
+    func fetchCars() async -> Result<[CarModel], UploadError> {
+        return await repository.fetchCars()
+    }
 }

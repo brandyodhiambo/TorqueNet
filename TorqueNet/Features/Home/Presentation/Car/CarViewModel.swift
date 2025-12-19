@@ -203,7 +203,28 @@ class CarViewModel: ObservableObject {
             
         }
     }
+    
     func resetForm() {
         carUiState = CarUiState()
     }
+    
+    func fetchCars(
+        onSuccess:() -> Void,
+        onFailure: (String) -> Void
+    ) async {
+        let result = await carUseCase.fetchCars()
+        switch result {
+        case .success(let cars):
+            self.carUiState.fetchedCars = cars
+            onSuccess()
+        case .failure(let error):
+            let message = error.errorDescription?.description ?? "An unexpected error occurred."
+            carUiState.carState = .error(message)
+            carUiState.errorMessage = message
+            carUiState.showError = true
+            onFailure(message)
+        }
+    }
+    
+    
 }

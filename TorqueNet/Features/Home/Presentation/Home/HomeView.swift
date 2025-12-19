@@ -12,6 +12,7 @@ struct HomeView: View {
     @EnvironmentObject var router: Router
     @StateObject var locationManager = LocationManager()
     @StateObject var homeViewModel = HomeViewModel()
+    @StateObject var carViewModel = CarViewModel()
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -80,9 +81,9 @@ struct HomeView: View {
                 
                 // Featured Cars
                 VStack(alignment: .leading, spacing: 12) {
-                    sectionHeader(title: "Featured Cars", showSeeAll: true)
+                    sectionHeader(title: "Featured Cars", showSeeAll: false)
                         .padding(.horizontal, 16)
-                    
+                    //MARK: HERE IS WHERE WE NEED TO SHOW THE CARS FROM BACKEND
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
                             ForEach(homeViewModel.featuredCars) { car in
@@ -117,7 +118,6 @@ struct HomeView: View {
         .onAppear {
             Task{
                 updateLocationNameIfNeeded()
-                
                 await settingsViewModel.fetchUser(
                     forceRefresh: true,
                     onSuccess: { user in
@@ -129,7 +129,14 @@ struct HomeView: View {
 
                     }
                 )
-                
+                await carViewModel.fetchCars(
+                    onSuccess: {
+                        print("DEBUG: fetchCars cars.count: \(carViewModel.carUiState.fetchedCars.count)")
+                    },
+                    onFailure: { error in
+                        print("DEBUG: fetchCars error: \(error)")
+                    }
+                )
             }
         }
         .background(Color.theme.surfaceColor.ignoresSafeArea(.all))

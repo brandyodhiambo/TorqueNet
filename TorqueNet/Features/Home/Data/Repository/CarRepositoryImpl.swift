@@ -62,7 +62,7 @@ class CarRepositoryImpl: CarRepository {
             "ownerName": car.ownerName,
             "ownerRole": car.ownerRole,
             "ownerProfileImageUrl": profileImageUrl ?? "",
-            "carImageUrls": carImageUrls, // ✅ now [String]
+            "carImageUrls": carImageUrls,
             "passengers": car.passengers,
             "doors": car.doors,
             "hasAirConditioner": car.hasAirConditioner,
@@ -142,5 +142,26 @@ class CarRepositoryImpl: CarRepository {
         return .success(profileImageUrl)
         
     }
+    
+    func fetchCars() async -> Result<[CarModel], UploadError> {
+        do {
+            let snapshot = try await FirestoreConstants.CarsCollection
+                .order(by: "createdAt", descending: true)
+                .getDocuments()
+
+
+            let cars: [CarModel] = snapshot.documents.compactMap { document in
+                try? document.data(as: CarModel.self)
+            }
+
+            return .success(cars)
+
+        } catch {
+            return .failure(
+                .firestoreFetchFailed(error.localizedDescription, "cars")
+            )
+        }
+    }
+
     
 }
