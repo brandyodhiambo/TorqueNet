@@ -34,6 +34,9 @@ class CarViewModel: ObservableObject {
         
         carUiState.isButtonEnable = isFormValid
     }
+    func updateCarCondition(value: String) {
+        carUiState.carCondition = value
+    }
     
     func updateCarErrors(key: String, value: String) {
         carUiState.carErrors[key] = value
@@ -172,6 +175,8 @@ class CarViewModel: ObservableObject {
             maxPower: carUiState.maxPower,
             zeroToSixty: carUiState.zeroToSixty,
             topSpeed: carUiState.topSpeed,
+            carCondition: carUiState.carCondition,
+            isNewCar: carUiState.isNewCar,
             createdAt: Date()
         )
         

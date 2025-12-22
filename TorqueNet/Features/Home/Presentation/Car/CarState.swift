@@ -11,6 +11,8 @@ import PhotosUI
 struct CarUiState{
     var carName = ""
     var carModel = ""
+    var carCondition = ""
+    var isNewCar: Bool = false
     var rating = 4.8
     var numberOfReviews = ""
     var ownerName = ""

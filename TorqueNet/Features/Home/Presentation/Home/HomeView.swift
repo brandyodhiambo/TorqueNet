@@ -86,7 +86,7 @@ struct HomeView: View {
                     //MARK: HERE IS WHERE WE NEED TO SHOW THE CARS FROM BACKEND
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
-                            ForEach(homeViewModel.featuredCars) { car in
+                            ForEach(carViewModel.carUiState.fetchedCars) { car in
                                 EnhancedCarCard(car: car) {
                                     router.push(.carDetails)
                                 }
@@ -466,7 +466,7 @@ struct EnhancedBrandView: View {
 }
 
 struct EnhancedCarCard: View {
-    let car: FeaturedCar
+    let car: CarModel
     let onTap: () -> Void
     @State private var isFavorite = false
     
@@ -474,17 +474,18 @@ struct EnhancedCarCard: View {
         VStack(alignment: .leading, spacing: 0) {
             // Image with overlays
             ZStack(alignment: .topLeading) {
-                Image(car.image)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 280, height: 180)
+                CustomImageView(url: car.carImageUrls.first ?? "", maxWidth: 280, height: 180,)
+//                Image(car.carImageUrls.first)
+//                    .resizable()
+//                    .scaledToFill()
+//                    .frame(width: 280, height: 180)
                     .clipped()
                     .clipShape(RoundedCorner(radius: 16, corners: [.topLeft, .topRight]))
                 
                 // Badges
                 HStack {
                     VStack(alignment: .leading, spacing: 6) {
-                        if car.isNew {
+                        if car.isNewCar {
                             Text("NEW")
                                 .font(.custom("Exo2-Bold", size: 8))
                                 .foregroundColor(.white)
@@ -494,7 +495,7 @@ struct EnhancedCarCard: View {
                                 .cornerRadius(8)
                         }
                         
-                        Text(car.condition)
+                        Text(car.carCondition)
                             .font(.custom("Exo2-Medium", size: 8))
                             .foregroundColor(.theme.primaryColor)
                             .padding(.horizontal, 8)
@@ -524,17 +525,17 @@ struct EnhancedCarCard: View {
             // Content
             VStack(alignment: .leading, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(car.title)
+                    Text(car.carName)
                         .font(.custom("Exo2-Bold", size: 16))
                         .foregroundColor(.theme.onSurfaceColor)
                         .lineLimit(2)
                     
                     HStack(spacing: 4) {
-                        Image(systemName: "location")
+                        Image(systemName: "Owner")
                             .foregroundColor(.gray)
                             .font(.system(size: 12))
                         
-                        Text(car.location)
+                        Text(car.ownerName)
                             .font(.custom("Exo2-Regular", size: 12))
                             .foregroundColor(.theme.onSurfaceColor.opacity(0.8))
                     }
@@ -543,19 +544,19 @@ struct EnhancedCarCard: View {
                 // Details
                 HStack(spacing: 16) {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Year")
+                        Text("Transmission")
                             .font(.custom("Exo2-Regular", size: 10))
                             .foregroundColor(.gray)
-                        Text(car.year)
+                        Text(car.transmission)
                             .font(.custom("Exo2-Medium", size: 12))
                             .foregroundColor(.theme.onSurfaceColor)
                     }
                     
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Mileage")
+                        Text("Max Power")
                             .font(.custom("Exo2-Regular", size: 10))
                             .foregroundColor(.gray)
-                        Text(car.mileage)
+                        Text(car.maxPower)
                             .font(.custom("Exo2-Medium", size: 12))
                             .foregroundColor(.theme.onSurfaceColor)
                     }
@@ -564,10 +565,10 @@ struct EnhancedCarCard: View {
                 // Price and rating
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Price")
+                        Text("Top Speed")
                             .font(.custom("Exo2-Regular", size: 10))
                             .foregroundColor(.gray)
-                        Text("$\(car.price, specifier: "%.0f")")
+                        Text("\(car.topSpeed)")
                             .font(.custom("Exo2-Bold", size: 18))
                             .foregroundColor(.theme.primaryColor)
                     }
@@ -583,7 +584,7 @@ struct EnhancedCarCard: View {
                             .font(.custom("Exo2-Medium", size: 12))
                             .foregroundColor(.theme.onSurfaceColor)
                         
-                        Text("(\(car.reviewCount))")
+                        Text("(\(car.numberOfReviews))")
                             .font(.custom("Exo2-Regular", size: 10))
                             .foregroundColor(.gray)
                     }

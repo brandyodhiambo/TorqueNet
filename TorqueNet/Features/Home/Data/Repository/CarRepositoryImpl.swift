@@ -71,6 +71,8 @@ class CarRepositoryImpl: CarRepository {
             "maxPower": car.maxPower,
             "zeroToSixty": car.zeroToSixty,
             "topSpeed": car.topSpeed,
+            "carCondition": car.carCondition,
+            "isNewCar": car.isNewCar,
             "createdAt": Timestamp(date: car.createdAt)
         ]
 

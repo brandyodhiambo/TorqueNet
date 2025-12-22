@@ -101,6 +101,31 @@ struct CarUploadView: View {
                         }
                     )
                     
+                    HStack{
+                        Toggle(isOn: $carViewModel.carUiState.isNewCar) {
+                            Text("Is this a new car?")
+                                .font(.custom("Exo2-Medium", size: 15))
+                                .foregroundColor(Color.theme.primaryColor)
+                        }
+                        .toggleStyle(CheckboxToggleStyle())
+                        .foregroundColor(Color.theme.onSurfaceColor)
+                        Spacer()
+                    }
+                    
+                    if !carViewModel.carUiState.isNewCar {
+                        InputFieldView(
+                            description: "Condition",
+                            placeHolder: "Very Good",
+                            text: $carViewModel.carUiState.carCondition,
+                            foregroundColor: .theme.onSurfaceColor,
+                            backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                            keyboardType: .default,
+                            inputFieldStyle: .outlined,
+                            onTextChange: {text in
+                                carViewModel.updateCarCondition(value: text)
+                            }
+                        )
+                    }
                     
                     HStack(spacing: 12) {
                         VStack(alignment: .leading, spacing: 8) {

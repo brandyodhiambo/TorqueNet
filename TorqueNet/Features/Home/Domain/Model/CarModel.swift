@@ -25,6 +25,8 @@ struct CarModel: Codable, Identifiable {
     let maxPower: String
     let zeroToSixty: String
     let topSpeed: String
+    let carCondition: String
+    let isNewCar: Bool
     let createdAt: Date
     
     enum CodingKeys: String, CodingKey {
@@ -45,6 +47,8 @@ struct CarModel: Codable, Identifiable {
         case maxPower
         case zeroToSixty
         case topSpeed
+        case carCondition
+        case isNewCar
         case createdAt
     }
 }
