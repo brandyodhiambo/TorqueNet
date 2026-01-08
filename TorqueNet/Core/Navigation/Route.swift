@@ -14,7 +14,7 @@ enum Route: Hashable {
     case forgotPassword
     
     case home
-    case carDetails
+    case carDetails(car:CarModel)
     case uploadCar
     
     case wishlist

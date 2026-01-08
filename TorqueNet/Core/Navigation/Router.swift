@@ -133,8 +133,8 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
     case .home:
         HomeView()
         
-    case .carDetails:
-        CarDetailView()
+    case .carDetails(let car):
+        CarDetailView(car: car)
             .navigationBarBackButtonHidden()
         
     case .uploadCar:

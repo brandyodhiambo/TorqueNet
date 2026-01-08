@@ -83,12 +83,11 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     sectionHeader(title: "Featured Cars", showSeeAll: false)
                         .padding(.horizontal, 16)
-                    //MARK: HERE IS WHERE WE NEED TO SHOW THE CARS FROM BACKEND
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
                             ForEach(carViewModel.carUiState.fetchedCars) { car in
                                 EnhancedCarCard(car: car) {
-                                    router.push(.carDetails)
+                                    router.push(.carDetails(car: car))
                                 }
                             }
                         }
@@ -101,10 +100,11 @@ struct HomeView: View {
                     sectionHeader(title: "Recently Viewed", showSeeAll: false)
                         .padding(.horizontal, 16)
                     
+                    //MARK: Add implementaion for recently viewed cars here
                     LazyVStack(spacing: 12) {
                         ForEach(homeViewModel.featuredCars.prefix(2)) { car in
                             RecentlyViewedRow(car: car) {
-                                router.push(.carDetails)
+                                //router.push(.carDetails)
                             }
                             .padding(.horizontal, 16)
                         }
@@ -475,10 +475,6 @@ struct EnhancedCarCard: View {
             // Image with overlays
             ZStack(alignment: .topLeading) {
                 CustomImageView(url: car.carImageUrls.first ?? "", maxWidth: 280, height: 180,)
-//                Image(car.carImageUrls.first)
-//                    .resizable()
-//                    .scaledToFill()
-//                    .frame(width: 280, height: 180)
                     .clipped()
                     .clipShape(RoundedCorner(radius: 16, corners: [.topLeft, .topRight]))
                 

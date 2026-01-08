@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CarModel: Codable, Identifiable {
+struct CarModel: Codable, Identifiable,Equatable,Hashable {
     var id: String?
     let carName: String
     let carModel: String
@@ -51,4 +51,34 @@ struct CarModel: Codable, Identifiable {
         case isNewCar
         case createdAt
     }
+}
+
+extension CarModel{
+    static let preview: CarModel = CarModel(
+        id: "001",
+        carName: "Toyota Camry",
+        carModel: "SE 2022",
+        rating: 4.6,
+        numberOfReviews: 128,
+        ownerName: "Alex Johnson",
+        ownerRole: "Host",
+        ownerProfileImageUrl: "https://example.com/profiles/alex.jpg",
+        carImageUrls: [
+            "https://example.com/cars/camry_front.jpg",
+            "https://example.com/cars/camry_side.jpg",
+            "https://example.com/cars/camry_interior.jpg"
+        ],
+        passengers: 5,
+        doors: 4,
+        hasAirConditioner: true,
+        fuelPolicy: "Full to Full",
+        transmission: "Automatic",
+        maxPower: "203 hp",
+        zeroToSixty: "7.6s",
+        topSpeed: "135 mph",
+        carCondition: "Excellent",
+        isNewCar: false,
+        createdAt: Date(timeIntervalSince1970: 1_700_000_000)
+    )
+    
 }
