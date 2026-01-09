@@ -15,6 +15,7 @@ import Combine
 class CarRepositoryImpl: CarRepository {
     static let shared = CarRepositoryImpl()
     private let storageBasePath = "car_images"
+    private let maxItems = 4
     
     func uploadCar(
         _ car: CarModel,
@@ -164,6 +165,25 @@ class CarRepositoryImpl: CarRepository {
             )
         }
     }
-
+    
+    func getIds() -> [String]{
+        LocalState.recentlyViewedCarIds
+    }
+    func setId(id: String){
+        var ids = LocalState.recentlyViewedCarIds
+        
+        ids.removeAll{$0 == id}
+        
+        ids.insert(id,at:0)
+        
+        if ids.count > maxItems{
+            ids = Array(ids.prefix(maxItems))
+        }
+        
+        LocalState.recentlyViewedCarIds = ids
+    }
+    func clearIds(){
+        LocalState.recentlyViewedCarIds = []
+    }
     
 }

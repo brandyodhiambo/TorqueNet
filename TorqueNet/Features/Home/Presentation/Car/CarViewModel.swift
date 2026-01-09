@@ -221,6 +221,13 @@ class CarViewModel: ObservableObject {
         switch result {
         case .success(let cars):
             self.carUiState.fetchedCars = cars
+            
+            load()
+            self.carUiState.recentlyViewedCars = carUiState.recentCarIds.compactMap{ id in
+                self.carUiState.fetchedCars.first{
+                    $0.id == id
+                }
+            }
             onSuccess()
         case .failure(let error):
             let message = error.errorDescription?.description ?? "An unexpected error occurred."
@@ -229,6 +236,21 @@ class CarViewModel: ObservableObject {
             carUiState.showError = true
             onFailure(message)
         }
+    }
+    
+    
+    func load() {
+        carUiState.recentCarIds = carUseCase.getRecentlyViewedIds()
+    }
+    
+    func onCarViewed(carId: String) {
+        carUseCase.track(carId: carId)
+        load()
+    }
+    
+    func clear() {
+        carUseCase.clear()
+        load()
     }
     
     

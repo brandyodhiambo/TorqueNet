@@ -26,6 +26,8 @@ struct CarUiState{
     var zeroToSixty = ""
     var topSpeed = ""
     var fetchedCars: [CarModel] = []
+    var recentlyViewedCars: [CarModel] = []
+    var recentCarIds: [String] = []
     
     var selectedImages: [PhotosPickerItem] = []
     var loadedImages: [UIImage] = []

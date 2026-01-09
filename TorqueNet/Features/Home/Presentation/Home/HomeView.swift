@@ -83,15 +83,26 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     sectionHeader(title: "Featured Cars", showSeeAll: false)
                         .padding(.horizontal, 16)
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 16) {
-                            ForEach(carViewModel.carUiState.fetchedCars) { car in
-                                EnhancedCarCard(car: car) {
-                                    router.push(.carDetails(car: car))
+                    if carViewModel.carUiState.fetchedCars.isEmpty {
+                        EmptyStateView(
+                            imageName: "empty_cars",
+                            title: "No cars available",
+                            subtitle: "Check back later for featured vehicles",
+                            height: 180
+                        )
+                        .padding(.horizontal, 16)
+                    } else {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 16) {
+                                ForEach(carViewModel.carUiState.fetchedCars) { car in
+                                    EnhancedCarCard(car: car) {
+                                        carViewModel.onCarViewed(carId: car.id ?? "")
+                                        router.push(.carDetails(car: car))
+                                    }
                                 }
                             }
+                            .padding(.horizontal, 16)
                         }
-                        .padding(.horizontal, 16)
                     }
                 }
                 
@@ -100,15 +111,24 @@ struct HomeView: View {
                     sectionHeader(title: "Recently Viewed", showSeeAll: false)
                         .padding(.horizontal, 16)
                     
-                    //MARK: Add implementaion for recently viewed cars here
-                    LazyVStack(spacing: 12) {
-                        ForEach(homeViewModel.featuredCars.prefix(2)) { car in
-                            RecentlyViewedRow(car: car) {
-                                //router.push(.carDetails)
-                            }
-                            .padding(.horizontal, 16)
-                        }
-                    }
+                    if carViewModel.carUiState.recentlyViewedCars.isEmpty {
+                          EmptyStateView(
+                              imageName: "empty_recent",
+                              title: "No recently viewed cars",
+                              subtitle: "Cars you view will appear here",
+                              height: 160
+                          )
+                          .padding(.horizontal, 16)
+                      } else {
+                          LazyVStack(spacing: 12) {
+                              ForEach(carViewModel.carUiState.recentlyViewedCars) { car in
+                                  RecentlyViewedRow(car: car) {
+                                      router.push(.carDetails(car: car))
+                                  }
+                                  .padding(.horizontal, 16)
+                              }
+                          }
+                      }
                 }
                 
                 // Bottom spacing for tab bar
@@ -599,19 +619,18 @@ struct EnhancedCarCard: View {
 }
 
 struct RecentlyViewedRow: View {
-    let car: FeaturedCar
+    let car: CarModel
     let onTap: () -> Void
     
     var body: some View {
         HStack(spacing: 12) {
-            Image(car.image)
-                .resizable()
+              CustomImageView(url: car.carImageUrls.first ?? "", maxWidth: 100, height: 80,)
                 .scaledToFill()
                 .frame(width: 100, height: 80)
                 .cornerRadius(12)
             
             VStack(alignment: .leading, spacing: 6) {
-                Text(car.title)
+                Text(car.carName)
                     .font(.custom("Exo2-Bold", size: 16))
                     .foregroundColor(.theme.onSurfaceColor)
                     .lineLimit(1)
@@ -621,13 +640,13 @@ struct RecentlyViewedRow: View {
                         .foregroundColor(.gray)
                         .font(.system(size: 12))
                     
-                    Text(car.location)
+                    Text(car.carModel)
                         .font(.custom("Exo2-Regular", size: 12))
                         .foregroundColor(.gray)
                 }
                 
                 HStack {
-                    Text("$\(car.price, specifier: "%.0f")")
+                    Text("\(car.numberOfReviews, specifier: "%.0f") Reviews")
                         .font(.custom("Exo2-Bold", size: 14))
                         .foregroundColor(.theme.primaryColor)
                     
