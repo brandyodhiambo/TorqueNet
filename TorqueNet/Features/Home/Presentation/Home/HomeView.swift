@@ -94,7 +94,7 @@ struct HomeView: View {
                     } else {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 16) {
-                                ForEach(carViewModel.carUiState.fetchedCars) { car in
+                                ForEach(carViewModel.carUiState.filteredCars) { car in
                                     EnhancedCarCard(car: car) {
                                         carViewModel.onCarViewed(carId: car.id ?? "")
                                         router.push(.carDetails(car: car))
@@ -310,7 +310,12 @@ struct HomeView: View {
                         .foregroundColor(.gray)
                         .font(.system(size: 16))
                     
-                    TextField("Search cars, brands, models...", text: $homeViewModel.searchText)
+                    TextField("Search cars, brands, models...",
+                              text: Binding(
+                                get: { homeViewModel.searchText },
+                                set: { homeViewModel.updateSaerchText($0) }
+                              )
+                    )
                         .font(.custom("Exo2-Regular", size: 16))
                 }
                 .padding(.horizontal, 16)
@@ -320,7 +325,7 @@ struct HomeView: View {
                 .shadow(color: Color.theme.onSurfaceColor.opacity(0.05), radius: 8, x: 0, y: 2)
                 
                 Button(action: {
-                    // Filter action
+                    homeViewModel.applyFilters()
                 }) {
                     Image(systemName: "slider.horizontal.3")
                         .font(.system(size: 16, weight: .medium))

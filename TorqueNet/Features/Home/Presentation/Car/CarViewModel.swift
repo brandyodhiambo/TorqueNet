@@ -221,6 +221,7 @@ class CarViewModel: ObservableObject {
         switch result {
         case .success(let cars):
             self.carUiState.fetchedCars = cars
+            self.carUiState.filteredCars = cars
             
             load()
             self.carUiState.recentlyViewedCars = carUiState.recentCarIds.compactMap{ id in
