@@ -48,10 +48,8 @@ struct AuctionView: View {
     
     var body: some View {
         NavigationView {
-            
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
-                    
                     // Search Bar
                     HStack(spacing: 12) {
                         HStack {
