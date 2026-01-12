@@ -83,7 +83,7 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     sectionHeader(title: "Featured Cars", showSeeAll: false)
                         .padding(.horizontal, 16)
-                    if carViewModel.carUiState.fetchedCars.isEmpty {
+                    if carViewModel.carUiState.filteredCars.isEmpty {
                         EmptyStateView(
                             imageName: "empty_cars",
                             title: "No cars available",
@@ -312,8 +312,8 @@ struct HomeView: View {
                     
                     TextField("Search cars, brands, models...",
                               text: Binding(
-                                get: { homeViewModel.searchText },
-                                set: { homeViewModel.updateSaerchText($0) }
+                                get: { carViewModel.carUiState.searchText },
+                                set: { carViewModel.updateSaerchText($0) }
                               )
                     )
                         .font(.custom("Exo2-Regular", size: 16))
@@ -323,21 +323,20 @@ struct HomeView: View {
                 .background(Color.theme.surfaceColor)
                 .cornerRadius(16)
                 .shadow(color: Color.theme.onSurfaceColor.opacity(0.05), radius: 8, x: 0, y: 2)
-                
-                Button(action: {
-                    homeViewModel.applyFilters()
-                }) {
-                    Image(systemName: "slider.horizontal.3")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white)
-                        .padding(14)
-                        .background(Color.theme.primaryColor)
-                        .cornerRadius(16)
-                }
+//                Button(action: {
+//                    homeViewModel.applyFilters()
+//                }) {
+//                    Image(systemName: "slider.horizontal.3")
+//                        .font(.system(size: 16, weight: .medium))
+//                        .foregroundColor(.white)
+//                        .padding(14)
+//                        .background(Color.theme.primaryColor)
+//                        .cornerRadius(16)
+//                }
             }
             
             // Search suggestions
-            if !homeViewModel.searchText.isEmpty {
+            if !carViewModel.carUiState.searchText.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         ForEach(["Mercedes", "BMW", "Tesla", "Audi"], id: \.self) { suggestion in
@@ -348,7 +347,11 @@ struct HomeView: View {
                                 .padding(.vertical, 6)
                                 .background(Color.theme.primaryColor.opacity(0.1))
                                 .cornerRadius(16)
+                                .onTapGesture {
+                                    carViewModel.updateSaerchText(suggestion)
+                                }
                         }
+
                     }
                     .padding(.horizontal, 16)
                 }

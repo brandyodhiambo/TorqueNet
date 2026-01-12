@@ -9,7 +9,6 @@ import UIKit
 
 @MainActor
 class HomeViewModel:ObservableObject{
-    @Published var searchText: String = ""
     @Published var selectedBrandIndex = 0
     @Published var selectedBrand:Brand? = nil
     @Published var isLocationAuthorized = false
@@ -29,33 +28,11 @@ class HomeViewModel:ObservableObject{
     ]
         
     var quickActions: [QuickAction] = [
-        //QuickAction(icon: "car.2", title: "Compare", color: .blue),
         QuickAction(icon: "wallet.bifold", title: "Live Offers", color: .red),
         QuickAction(icon: "bell", title: "Alerts", color: .orange),
         QuickAction(icon: "calendar", title: "Schedule", color: .green)
     ]
     
-    func applyFilters() {
-        let text = searchText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-
-        carUiState.filteredCars = carUiState.fetchedCars.filter { car in
-            let matchesText =
-                text.isEmpty ||
-                car.carName.lowercased().contains(text) ||
-                car.carModel.lowercased().contains(text)
-
-            let matchesBrand =
-                selectedBrand == nil ||
-            car.carModel.lowercased().contains(selectedBrand?.title.lowercased() ?? "")
-
-            return matchesText && matchesBrand
-        }
-    }
-    
-    func updateSaerchText(_ text: String) {
-        self.searchText = text
-        applyFilters()
-    }
 
     
 }

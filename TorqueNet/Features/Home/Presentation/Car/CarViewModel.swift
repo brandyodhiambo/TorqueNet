@@ -239,6 +239,30 @@ class CarViewModel: ObservableObject {
         }
     }
     
+    func applyFilters() {
+        let text = carUiState.searchText
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        carUiState.filteredCars = carUiState.fetchedCars.filter { car in
+            guard !text.isEmpty else { return true }
+
+            let matchesName =
+                car.carName.range(of: text, options: .caseInsensitive) != nil
+
+            let matchesModel =
+                car.carModel.range(of: text, options: .caseInsensitive) != nil
+
+            return matchesName || matchesModel
+        }
+    }
+
+
+    
+    func updateSaerchText(_ text: String) {
+        self.carUiState.searchText = text
+        applyFilters()
+    }
+    
     
     func load() {
         carUiState.recentCarIds = carUseCase.getRecentlyViewedIds()
