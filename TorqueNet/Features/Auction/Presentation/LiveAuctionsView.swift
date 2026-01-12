@@ -14,7 +14,7 @@ struct LiveAuctionsView: View {
     @EnvironmentObject var router: Router
     @State var toast: Toast? = nil
     
-    let categories = ["All", "Art", "Electronics", "Collectibles", "Jewelry", "Vehicles"]
+    let categories = ["All", "Running", "Closed"]
     
     var filteredAuctions: [LiveAuction] {
         let categoryFiltered = selectedCategory == "All" ? liveAuctions : liveAuctions.filter { $0.category == selectedCategory }

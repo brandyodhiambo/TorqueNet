@@ -217,11 +217,13 @@ class CarViewModel: ObservableObject {
         onSuccess:() -> Void,
         onFailure: (String) -> Void
     ) async {
+        carUiState.carState = .isLoading
         let result = await carUseCase.fetchCars()
         switch result {
         case .success(let cars):
             self.carUiState.fetchedCars = cars
             self.carUiState.filteredCars = cars
+            carUiState.carState = .good
             
             load()
             self.carUiState.recentlyViewedCars = carUiState.recentCarIds.compactMap{ id in

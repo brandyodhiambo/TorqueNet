@@ -12,4 +12,5 @@ protocol AuctionUploadRepository {
     func createAuction(_ auction: AuctionUploadModel) async  -> Result<String, UploadError>
     func updateAuction(_ auction: AuctionUploadModel) async -> Result<Bool, UploadError>
     func deleteAuctionImages(_ imageUrls: [String]) async -> Result<Bool, UploadError>
+    func fetchAuctions() async -> Result<[AuctionUploadModel], UploadError>
 }

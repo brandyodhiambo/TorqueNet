@@ -310,13 +310,11 @@ struct HomeView: View {
                         .foregroundColor(.gray)
                         .font(.system(size: 16))
                     
-                    TextField("Search cars, brands, models...",
-                              text: Binding(
-                                get: { carViewModel.carUiState.searchText },
-                                set: { carViewModel.updateSaerchText($0) }
-                              )
+                    TextField(
+                        "Search cars, brands, models...",
+                        text: Binding(get: { carViewModel.carUiState.searchText },set: { carViewModel.updateSaerchText($0) })
                     )
-                        .font(.custom("Exo2-Regular", size: 16))
+                    .font(.custom("Exo2-Regular", size: 16))
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)

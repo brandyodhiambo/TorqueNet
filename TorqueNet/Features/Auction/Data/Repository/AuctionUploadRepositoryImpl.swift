@@ -55,7 +55,6 @@ class AuctionUploadRepositoryImpl: AuctionUploadRepository {
         }
     }
 
-
     func createAuction(_ auction: AuctionUploadModel) async -> Result<String, UploadError> {
         do {
             let docRef = FirestoreConstants.AuctionsCollection.document(auction.id)
@@ -89,5 +88,24 @@ class AuctionUploadRepositoryImpl: AuctionUploadRepository {
         }
         
         return .success(true)
+    }
+    
+    func fetchAuctions() async -> Result<[AuctionUploadModel], UploadError> {
+        do {
+            let snapshot = try await FirestoreConstants.CarsCollection
+                .order(by: "createdAt", descending: true)
+                .getDocuments()
+
+            let auctions: [AuctionUploadModel] = snapshot.documents.compactMap { document in
+                try? document.data(as: AuctionUploadModel.self)
+            }
+
+            return .success(auctions)
+
+        } catch {
+            return .failure(
+                .firestoreFetchFailed(error.localizedDescription, "auctions")
+            )
+        }
     }
 }

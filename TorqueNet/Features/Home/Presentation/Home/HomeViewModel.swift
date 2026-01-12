@@ -32,7 +32,4 @@ class HomeViewModel:ObservableObject{
         QuickAction(icon: "bell", title: "Alerts", color: .orange),
         QuickAction(icon: "calendar", title: "Schedule", color: .green)
     ]
-    
-
-    
 }
