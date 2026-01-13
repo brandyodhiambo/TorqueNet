@@ -321,16 +321,7 @@ struct HomeView: View {
                 .background(Color.theme.surfaceColor)
                 .cornerRadius(16)
                 .shadow(color: Color.theme.onSurfaceColor.opacity(0.05), radius: 8, x: 0, y: 2)
-//                Button(action: {
-//                    homeViewModel.applyFilters()
-//                }) {
-//                    Image(systemName: "slider.horizontal.3")
-//                        .font(.system(size: 16, weight: .medium))
-//                        .foregroundColor(.white)
-//                        .padding(14)
-//                        .background(Color.theme.primaryColor)
-//                        .cornerRadius(16)
-//                }
+
             }
             
             // Search suggestions

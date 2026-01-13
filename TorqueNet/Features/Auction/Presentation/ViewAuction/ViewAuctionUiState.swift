@@ -10,6 +10,7 @@ struct ViewAuctionUiState {
     var selectedCategory = 0
     var fetchedAuctions: [AuctionUploadModel] = []
     var filteredAuctions: [AuctionUploadModel] = []
+    var isShowingAllCategories: Bool = true
     
     var featuredAuctions: [AuctionUploadModel] = []
     var liveAuctions: [AuctionUploadModel] = []

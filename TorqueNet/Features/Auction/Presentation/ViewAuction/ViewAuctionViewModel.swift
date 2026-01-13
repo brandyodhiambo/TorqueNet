@@ -23,7 +23,7 @@ class ViewAuctionViewModel: ObservableObject {
         switch result {
         case .success(let auctions):
             self.viewAuctionUiState.fetchedAuctions = auctions
-            self.viewAuctionUiState.filteredAuctions = auctions
+            applyFilters()
             viewAuctionUiState.auctionState = .good
             onSuccess()
         case .failure(let error):
