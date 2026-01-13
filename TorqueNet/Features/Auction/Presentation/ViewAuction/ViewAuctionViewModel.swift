@@ -50,6 +50,8 @@ class ViewAuctionViewModel: ObservableObject {
             
             let categories = ["All", "Upcoming", "Ongoing", "Completed", "Featured"]
             let selectedCategory = categories[viewAuctionUiState.selectedCategory]
+        
+           viewAuctionUiState.isShowingAllCategories = selectedCategory == "All"
             
             if selectedCategory != "All" {
                 filtered = filtered.filter { auction in
