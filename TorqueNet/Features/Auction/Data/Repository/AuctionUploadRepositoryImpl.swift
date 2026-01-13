@@ -92,8 +92,7 @@ class AuctionUploadRepositoryImpl: AuctionUploadRepository {
     
     func fetchAuctions() async -> Result<[AuctionUploadModel], UploadError> {
         do {
-            let snapshot = try await FirestoreConstants.CarsCollection
-                .order(by: "createdAt", descending: true)
+            let snapshot = try await FirestoreConstants.AuctionsCollection
                 .getDocuments()
 
             let auctions: [AuctionUploadModel] = snapshot.documents.compactMap { document in

@@ -9,6 +9,12 @@ struct ViewAuctionUiState {
     var searchText = ""
     var selectedCategory = 0
     var fetchedAuctions: [AuctionUploadModel] = []
+    var filteredAuctions: [AuctionUploadModel] = []
+    
+    var featuredAuctions: [AuctionUploadModel] = []
+    var liveAuctions: [AuctionUploadModel] = []
+    var upcomingAuctions: [AuctionUploadModel] = []
+    var completedAuctions: [AuctionUploadModel] = []
     
     var errorMessage: String? = nil
     var showError: Bool = false

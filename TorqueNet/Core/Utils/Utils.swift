@@ -7,6 +7,7 @@
 import Foundation
 import SwiftUI
 import CoreLocation
+import FirebaseCore
 
 struct Utils {
     static let shared = Utils()
@@ -91,5 +92,13 @@ struct Utils {
         
         return "Just now"
     }
+    
+    func formatStartDate(_ date: Date) -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .full
+        return formatter.localizedString(for: date, relativeTo: Date())
+    }
+    
+
     
 }
