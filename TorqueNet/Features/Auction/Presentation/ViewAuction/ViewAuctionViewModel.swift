@@ -13,7 +13,6 @@ class ViewAuctionViewModel: ObservableObject {
     let auctionUseCase: UploadAuctionUseCase = UploadAuctionUseCase(repository: AuctionUploadRepositoryImpl.shared)
     
     
-    
     func fetchAuctions(
         onSuccess:() -> Void,
         onFailure: (String) -> Void
