@@ -184,7 +184,7 @@ struct AllCategoriesView: View {
                         HStack(spacing: 16) {
                             ForEach(viewModel.viewAuctionUiState.featuredAuctions) { auction in
                                 FeaturedAuctionCard(auction: auction) {
-                                    router.push(.auctionDetails(auction: auction))
+                                    router.push(.auctionDetails(auctionId: auction.id))
                                 }
                             }
                         }
@@ -229,7 +229,7 @@ struct AllCategoriesView: View {
                         HStack(spacing: 16) {
                             ForEach(viewModel.viewAuctionUiState.liveAuctions) { auction in
                                 LiveAuctionCard(auction: auction) {
-                                    router.push(.auctionDetails(auction: auction))
+                                    router.push(.auctionDetails(auctionId: auction.id))
                                 }
                             }
                         }
@@ -273,7 +273,7 @@ struct AllCategoriesView: View {
                     LazyVStack(spacing: 12) {
                         ForEach(viewModel.viewAuctionUiState.upcomingAuctions.prefix(5)) { auction in
                             UpcomingAuctionRow(auction: auction) {
-                                router.push(.auctionDetails(auction: auction))
+                                router.push(.auctionDetails(auctionId: auction.id))
                             }
                             .padding(.horizontal, 16)
                         }
@@ -331,7 +331,7 @@ struct FilteredCategoryView: View {
                 LazyVStack(spacing: 16) {
                     ForEach(viewModel.viewAuctionUiState.filteredAuctions) { auction in
                         FilteredAuctionCard(auction: auction) {
-                            router.push(.auctionDetails(auction: auction))
+                            router.push(.auctionDetails(auctionId: auction.id))
                         }
                         .padding(.horizontal, 16)
                     }

@@ -149,5 +149,9 @@ class UploadAuctionUseCase {
     func fetchAuctions() async -> Result<[AuctionUploadModel], UploadError> {
         return await repository.fetchAuctions()
     }
+    
+    func fetchAuction(auctionId: String) async -> Result<AuctionUploadModel, UploadError> {
+        return await repository.fetchAuction(auctionId: auctionId)
+    }
 }
 

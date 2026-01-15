@@ -10,7 +10,9 @@ import SwiftUI
 struct AuctionCarDetailView: View {
     @EnvironmentObject var router: Router
     @StateObject var auctionDetailViewModel = AuctionDetailsViewModel()
-    let auction:AuctionUploadModel
+    let auctionId:String
+    
+    @State var auction:AuctionUploadModel? = nil
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
@@ -50,7 +52,14 @@ struct AuctionCarDetailView: View {
             .padding(.horizontal, 20)
             .onAppear {
                 updateTimeRemaining()
+                Task{
+                    await auctionDetailViewModel.fetchAuction(
+                        auctionId: auctionId,
+                        onSuccess: {auction = auctionDetailViewModel.auctionDetailsUiState.fetchedAuction},
+                        onFailure: {_ in})
+                }
             }
+            .fullScreenProgressOverlay(isShowing: auctionDetailViewModel.auctionDetailsUiState.auctionState == .isLoading)
             .onReceive(timer) { _ in
                 updateTimeRemaining()
             }
@@ -65,27 +74,29 @@ struct AuctionCarDetailView: View {
     private var imageGallerySection: some View {
         ZStack {
             TabView(selection: $auctionDetailViewModel.auctionDetailsUiState.selectedImageIndex) {
-                ForEach(Array(auction.imageUrls.enumerated()), id: \.offset) { index, imageUrl in
-                    ZStack {
-                        CustomImageView(
-                            url: imageUrl,
-                            maxWidth: .infinity,
-                            height: .infinity
-                        )
-                        .ignoresSafeArea(edges: .top)
-                        .clipped()
+                if let auction = auction{
+                    ForEach(Array(auction.imageUrls.enumerated()), id: \.offset) { index, imageUrl in
+                        ZStack {
+                            CustomImageView(
+                                url: imageUrl,
+                                maxWidth: .infinity,
+                                height: .infinity
+                            )
+                            .ignoresSafeArea(edges: .top)
+                            .clipped()
 
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                .clear,
-                                .clear,
-                                .black.opacity(0.9)
-                            ]),
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    .clear,
+                                    .clear,
+                                    .black.opacity(0.9)
+                                ]),
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        }
+                        .tag(index)
                     }
-                    .tag(index)
                 }
 
             }
@@ -140,25 +151,27 @@ struct AuctionCarDetailView: View {
                 Spacer()
                 
                 HStack(spacing: 8) {
-                    ForEach(auction.imageUrls.indices, id: \.self) { index in
-                        Circle()
-                            .fill(
-                                auctionDetailViewModel.auctionDetailsUiState.selectedImageIndex == index
-                                ? Color.white
-                                : Color.white.opacity(0.5)
-                            )
-                            .frame(width: 8, height: 8)
-                            .scaleEffect(
-                                auctionDetailViewModel.auctionDetailsUiState.selectedImageIndex == index
-                                ? 1.2
-                                : 1.0
-                            )
-                            .animation(
-                                .spring(),
-                                value: auctionDetailViewModel.auctionDetailsUiState.selectedImageIndex
-                            )
+                    if let auction = auction {
+                        ForEach(auction.imageUrls.indices, id: \.self) { index in
+                            Circle()
+                                .fill(
+                                    auctionDetailViewModel.auctionDetailsUiState.selectedImageIndex == index
+                                    ? Color.white
+                                    : Color.white.opacity(0.5)
+                                )
+                                .frame(width: 8, height: 8)
+                                .scaleEffect(
+                                    auctionDetailViewModel.auctionDetailsUiState.selectedImageIndex == index
+                                    ? 1.2
+                                    : 1.0
+                                )
+                                .animation(
+                                    .spring(),
+                                    value: auctionDetailViewModel.auctionDetailsUiState.selectedImageIndex
+                                )
+                        }
                     }
-
+                   
                 }
                 .padding(.bottom, 20)
             }
@@ -171,11 +184,11 @@ struct AuctionCarDetailView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(auction.carTitle)
+                    Text(auction?.carTitle ?? "")
                         .font(.custom("Exo2-Bold", size: 28))
                         .foregroundColor(.theme.onSurfaceColor)
                     
-                    Text(auction.subtitle)
+                    Text(auction?.subtitle ?? "")
                         .font(.custom("Exo2-Medium", size: 16))
                         .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
                 }
@@ -183,7 +196,7 @@ struct AuctionCarDetailView: View {
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text("Lot #\(auction.lotNumber)")
+                    Text("Lot #\(auction?.lotNumber)")
                         .font(.custom("Exo2-Regular", size: 14))
                         .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
                     
@@ -191,7 +204,7 @@ struct AuctionCarDetailView: View {
                         Image(systemName: "star.fill")
                             .foregroundColor(.yellow)
                             .font(.system(size: 12))
-                        Text("\(auction.rating, specifier: "%.1f")")
+                        Text("\(auction?.rating ?? 0.0, specifier: "%.1f")")
                             .font(.custom("Exo2-Medium", size: 14))
                             .foregroundColor(.theme.onSurfaceColor)
                     }
@@ -200,10 +213,13 @@ struct AuctionCarDetailView: View {
             
             // Key Specs
             HStack(spacing: 20) {
-                SpecBadge(icon: "speedometer", value: auction.mileage, unit: "miles")
-                SpecBadge(icon: "calendar", value: auction.year, unit: "year")
-                SpecBadge(icon: "fuelpump.fill", value: auction.engine, unit: "engine")
-                SpecBadge(icon: "gearshape.fill", value: auction.transmission, unit: "trans")
+                if let auction = auction {
+                    SpecBadge(icon: "speedometer", value: auction.mileage, unit: "miles")
+                    SpecBadge(icon: "calendar", value: auction.year, unit: "year")
+                    SpecBadge(icon: "fuelpump.fill", value: auction.engine, unit: "engine")
+                    SpecBadge(icon: "gearshape.fill", value: auction.transmission, unit: "trans")
+                }
+               
             }
         }
         .padding(.horizontal,8)
@@ -219,7 +235,7 @@ struct AuctionCarDetailView: View {
                         .font(.custom("Exo2-Regular", size: 14))
                         .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
                     
-                    Text(auction.currentBid.description)
+                    Text(auction?.currentBid.description ?? "")
                         .font(.custom("Exo2-Bold", size: 32))
                         .foregroundColor(.theme.primaryColor)
                     
@@ -227,7 +243,7 @@ struct AuctionCarDetailView: View {
                         Image(systemName: "arrow.up")
                             .foregroundColor(.green)
                             .font(.system(size: 12))
-                        Text("\(auction.bidCount) bids")
+                        Text("\(auction?.bidCount) bids")
                             .font(.custom("Exo2-Medium", size: 12))
                             .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
                     }
@@ -323,27 +339,31 @@ struct AuctionCarDetailView: View {
     
     private var detailsTabContent: some View {
         VStack(alignment: .leading, spacing: 16) {
-            DetailRow(label: "Make", value: auction.make)
-            DetailRow(label: "Model", value: auction.model)
-            DetailRow(label: "Year", value: auction.year)
-            DetailRow(label: "Mileage", value: "\(auction.mileage) miles")
-            DetailRow(label: "Engine", value: auction.engine)
-            DetailRow(label: "Transmission", value: auction.transmission)
-            DetailRow(label: "Drivetrain", value: auction.drivetrain)
-            DetailRow(label: "Exterior Color", value: auction.exteriorColor)
-            DetailRow(label: "Interior Color", value: auction.interiorColor)
-            DetailRow(label: "VIN", value: auction.vin)
-            DetailRow(label: "Location", value: auction.location)
-            DetailRow(label: "Seller", value: auction.seller)
+            if let auction = auction {
+                DetailRow(label: "Make", value: auction.make)
+                DetailRow(label: "Model", value: auction.model)
+                DetailRow(label: "Year", value: auction.year)
+                DetailRow(label: "Mileage", value: "\(auction.mileage) miles")
+                DetailRow(label: "Engine", value: auction.engine)
+                DetailRow(label: "Transmission", value: auction.transmission)
+                DetailRow(label: "Drivetrain", value: auction.drivetrain)
+                DetailRow(label: "Exterior Color", value: auction.exteriorColor)
+                DetailRow(label: "Interior Color", value: auction.interiorColor)
+                DetailRow(label: "VIN", value: auction.vin)
+                DetailRow(label: "Location", value: auction.location)
+                DetailRow(label: "Seller", value: auction.seller)
+            }
         }
         .padding(.horizontal, 16)
     }
     
     private var featuresTabContent: some View {
         VStack(alignment: .leading, spacing: 16) {
-            FeatureGroup(title: "Performance", features: auction.performanceFeatures)
-            FeatureGroup(title: "Technology", features:auction.technologyFeatures)
-            FeatureGroup(title: "Comfort & Convenience", features: auction.comfortFeatures)
+            if let auction = auction {
+                FeatureGroup(title: "Performance", features: auction.performanceFeatures)
+                FeatureGroup(title: "Technology", features:auction.technologyFeatures)
+                FeatureGroup(title: "Comfort & Convenience", features: auction.comfortFeatures)
+            }
         }
         
     }
@@ -355,8 +375,10 @@ struct AuctionCarDetailView: View {
                 .foregroundColor(.theme.onSurfaceColor)
             
             VStack(spacing: 12) {
-                ForEach(auction.historyEvents, id: \.date) { historyEvents in
-                    HistoryEvent(date: historyEvents.date, event: historyEvents.event, details: historyEvents.details)
+                if let auction = auction {
+                    ForEach(auction.historyEvents, id: \.date) { historyEvents in
+                        HistoryEvent(date: historyEvents.date, event: historyEvents.event, details: historyEvents.details)
+                    }
                 }
             }
         }
@@ -369,11 +391,14 @@ struct AuctionCarDetailView: View {
                 .foregroundColor(.theme.onSurfaceColor)
             
             VStack(spacing: 12) {
-                InspectionCategory(title: "Exterior", rating: auction.inspection.exterior.rating, details: auction.inspection.exterior.details)
-                InspectionCategory(title: "Interior",rating: auction.inspection.interior.rating, details: auction.inspection.interior.details)
-                InspectionCategory(title: "Engine", rating: auction.inspection.engine.rating, details: auction.inspection.engine.details)
-                InspectionCategory(title: "Transmission", rating: auction.inspection.transmission.rating, details: auction.inspection.transmission.details)
-                InspectionCategory(title: "Electronics", rating: auction.inspection.electronics.rating, details: auction.inspection.electronics.details)
+                if let auction = auction {
+                    InspectionCategory(title: "Exterior", rating: auction.inspection.exterior.rating, details: auction.inspection.exterior.details)
+                    InspectionCategory(title: "Interior",rating: auction.inspection.interior.rating, details: auction.inspection.interior.details)
+                    InspectionCategory(title: "Engine", rating: auction.inspection.engine.rating, details: auction.inspection.engine.details)
+                    InspectionCategory(title: "Transmission", rating: auction.inspection.transmission.rating, details: auction.inspection.transmission.details)
+                    InspectionCategory(title: "Electronics", rating: auction.inspection.electronics.rating, details: auction.inspection.electronics.details)
+                }
+               
             }
             
             HStack {
@@ -383,7 +408,7 @@ struct AuctionCarDetailView: View {
                 
                 Spacer()
                 
-                Text("\(auction.rating.rounded())/10")
+                Text("\(auction?.rating.rounded())/10")
                     .font(.custom("Exo2-Bold", size: 18))
                     .foregroundColor(.green)
             }
@@ -393,7 +418,7 @@ struct AuctionCarDetailView: View {
     }
     
     
-    //Add launceher to phone dailer
+    
     private var bottomActionBar: some View {
         VStack(spacing: 12) {
             HStack(spacing: 16) {
@@ -441,12 +466,15 @@ struct AuctionCarDetailView: View {
     }
     
     private func updateTimeRemaining() {
-        let now = Date()
-        auctionDetailViewModel.auctionDetailsUiState.timeRemaining  = auction.auctionEndDate.dateValue().timeIntervalSince(now)
-        
-        if auctionDetailViewModel.auctionDetailsUiState.timeRemaining  <= 0 {
-            auctionDetailViewModel.auctionDetailsUiState.timeRemaining  = 0
+        if let auction = auction {
+            let now = Date()
+            auctionDetailViewModel.auctionDetailsUiState.timeRemaining  = auction.auctionEndDate.dateValue().timeIntervalSince(now)
+            
+            if auctionDetailViewModel.auctionDetailsUiState.timeRemaining  <= 0 {
+                auctionDetailViewModel.auctionDetailsUiState.timeRemaining  = 0
+            }
         }
+       
     }
     
     private func countdownString() -> String {

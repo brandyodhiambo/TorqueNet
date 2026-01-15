@@ -20,7 +20,7 @@ enum Route: Hashable {
     case wishlist
     
     case auction
-    case auctionDetails(auction:AuctionUploadModel)
+    case auctionDetails(auctionId:String)
     case auctionUpload
     case auctionLiveBids
     case auctionSchedule

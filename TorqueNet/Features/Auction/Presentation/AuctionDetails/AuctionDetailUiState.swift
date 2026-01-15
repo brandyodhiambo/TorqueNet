@@ -14,4 +14,12 @@ struct AuctionDetailUiState{
     var timeRemaining: TimeInterval = 0
     var showBidSheet = false
     var selectedTab = 0
+    var fetchedAuction: AuctionUploadModel? = nil
+    
+    var errorMessage: String? = nil
+    var showError: Bool = false
+    var uploadSuccess: Bool = false
+    
+    var auctionState: FetchState = .good
+    var toast: Toast? = nil
 }
