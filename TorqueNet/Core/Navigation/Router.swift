@@ -113,7 +113,7 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
         
     case .dashboard:
         DashboardView()
-            .navigationBarBackButtonHidden() //MARK: Temporal fix
+            .navigationBarBackButtonHidden()
         
     case .login:
         LoginView(
@@ -133,8 +133,8 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
     case .home:
         HomeView()
         
-    case .carDetails:
-        CarDetailView()
+    case .carDetails(let car):
+        CarDetailView(car: car)
             .navigationBarBackButtonHidden()
         
     case .uploadCar:
@@ -144,15 +144,18 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
     case .auction:
         AuctionView()
         
-    case .auctionDetails:
-        AuctionCarDetailView()
+    case .auctionDetails(let auctionId):
+        AuctionCarDetailView(auctionId:auctionId)
             .navigationBarBackButtonHidden()
+        
     case .auctionUpload:
         AuctionUploadView()
             .navigationBarBackButtonHidden()
+        
     case .auctionLiveBids:
         LiveAuctionsView()
             .navigationBarBackButtonHidden()
+        
     case .auctionSchedule:
         AuctionScheduleView()
             .navigationBarBackButtonHidden()

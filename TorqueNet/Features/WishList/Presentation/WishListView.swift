@@ -172,7 +172,7 @@ struct WishListView: View {
                         // Handle favorite toggle
                     },
                     onCardTapped: {
-                        router.push(.auctionDetails)
+                        //router.push(.auctionDetails(auctionId: auction.id))
                     }
                 )
                 .transition(.asymmetric(

@@ -83,16 +83,26 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     sectionHeader(title: "Featured Cars", showSeeAll: false)
                         .padding(.horizontal, 16)
-                    //MARK: HERE IS WHERE WE NEED TO SHOW THE CARS FROM BACKEND
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 16) {
-                            ForEach(homeViewModel.featuredCars) { car in
-                                EnhancedCarCard(car: car) {
-                                    router.push(.carDetails)
+                    if carViewModel.carUiState.filteredCars.isEmpty {
+                        EmptyStateView(
+                            imageName: "empty_cars",
+                            title: "No cars available",
+                            subtitle: "Check back later for featured vehicles",
+                            height: 180
+                        )
+                        .padding(.horizontal, 16)
+                    } else {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 16) {
+                                ForEach(carViewModel.carUiState.filteredCars) { car in
+                                    EnhancedCarCard(car: car) {
+                                        carViewModel.onCarViewed(carId: car.id ?? "")
+                                        router.push(.carDetails(car: car))
+                                    }
                                 }
                             }
+                            .padding(.horizontal, 16)
                         }
-                        .padding(.horizontal, 16)
                     }
                 }
                 
@@ -101,14 +111,24 @@ struct HomeView: View {
                     sectionHeader(title: "Recently Viewed", showSeeAll: false)
                         .padding(.horizontal, 16)
                     
-                    LazyVStack(spacing: 12) {
-                        ForEach(homeViewModel.featuredCars.prefix(2)) { car in
-                            RecentlyViewedRow(car: car) {
-                                router.push(.carDetails)
-                            }
-                            .padding(.horizontal, 16)
-                        }
-                    }
+                    if carViewModel.carUiState.recentlyViewedCars.isEmpty {
+                          EmptyStateView(
+                              imageName: "empty_recent",
+                              title: "No recently viewed cars",
+                              subtitle: "Cars you view will appear here",
+                              height: 160
+                          )
+                          .padding(.horizontal, 16)
+                      } else {
+                          LazyVStack(spacing: 12) {
+                              ForEach(carViewModel.carUiState.recentlyViewedCars) { car in
+                                  RecentlyViewedRow(car: car) {
+                                      router.push(.carDetails(car: car))
+                                  }
+                                  .padding(.horizontal, 16)
+                              }
+                          }
+                      }
                 }
                 
                 // Bottom spacing for tab bar
@@ -290,29 +310,22 @@ struct HomeView: View {
                         .foregroundColor(.gray)
                         .font(.system(size: 16))
                     
-                    TextField("Search cars, brands, models...", text: $homeViewModel.searchText)
-                        .font(.custom("Exo2-Regular", size: 16))
+                    TextField(
+                        "Search cars, brands, models...",
+                        text: Binding(get: { carViewModel.carUiState.searchText },set: { carViewModel.updateSaerchText($0) })
+                    )
+                    .font(.custom("Exo2-Regular", size: 16))
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
                 .background(Color.theme.surfaceColor)
                 .cornerRadius(16)
                 .shadow(color: Color.theme.onSurfaceColor.opacity(0.05), radius: 8, x: 0, y: 2)
-                
-                Button(action: {
-                    // Filter action
-                }) {
-                    Image(systemName: "slider.horizontal.3")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white)
-                        .padding(14)
-                        .background(Color.theme.primaryColor)
-                        .cornerRadius(16)
-                }
+
             }
             
             // Search suggestions
-            if !homeViewModel.searchText.isEmpty {
+            if !carViewModel.carUiState.searchText.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         ForEach(["Mercedes", "BMW", "Tesla", "Audi"], id: \.self) { suggestion in
@@ -323,7 +336,11 @@ struct HomeView: View {
                                 .padding(.vertical, 6)
                                 .background(Color.theme.primaryColor.opacity(0.1))
                                 .cornerRadius(16)
+                                .onTapGesture {
+                                    carViewModel.updateSaerchText(suggestion)
+                                }
                         }
+
                     }
                     .padding(.horizontal, 16)
                 }
@@ -466,7 +483,7 @@ struct EnhancedBrandView: View {
 }
 
 struct EnhancedCarCard: View {
-    let car: FeaturedCar
+    let car: CarModel
     let onTap: () -> Void
     @State private var isFavorite = false
     
@@ -474,17 +491,14 @@ struct EnhancedCarCard: View {
         VStack(alignment: .leading, spacing: 0) {
             // Image with overlays
             ZStack(alignment: .topLeading) {
-                Image(car.image)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 280, height: 180)
+                CustomImageView(url: car.carImageUrls.first ?? "", maxWidth: 280, height: 180,)
                     .clipped()
                     .clipShape(RoundedCorner(radius: 16, corners: [.topLeft, .topRight]))
                 
                 // Badges
                 HStack {
                     VStack(alignment: .leading, spacing: 6) {
-                        if car.isNew {
+                        if car.isNewCar {
                             Text("NEW")
                                 .font(.custom("Exo2-Bold", size: 8))
                                 .foregroundColor(.white)
@@ -494,7 +508,7 @@ struct EnhancedCarCard: View {
                                 .cornerRadius(8)
                         }
                         
-                        Text(car.condition)
+                        Text(car.carCondition)
                             .font(.custom("Exo2-Medium", size: 8))
                             .foregroundColor(.theme.primaryColor)
                             .padding(.horizontal, 8)
@@ -524,17 +538,17 @@ struct EnhancedCarCard: View {
             // Content
             VStack(alignment: .leading, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(car.title)
+                    Text(car.carName)
                         .font(.custom("Exo2-Bold", size: 16))
                         .foregroundColor(.theme.onSurfaceColor)
                         .lineLimit(2)
                     
                     HStack(spacing: 4) {
-                        Image(systemName: "location")
+                        Image(systemName: "Owner")
                             .foregroundColor(.gray)
                             .font(.system(size: 12))
                         
-                        Text(car.location)
+                        Text(car.ownerName)
                             .font(.custom("Exo2-Regular", size: 12))
                             .foregroundColor(.theme.onSurfaceColor.opacity(0.8))
                     }
@@ -543,19 +557,19 @@ struct EnhancedCarCard: View {
                 // Details
                 HStack(spacing: 16) {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Year")
+                        Text("Transmission")
                             .font(.custom("Exo2-Regular", size: 10))
                             .foregroundColor(.gray)
-                        Text(car.year)
+                        Text(car.transmission)
                             .font(.custom("Exo2-Medium", size: 12))
                             .foregroundColor(.theme.onSurfaceColor)
                     }
                     
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Mileage")
+                        Text("Max Power")
                             .font(.custom("Exo2-Regular", size: 10))
                             .foregroundColor(.gray)
-                        Text(car.mileage)
+                        Text(car.maxPower)
                             .font(.custom("Exo2-Medium", size: 12))
                             .foregroundColor(.theme.onSurfaceColor)
                     }
@@ -564,10 +578,10 @@ struct EnhancedCarCard: View {
                 // Price and rating
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Price")
+                        Text("Top Speed")
                             .font(.custom("Exo2-Regular", size: 10))
                             .foregroundColor(.gray)
-                        Text("$\(car.price, specifier: "%.0f")")
+                        Text("\(car.topSpeed)")
                             .font(.custom("Exo2-Bold", size: 18))
                             .foregroundColor(.theme.primaryColor)
                     }
@@ -583,7 +597,7 @@ struct EnhancedCarCard: View {
                             .font(.custom("Exo2-Medium", size: 12))
                             .foregroundColor(.theme.onSurfaceColor)
                         
-                        Text("(\(car.reviewCount))")
+                        Text("(\(car.numberOfReviews))")
                             .font(.custom("Exo2-Regular", size: 10))
                             .foregroundColor(.gray)
                     }
@@ -602,19 +616,18 @@ struct EnhancedCarCard: View {
 }
 
 struct RecentlyViewedRow: View {
-    let car: FeaturedCar
+    let car: CarModel
     let onTap: () -> Void
     
     var body: some View {
         HStack(spacing: 12) {
-            Image(car.image)
-                .resizable()
+              CustomImageView(url: car.carImageUrls.first ?? "", maxWidth: 100, height: 80,)
                 .scaledToFill()
                 .frame(width: 100, height: 80)
                 .cornerRadius(12)
             
             VStack(alignment: .leading, spacing: 6) {
-                Text(car.title)
+                Text(car.carName)
                     .font(.custom("Exo2-Bold", size: 16))
                     .foregroundColor(.theme.onSurfaceColor)
                     .lineLimit(1)
@@ -624,13 +637,13 @@ struct RecentlyViewedRow: View {
                         .foregroundColor(.gray)
                         .font(.system(size: 12))
                     
-                    Text(car.location)
+                    Text(car.carModel)
                         .font(.custom("Exo2-Regular", size: 12))
                         .foregroundColor(.gray)
                 }
                 
                 HStack {
-                    Text("$\(car.price, specifier: "%.0f")")
+                    Text("\(car.numberOfReviews, specifier: "%.0f") Reviews")
                         .font(.custom("Exo2-Bold", size: 14))
                         .foregroundColor(.theme.primaryColor)
                     

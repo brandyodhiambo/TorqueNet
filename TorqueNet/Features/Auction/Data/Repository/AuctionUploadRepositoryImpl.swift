@@ -55,7 +55,6 @@ class AuctionUploadRepositoryImpl: AuctionUploadRepository {
         }
     }
 
-
     func createAuction(_ auction: AuctionUploadModel) async -> Result<String, UploadError> {
         do {
             let docRef = FirestoreConstants.AuctionsCollection.document(auction.id)
@@ -90,4 +89,49 @@ class AuctionUploadRepositoryImpl: AuctionUploadRepository {
         
         return .success(true)
     }
+    
+    func fetchAuctions() async -> Result<[AuctionUploadModel], UploadError> {
+        do {
+            let snapshot = try await FirestoreConstants.AuctionsCollection
+                .getDocuments()
+
+            let auctions: [AuctionUploadModel] = snapshot.documents.compactMap { document in
+                try? document.data(as: AuctionUploadModel.self)
+            }
+
+            return .success(auctions)
+
+        } catch {
+            return .failure(
+                .firestoreFetchFailed(error.localizedDescription, "auctions")
+            )
+        }
+    }
+    
+    func fetchAuction(auctionId: String) async -> Result<AuctionUploadModel, UploadError>{
+        do {
+            let snapshot = try await FirestoreConstants.AuctionsCollection
+                .document(auctionId)
+                .getDocument()
+            
+            guard snapshot.exists else {
+                return .failure(.firestoreFetchFailed("Auction not found", "auctions"))
+            }
+            
+            let auction: AuctionUploadModel = try! snapshot.data(as: AuctionUploadModel.self)
+            
+            return .success(auction)
+
+        } catch {
+            return .failure(
+                .firestoreFetchFailed(error.localizedDescription, "auctions")
+            )
+        }
+    }
+    
+    /**
+     let snapshot = try await FirestoreConstants.UserCollection.document(uid).getDocument()
+     guard snapshot.exists else { return .failure(.custom("User not found")) }
+     let user = try snapshot.data(as: User.self)
+     */
 }

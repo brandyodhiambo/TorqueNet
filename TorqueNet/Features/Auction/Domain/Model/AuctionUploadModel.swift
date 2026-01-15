@@ -11,7 +11,7 @@ import FirebaseFirestore
 import FirebaseStorage
 import Combine
 
-struct AuctionUploadModel: Codable {
+struct AuctionUploadModel: Identifiable, Codable {
     let id: String
     let imageUrls: [String]
     let carTitle: String

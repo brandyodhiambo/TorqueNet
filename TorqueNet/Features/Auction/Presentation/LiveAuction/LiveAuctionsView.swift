@@ -8,21 +8,18 @@
 import SwiftUI
 
 struct LiveAuctionsView: View {
-    @State private var searchText = ""
-    @State private var selectedCategory = "All"
-    @State private var liveAuctions: [LiveAuction] = sampleLiveAuctions
     @EnvironmentObject var router: Router
-    @State var toast: Toast? = nil
+    @StateObject var liveAuctionViewModel =  LiveAuctionViewModel()
     
-    let categories = ["All", "Art", "Electronics", "Collectibles", "Jewelry", "Vehicles"]
+    let categories = ["All", "Ongoing", "Closed"]
     
-    var filteredAuctions: [LiveAuction] {
-        let categoryFiltered = selectedCategory == "All" ? liveAuctions : liveAuctions.filter { $0.category == selectedCategory }
+    var filteredAuctions: [AuctionUploadModel] {
+        let categoryFiltered = liveAuctionViewModel.liveAuctionUiState.selectedCategory == "All" ? liveAuctionViewModel.liveAuctionUiState.fetchedAuctions : liveAuctionViewModel.liveAuctionUiState.fetchedAuctions.filter { $0.auctionStatus == liveAuctionViewModel.liveAuctionUiState.selectedCategory}
         
-        if searchText.isEmpty {
+        if liveAuctionViewModel.liveAuctionUiState.searchText.isEmpty {
             return categoryFiltered
         } else {
-            return categoryFiltered.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
+            return categoryFiltered.filter { $0.carTitle.localizedCaseInsensitiveContains(liveAuctionViewModel.liveAuctionUiState.searchText) }
         }
     }
     
@@ -48,7 +45,18 @@ struct LiveAuctionsView: View {
                 categoryFilter
                 
                 // Live auctions grid
-                auctionsGrid
+                if filteredAuctions.isEmpty {
+                    EmptyStateView(
+                        imageName: "empty_recent",
+                        title: "No Live Auction",
+                        subtitle: "Check back later for featured auctions",
+                        height: 160
+                    )
+                    .padding(.horizontal, 16)
+                } else {
+                    auctionsGrid
+                }
+                
             }
            
         }
@@ -62,12 +70,18 @@ struct LiveAuctionsView: View {
             },
             trailingIcon: "arrow.clockwise",
             onTrailingTap: {
-                refreshAuctions()
-                //toast = Toast(style: .success, message: "Hurray! Auctions refreshed!")
+                liveAuctionViewModel.refreshAuctions()
             },
             trailingMenu: {}
             )
-        .toastView(toast: $toast)
+        .toastView(toast: $liveAuctionViewModel.liveAuctionUiState.toast)
+        .fullScreenProgressOverlay(isShowing: liveAuctionViewModel.liveAuctionUiState.auctionState == .isLoading)
+        .task {
+            await liveAuctionViewModel.fetchAuctions(
+                onSuccess: {},
+                onFailure: { _ in }
+            )
+        }
     }
     
     private var searchBar: some View {
@@ -75,7 +89,10 @@ struct LiveAuctionsView: View {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.gray)
             
-            TextField("Search live auctions...", text: $searchText)
+            TextField("Search live auctions...", text: Binding(
+                get: { liveAuctionViewModel.liveAuctionUiState.searchText },
+                set: { liveAuctionViewModel.updateSaerchText($0) }
+            ))
                 .font(.custom("Exo2-Regular", size: 16))
         }
         .padding(.horizontal, 16)
@@ -92,9 +109,9 @@ struct LiveAuctionsView: View {
                 ForEach(categories, id: \.self) { category in
                     LiveCategoryChip(
                         title: category,
-                        isSelected: selectedCategory == category
+                        isSelected: liveAuctionViewModel.liveAuctionUiState.selectedCategory == category
                     ) {
-                        selectedCategory = category
+                        liveAuctionViewModel.updateSelectedCategory(category)
                     }
                 }
             }
@@ -111,10 +128,9 @@ struct LiveAuctionsView: View {
             ], spacing: 20) {
                 ForEach(filteredAuctions) { auction in
                     LiveAuctionCard2(
-                        imageName: auction.imageName,
-                        title: auction.title
+                        auction:auction
                     ) {
-                        openAuctionDetail(auction)
+                        router.push(.auctionDetails(auctionId: auction.id))
                     }
                 }
             }
@@ -122,25 +138,8 @@ struct LiveAuctionsView: View {
             .padding(.bottom, 20)
         }
         .refreshable {
-            await refreshAuctionsAsync()
+            await liveAuctionViewModel.refreshAuctionsAsync()
         }
-    }
-    
-    private func refreshAuctions() {
-        withAnimation(.easeInOut(duration: 0.3)) {
-            liveAuctions = sampleLiveAuctions.shuffled()
-        }
-    }
-    
-    private func refreshAuctionsAsync() async {
-        try? await Task.sleep(nanoseconds: 1_000_000_000)
-        await MainActor.run {
-            refreshAuctions()
-        }
-    }
-    
-    private func openAuctionDetail(_ auction: LiveAuction) {
-        print("Opening auction: \(auction.title)")
     }
 }
 
@@ -164,16 +163,13 @@ struct LiveCategoryChip: View {
 }
 
 struct LiveAuctionCard2: View {
-    let imageName: String
-    let title: String
+    let auction:AuctionUploadModel
     let onTap: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             ZStack(alignment: .topTrailing) {
-                Image(imageName)
-                    .resizable()
-                    .scaledToFill()
+                CustomImageView(url:auction.imageUrls.last ?? "", maxWidth: 170, height: 120,)
                     .frame(width: 170, height: 120)
                     .cornerRadius(12)
                 
@@ -196,19 +192,19 @@ struct LiveAuctionCard2: View {
             }
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(title)
+                Text(auction.carTitle)
                     .font(.custom("Exo2-Medium", size: 14))
                     .foregroundColor(.theme.onSurfaceColor)
                     .lineLimit(2)
                 
                 HStack {
-                    Text("$45,200")
+                    Text(auction.currentBid.description)
                         .font(.custom("Exo2-Bold", size: 16))
                         .foregroundColor(.theme.primaryColor)
                     
                     Spacer()
                     
-                    Text("23 bids")
+                    Text("\(auction.bidCount) bids")
                         .font(.custom("Exo2-Regular", size: 12))
                         .foregroundColor(.gray)
                 }
@@ -228,17 +224,4 @@ struct LiveAuctionCard2: View {
     }
     
 }
-
-
-// MARK: - Sample Data
-let sampleLiveAuctions: [LiveAuction] = [
-    LiveAuction(imageName: "car", title: "Vintage Rolex Submariner 1960s", category: "Collectibles", currentBid: 45200, bidCount: 23),
-    LiveAuction(imageName: "car", title: "Abstract Canvas Oil Painting", category: "Art", currentBid: 12800, bidCount: 15),
-    LiveAuction(imageName: "car", title: "1967 Ford Mustang Fastback", category: "Vehicles", currentBid: 89500, bidCount: 42),
-    LiveAuction(imageName: "car", title: "2.5ct Diamond Engagement Ring", category: "Jewelry", currentBid: 28400, bidCount: 18),
-    LiveAuction(imageName: "car", title: "iPhone 15 Pro Max 512GB", category: "Electronics", currentBid: 1200, bidCount: 8),
-    LiveAuction(imageName: "car", title: "Bronze Sculpture Limited Edition", category: "Art", currentBid: 5600, bidCount: 11),
-    LiveAuction(imageName: "car", title: "Ming Dynasty Porcelain Vase", category: "Collectibles", currentBid: 125000, bidCount: 67),
-    LiveAuction(imageName: "car", title: "High-End Gaming PC Setup", category: "Electronics", currentBid: 3400, bidCount: 14)
-]
 

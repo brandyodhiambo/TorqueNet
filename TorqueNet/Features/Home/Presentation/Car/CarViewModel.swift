@@ -34,6 +34,9 @@ class CarViewModel: ObservableObject {
         
         carUiState.isButtonEnable = isFormValid
     }
+    func updateCarCondition(value: String) {
+        carUiState.carCondition = value
+    }
     
     func updateCarErrors(key: String, value: String) {
         carUiState.carErrors[key] = value
@@ -172,6 +175,8 @@ class CarViewModel: ObservableObject {
             maxPower: carUiState.maxPower,
             zeroToSixty: carUiState.zeroToSixty,
             topSpeed: carUiState.topSpeed,
+            carCondition: carUiState.carCondition,
+            isNewCar: carUiState.isNewCar,
             createdAt: Date()
         )
         
@@ -212,10 +217,20 @@ class CarViewModel: ObservableObject {
         onSuccess:() -> Void,
         onFailure: (String) -> Void
     ) async {
+        carUiState.carState = .isLoading
         let result = await carUseCase.fetchCars()
         switch result {
         case .success(let cars):
             self.carUiState.fetchedCars = cars
+            self.carUiState.filteredCars = cars
+            carUiState.carState = .good
+            
+            load()
+            self.carUiState.recentlyViewedCars = carUiState.recentCarIds.compactMap{ id in
+                self.carUiState.fetchedCars.first{
+                    $0.id == id
+                }
+            }
             onSuccess()
         case .failure(let error):
             let message = error.errorDescription?.description ?? "An unexpected error occurred."
@@ -224,6 +239,45 @@ class CarViewModel: ObservableObject {
             carUiState.showError = true
             onFailure(message)
         }
+    }
+    
+    func applyFilters() {
+        let text = carUiState.searchText
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        carUiState.filteredCars = carUiState.fetchedCars.filter { car in
+            guard !text.isEmpty else { return true }
+
+            let matchesName =
+                car.carName.range(of: text, options: .caseInsensitive) != nil
+
+            let matchesModel =
+                car.carModel.range(of: text, options: .caseInsensitive) != nil
+
+            return matchesName || matchesModel
+        }
+    }
+
+
+    
+    func updateSaerchText(_ text: String) {
+        self.carUiState.searchText = text
+        applyFilters()
+    }
+    
+    
+    func load() {
+        carUiState.recentCarIds = carUseCase.getRecentlyViewedIds()
+    }
+    
+    func onCarViewed(carId: String) {
+        carUseCase.track(carId: carId)
+        load()
+    }
+    
+    func clear() {
+        carUseCase.clear()
+        load()
     }
     
     

@@ -21,4 +21,16 @@ class UploadCarUseCase {
     func fetchCars() async -> Result<[CarModel], UploadError> {
         return await repository.fetchCars()
     }
+    
+    func track(carId: String) {
+        repository.setId(id: carId)
+    }
+    
+    func getRecentlyViewedIds() -> [String] {
+        repository.getIds()
+    }
+    
+    func clear() {
+        repository.clearIds()
+    }
 }

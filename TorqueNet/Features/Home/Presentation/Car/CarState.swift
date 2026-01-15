@@ -11,6 +11,8 @@ import PhotosUI
 struct CarUiState{
     var carName = ""
     var carModel = ""
+    var carCondition = ""
+    var isNewCar: Bool = false
     var rating = 4.8
     var numberOfReviews = ""
     var ownerName = ""
@@ -23,7 +25,11 @@ struct CarUiState{
     var maxPower = ""
     var zeroToSixty = ""
     var topSpeed = ""
+    var searchText: String = ""
     var fetchedCars: [CarModel] = []
+    var filteredCars: [CarModel] = []
+    var recentlyViewedCars: [CarModel] = []
+    var recentCarIds: [String] = []
     
     var selectedImages: [PhotosPickerItem] = []
     var loadedImages: [UIImage] = []

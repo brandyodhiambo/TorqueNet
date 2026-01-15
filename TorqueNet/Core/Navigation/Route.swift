@@ -14,13 +14,13 @@ enum Route: Hashable {
     case forgotPassword
     
     case home
-    case carDetails
+    case carDetails(car:CarModel)
     case uploadCar
     
     case wishlist
     
     case auction
-    case auctionDetails
+    case auctionDetails(auctionId:String)
     case auctionUpload
     case auctionLiveBids
     case auctionSchedule

@@ -9,16 +9,16 @@ import SwiftUI
 
 struct CarDetailView: View {
     @EnvironmentObject var router:Router
+    let car: CarModel
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading, spacing: 24) {
-                
-                let carImages: [String] = ["car", "carKey", "benz"]
-
                 TabView {
-                    ForEach(carImages, id: \.self) { imageName in
-                        Image(imageName)
-                            .resizable()
+                    ForEach(car.carImageUrls, id: \.self) { image in
+                        //Image(imageName)
+                        CustomImageView(url: image)
+                            //.resizable()
                             .scaledToFill()
                     }
                 }
@@ -29,7 +29,7 @@ struct CarDetailView: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("Red Mazda 6 - Elite Estate")
+                        Text(car.carName)
                             .font(.custom("Exo2-ExtraBold", size: 24))
                             .foregroundColor(Color.theme.primaryColor)
                             .fontWeight(.bold)
@@ -42,12 +42,12 @@ struct CarDetailView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "star.fill")
                             .foregroundColor(.yellow)
-                        Text("4.8")
+                        Text(car.rating.description)
                             .font(.custom("Exo2-SemiBold", size: 16))
                             .fontWeight(.semibold)
                             .foregroundColor(.theme.onSurfaceColor)
                             
-                        Text("(100+ Reviews)")
+                        Text("(\(car.numberOfReviews)+ Reviews)")
                             .font(.custom("Exo2-SemiBold", size: 16))
                             .font(.subheadline)
                             .foregroundColor(.theme.onSurfaceColor)
@@ -55,18 +55,25 @@ struct CarDetailView: View {
                 }
 
                 HStack(spacing: 12) {
-                    Image("profile")
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 50, height: 50)
-                        .clipShape(Circle())
-
+                    if car.ownerProfileImageUrl != nil {
+                        CustomImageView(url: car.ownerProfileImageUrl ?? "", maxWidth: 50, height: 50,)
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 50, height: 50)
+                            .clipShape(Circle())
+                    } else {
+                        Image("profile")
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 50, height: 50)
+                            .clipShape(Circle())
+                    }
+                    
                     VStack(alignment: .leading) {
-                        Text("John Downson")
+                        Text(car.ownerName)
                             .font(.custom("Exo2-SemiBold", size: 20))
                             .fontWeight(.semibold)
                             .foregroundColor(.theme.onSurfaceColor)
-                        Text("Binder")
+                        Text(car.ownerRole)
                             .font(.custom("Exo2-SemiBold", size: 14))
                             .font(.subheadline)
                             .foregroundColor(.theme.onSurfaceColor)
@@ -106,15 +113,17 @@ struct CarDetailView: View {
 
                     Grid(alignment: .leading, horizontalSpacing: 20, verticalSpacing: 12) {
                         GridRow {
-                            CarInfoItem(icon: "person.2.fill", text: "8 Passengers")
-                            CarInfoItem(icon: "door.left.hand.open", text: "2 Doors")
+                            CarInfoItem(icon: "person.2.fill", text: "\(car.passengers) Passengers")
+                            CarInfoItem(icon: "door.left.hand.open", text: "\(car.doors) Doors")
                         }
                         GridRow {
-                            CarInfoItem(icon: "snowflake", text: "Air Conditioner")
-                            CarInfoItem(icon: "fuelpump.fill", text: "Fuel into: Full to Full")
+                            if car.hasAirConditioner{
+                                CarInfoItem(icon: "snowflake", text: "Air Conditioner")
+                            }
+                            CarInfoItem(icon: "fuelpump.fill", text: "Fuel into: \(car.fuelPolicy)")
                         }
                         GridRow {
-                            CarInfoItem(icon: "gearshift.layout.sixspeed", text: "Manual")
+                            CarInfoItem(icon: "gearshift.layout.sixspeed", text: car.transmission)
                         }
                     }
                 }
@@ -127,9 +136,9 @@ struct CarDetailView: View {
                         .foregroundColor(Color.theme.onSurfaceColor)
 
                     HStack(spacing: 12) {
-                        CarSpecCard(label: "Max Power", value: "320 Hp")
-                        CarSpecCard(label: "0-60 Mph", value: "5.4 Sec")
-                        CarSpecCard(label: "Top Speed", value: "187 Mph")
+                        CarSpecCard(label: "Max Power", value: car.maxPower)
+                        CarSpecCard(label: "0-60 Mph", value: car.zeroToSixty)
+                        CarSpecCard(label: "Top Speed", value: car.topSpeed)
                     }
                 }
             }
@@ -196,6 +205,8 @@ struct CarSpecCard: View {
 
 #Preview {
     NavigationView{
-        CarDetailView()
+        CarDetailView(
+            car:CarModel.preview
+        )
     }
 }
