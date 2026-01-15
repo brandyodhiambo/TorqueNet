@@ -130,7 +130,7 @@ struct LiveAuctionsView: View {
                     LiveAuctionCard2(
                         auction:auction
                     ) {
-                        liveAuctionViewModel.openAuctionDetail(auction)
+                        router.push(.auctionDetails(auction: auction))
                     }
                 }
             }
