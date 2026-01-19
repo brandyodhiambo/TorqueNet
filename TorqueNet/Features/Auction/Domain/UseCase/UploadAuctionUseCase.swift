@@ -153,5 +153,35 @@ class UploadAuctionUseCase {
     func fetchAuction(auctionId: String) async -> Result<AuctionUploadModel, UploadError> {
         return await repository.fetchAuction(auctionId: auctionId)
     }
+    
+    func placeBid(
+        bidUser:String,
+        bidAmount:String,
+    ) async -> Result<String, UploadError> {
+        
+        guard let bidAmount = Double(bidAmount), bidAmount > 0 else {
+            return .failure(.invalidData("Valid starting bid is required"))
+        }
+        
+        let auctionBidId = UUID().uuidString
+        
+        let bidAuction = AuctionBidModel(
+            id:auctionBidId,
+            bidUser:bidUser,
+            bidAmount:bidAmount,
+            bidTime: Timestamp(date: Date())
+        )
+        
+        let uploadResult = await repository.placeBid(bidAuction)
+        
+        switch uploadResult {
+        case .success(let documentId):
+            return .success(documentId)
+            
+        case .failure(let error):
+            return .failure(error)
+        }
+        
+    }
 }
 
