@@ -10,6 +10,7 @@ import SwiftUI
 struct AuctionCarDetailView: View {
     @EnvironmentObject var router: Router
     @StateObject var auctionDetailViewModel = AuctionDetailsViewModel()
+    @EnvironmentObject var settingsViewModel : SettingsViewModel
     let auctionId:String
     
     @State var auction:AuctionUploadModel? = nil
@@ -71,7 +72,7 @@ struct AuctionCarDetailView: View {
                 onBidSubmitted: { amount in
                     Task{
                         await auctionDetailViewModel.placeBid(
-                            bidUser: <#T##String#>,
+                            bidUser: settingsViewModel.currentUser?.name ?? "",
                             onSuccess: {
                                 auctionDetailViewModel.auctionDetailsUiState.toast = Toast(style: .success, message: "Bid placed successfully")
                             },
