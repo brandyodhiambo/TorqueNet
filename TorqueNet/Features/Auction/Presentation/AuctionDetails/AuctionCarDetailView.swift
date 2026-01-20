@@ -16,58 +16,71 @@ struct AuctionCarDetailView: View {
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
-            ZStack {
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        imageGallerySection
+        ZStack {
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 0) {
+                    imageGallerySection
+                    
+                    VStack(spacing: 24) {
+                        carTitleSection
                         
-                        VStack(spacing: 24) {
-                            carTitleSection
-                            
-                            auctionInfoSection
-                            
-                            tabSection
-                            
-                            tabContentSection
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.top, 20)
-                        .background(
-                            RoundedRectangle(cornerRadius: 30)
-                                .fill(Color.theme.surfaceColor)
-                                .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: -10)
-                        )
-                        .offset(y: -30)
+                        auctionInfoSection
+                        
+                        tabSection
+                        
+                        tabContentSection
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
+                    .background(
+                        RoundedRectangle(cornerRadius: 30)
+                            .fill(Color.theme.surfaceColor)
+                            .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: -10)
+                    )
+                    .offset(y: -30)
                 }
-                
-                VStack {
-                    Spacer()
-                    bottomActionBar
-                }
-                .padding(.horizontal, 20)
             }
-            .ignoresSafeArea(edges: .top)
-            .background(Color.theme.surfaceColor)
+            
+            VStack {
+                Spacer()
+                bottomActionBar
+            }
             .padding(.horizontal, 20)
-            .onAppear {
-                updateTimeRemaining()
-                Task{
-                    await auctionDetailViewModel.fetchAuction(
-                        auctionId: auctionId,
-                        onSuccess: {auction = auctionDetailViewModel.auctionDetailsUiState.fetchedAuction},
-                        onFailure: {_ in})
-                }
+        }
+        .ignoresSafeArea(edges: .top)
+        .background(Color.theme.surfaceColor)
+        .padding(.horizontal, 20)
+        .onAppear {
+            updateTimeRemaining()
+            Task{
+                await auctionDetailViewModel.fetchAuction(
+                    auctionId: auctionId,
+                    onSuccess: {auction = auctionDetailViewModel.auctionDetailsUiState.fetchedAuction},
+                    onFailure: {_ in})
             }
-            .fullScreenProgressOverlay(isShowing: auctionDetailViewModel.auctionDetailsUiState.auctionState == .isLoading)
-            .onReceive(timer) { _ in
-                updateTimeRemaining()
-            }
-        
-            .sheet(isPresented: $auctionDetailViewModel.auctionDetailsUiState.showBidSheet) {
-            BidSheetView(currentBid: 25000, onBidSubmitted: { amount in
-                print("Bid submitted: $\(amount)")
-            })
+        }
+        .fullScreenProgressOverlay(isShowing: auctionDetailViewModel.auctionDetailsUiState.auctionState == .isLoading)
+        .onReceive(timer) { _ in
+            updateTimeRemaining()
+        }
+        .toastView(toast: $auctionDetailViewModel.auctionDetailsUiState.toast)
+        .sheet(isPresented: $auctionDetailViewModel.auctionDetailsUiState.showBidSheet) {
+            BidSheetView(
+                currentBid: auction?.currentBid ?? 0,
+                auctionDetailsUiState: $auctionDetailViewModel.auctionDetailsUiState,
+                onBidSubmitted: { amount in
+                    Task{
+                        await auctionDetailViewModel.placeBid(
+                            bidUser: <#T##String#>,
+                            onSuccess: {
+                                auctionDetailViewModel.auctionDetailsUiState.toast = Toast(style: .success, message: "Bid placed successfully")
+                            },
+                            onFailure: {error in
+                                auctionDetailViewModel.auctionDetailsUiState.toast = Toast(style: .error, message: error)
+                            }
+                        )
+                    }
+                })
         }
     }
     
@@ -84,7 +97,7 @@ struct AuctionCarDetailView: View {
                             )
                             .ignoresSafeArea(edges: .top)
                             .clipped()
-
+                            
                             LinearGradient(
                                 gradient: Gradient(colors: [
                                     .clear,
@@ -98,7 +111,7 @@ struct AuctionCarDetailView: View {
                         .tag(index)
                     }
                 }
-
+                
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .frame(height: 450)
@@ -171,7 +184,7 @@ struct AuctionCarDetailView: View {
                                 )
                         }
                     }
-                   
+                    
                 }
                 .padding(.bottom, 20)
             }
@@ -219,11 +232,11 @@ struct AuctionCarDetailView: View {
                     SpecBadge(icon: "fuelpump.fill", value: auction.engine, unit: "engine")
                     SpecBadge(icon: "gearshape.fill", value: auction.transmission, unit: "trans")
                 }
-               
+                
             }
         }
         .padding(.horizontal,8)
-
+        
         
     }
     
@@ -398,7 +411,7 @@ struct AuctionCarDetailView: View {
                     InspectionCategory(title: "Transmission", rating: auction.inspection.transmission.rating, details: auction.inspection.transmission.details)
                     InspectionCategory(title: "Electronics", rating: auction.inspection.electronics.rating, details: auction.inspection.electronics.details)
                 }
-               
+                
             }
             
             HStack {
@@ -474,7 +487,7 @@ struct AuctionCarDetailView: View {
                 auctionDetailViewModel.auctionDetailsUiState.timeRemaining  = 0
             }
         }
-       
+        
     }
     
     private func countdownString() -> String {
@@ -675,94 +688,94 @@ struct InspectionCategory: View {
 
 struct BidSheetView: View {
     let currentBid: Double
+    @Binding var auctionDetailsUiState:AuctionDetailUiState
     let onBidSubmitted: (Double) -> Void
-    @State private var bidAmount = ""
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
-            VStack(spacing: 24) {
-                VStack(spacing: 16) {
-                    Text("Place Your Bid")
-                        .font(.custom("Exo2-Bold", size: 24))
-                        .foregroundColor(.theme.onSurfaceColor)
-                    
-                    Text("Current highest bid: $\(Int(currentBid))")
-                        .font(.custom("Exo2-Regular", size: 16))
-                        .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
-                }
+        VStack(spacing: 24) {
+            VStack(spacing: 16) {
+                Text("Place Your Bid")
+                    .font(.custom("Exo2-Bold", size: 24))
+                    .foregroundColor(.theme.onSurfaceColor)
                 
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Your Bid Amount")
-                        .font(.custom("Exo2-Medium", size: 16))
-                        .foregroundColor(.theme.onSurfaceColor)
-                    
-                    HStack {
-                        Text("$")
-                            .font(.custom("Exo2-Regular", size: 18))
-                            .foregroundColor(.theme.onSurfaceColor)
-                        
-                        TextField("Enter amount", text: $bidAmount)
-                            .font(.custom("Exo2-Regular", size: 18))
-                            .keyboardType(.numberPad)
-                    }
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.theme.primaryColor.opacity(0.3), lineWidth: 1)
-                    )
-                }
-                
-                HStack(spacing: 12) {
-                    ForEach([1000, 2500, 5000], id: \.self) { increment in
-                        Button(action: {
-                            let newBid = currentBid + Double(increment)
-                            bidAmount = String(format: "%.0f", newBid)
-                        }) {
-                            Text("+$\(increment)")
-                                .font(.custom("Exo2-Medium", size: 14))
-                                .foregroundColor(.theme.primaryColor)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color.theme.primaryColor, lineWidth: 1)
-                                )
-                        }
-                    }
-                }
-                
-                Spacer()
-                
-                Button(action: {
-                    if let amount = Double(bidAmount) {
-                        onBidSubmitted(amount)
-                        presentationMode.wrappedValue.dismiss()
-                    }
-                }) {
-                    Text("Submit Bid")
-                        .font(.custom("Exo2-SemiBold", size: 16))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.theme.primaryColor)
-                        )
-                }
-                .disabled(bidAmount.isEmpty)
+                Text("Current highest bid: $\(Int(currentBid))")
+                    .font(.custom("Exo2-Regular", size: 16))
+                    .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
             }
-            .background(Color.theme.surfaceColor)
-            .padding()
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarItems(
-                trailing: Button("Cancel") {
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Your Bid Amount")
+                    .font(.custom("Exo2-Medium", size: 16))
+                    .foregroundColor(.theme.onSurfaceColor)
+                
+                HStack {
+                    Text("$")
+                        .font(.custom("Exo2-Regular", size: 18))
+                        .foregroundColor(.theme.onSurfaceColor)
+                    
+                    TextField("Enter amount", text: $auctionDetailsUiState.bidAmount)
+                        .font(.custom("Exo2-Regular", size: 18))
+                        .keyboardType(.numberPad)
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.theme.primaryColor.opacity(0.3), lineWidth: 1)
+                )
+            }
+            
+            HStack(spacing: 12) {
+                ForEach([1000, 2500, 5000], id: \.self) { increment in
+                    Button(action: {
+                        let newBid = currentBid + Double(increment)
+                        auctionDetailsUiState.bidAmount = String(format: "%.0f", newBid)
+                    }) {
+                        Text("+$\(increment)")
+                            .font(.custom("Exo2-Medium", size: 14))
+                            .foregroundColor(.theme.primaryColor)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(Color.theme.primaryColor, lineWidth: 1)
+                            )
+                    }
+                }
+            }
+            
+            Spacer()
+            
+            Button(action: {
+                if let amount = Double(auctionDetailsUiState.bidAmount) {
+                    onBidSubmitted(amount)
                     presentationMode.wrappedValue.dismiss()
                 }
-            )
+            }) {
+                Text("Submit Bid")
+                    .font(.custom("Exo2-SemiBold", size: 16))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.theme.primaryColor)
+                    )
+            }
+            .disabled(auctionDetailsUiState.bidAmount.isEmpty)
+        }
+        .background(Color.theme.surfaceColor)
+        .padding()
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarItems(
+            trailing: Button("Cancel") {
+                presentationMode.wrappedValue.dismiss()
+            }
+        )
         
     }
 }
 
 #Preview {
-   // AuctionCarDetailView()
+    // AuctionCarDetailView()
 }
