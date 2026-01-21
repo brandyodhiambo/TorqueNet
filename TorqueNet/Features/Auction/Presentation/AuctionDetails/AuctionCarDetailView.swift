@@ -58,6 +58,9 @@ struct AuctionCarDetailView: View {
                     auctionId: auctionId,
                     onSuccess: {auction = auctionDetailViewModel.auctionDetailsUiState.fetchedAuction},
                     onFailure: {_ in})
+                await auctionDetailViewModel.fetchBids(
+                    onSuccess: {},
+                    onFailure: {_ in})
             }
         }
         .fullScreenProgressOverlay(isShowing: auctionDetailViewModel.auctionDetailsUiState.auctionState == .isLoading)
@@ -296,26 +299,41 @@ struct AuctionCarDetailView: View {
         )
     }
     
-    //MARK: Change to take data from backend
     private var bidHistoryPreview: some View {
         VStack(alignment: .leading, spacing: 12) {
+
             Text("Recent Bids")
                 .font(.custom("Exo2-SemiBold", size: 16))
                 .foregroundColor(.theme.onSurfaceColor)
-            
-            VStack(spacing: 8) {
-                BidRowView(bidder: "User****2847", amount: 85500, time: "2m ago", isHighest: true)
-                BidRowView(bidder: "Auto****1234", amount: 84000, time: "5m ago", isHighest: false)
-                BidRowView(bidder: "Coll****9876", amount: 82500, time: "8m ago", isHighest: false)
+
+            if auctionDetailViewModel.sortedBids.isEmpty {
+                Text("No bids yet")
+                    .font(.custom("Exo2-Regular", size: 14))
+                    .foregroundColor(.gray)
+            } else {
+                VStack(spacing: 8) {
+                    ForEach(auctionDetailViewModel.sortedBids.prefix(3)) { bid in
+                        BidRowView(
+                            bidder: Utils.shared.maskedUser(bid.bidUser),
+                            amount: bid.bidAmount,
+                            time: Utils.shared.formatDateToHumanReadable(bid.bidTime.dateValue().description),
+                            isHighest: bid.bidAmount == auctionDetailViewModel.highestBidAmount
+                        )
+                    }
+                }
             }
-            
-            Button(action: {}) {
+
+            Button(action: {
+                // Navigate to full bids screen / sheet
+                //auctionDetailsUiState.showBidSheet = true
+            }) {
                 Text("View All Bids")
                     .font(.custom("Exo2-Medium", size: 14))
                     .foregroundColor(.theme.primaryColor)
             }
         }
     }
+
     
     private var tabSection: some View {
         HStack {

@@ -139,4 +139,22 @@ class AuctionUploadRepositoryImpl: AuctionUploadRepository {
         }
     }
     
+    func fetchBids() async -> Result<[AuctionBidModel], UploadError> {
+        do {
+            let snapshot = try await FirestoreConstants.BidsCollection
+                .getDocuments()
+
+            let auctionBids: [AuctionBidModel] = snapshot.documents.compactMap { document in
+                try? document.data(as: AuctionBidModel.self)
+            }
+
+            return .success(auctionBids)
+
+        } catch {
+            return .failure(
+                .firestoreFetchFailed(error.localizedDescription, "bids")
+            )
+        }
+    }
+    
 }

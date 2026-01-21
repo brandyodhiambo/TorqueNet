@@ -183,5 +183,9 @@ class UploadAuctionUseCase {
         }
         
     }
+    
+    func fetchBids() async -> Result<[AuctionBidModel], UploadError> {
+        return await repository.fetchBids()
+    }
 }
 

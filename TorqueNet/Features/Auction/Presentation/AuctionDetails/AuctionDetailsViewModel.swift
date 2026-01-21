@@ -12,6 +12,19 @@ class AuctionDetailsViewModel: ObservableObject {
     @Published var auctionDetailsUiState = AuctionDetailUiState()
     let auctionUseCase:UploadAuctionUseCase = UploadAuctionUseCase(repository: AuctionUploadRepositoryImpl.shared)
     
+    var highestBidAmount: Double {
+        auctionDetailsUiState.fetchedBids
+            .map { $0.bidAmount }
+            .max() ?? 0
+    }
+    
+    var sortedBids: [AuctionBidModel] {
+        auctionDetailsUiState.fetchedBids
+            .sorted { $0.bidTime.dateValue() > $1.bidTime.dateValue() }
+    }
+
+
+    
     func updateBidAmount(value: String) {
         auctionDetailsUiState.bidAmount = value
     }
@@ -54,6 +67,26 @@ class AuctionDetailsViewModel: ObservableObject {
             }
             onSuccess()
 
+        case .failure(let error):
+            let message = error.errorDescription?.description ?? "An unexpected error occurred."
+            auctionDetailsUiState.auctionState = .error(message)
+            auctionDetailsUiState.errorMessage = message
+            auctionDetailsUiState.showError = true
+            onFailure(message)
+        }
+    }
+    
+    func fetchBids(
+        onSuccess:() -> Void,
+        onFailure: (String) -> Void
+    ) async {
+        auctionDetailsUiState.auctionState = .isLoading
+        let result = await auctionUseCase.fetchBids()
+        switch result {
+        case .success(let bids):
+            self.auctionDetailsUiState.fetchedBids = bids
+            auctionDetailsUiState.auctionState = .good
+            onSuccess()
         case .failure(let error):
             let message = error.errorDescription?.description ?? "An unexpected error occurred."
             auctionDetailsUiState.auctionState = .error(message)

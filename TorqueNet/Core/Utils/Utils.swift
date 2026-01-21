@@ -99,6 +99,14 @@ struct Utils {
         return formatter.localizedString(for: date, relativeTo: Date())
     }
     
+    func maskedUser(_ name: String) -> String {
+        guard name.count > 4 else { return name }
+        let prefix = name.prefix(4)
+        let suffix = name.suffix(4)
+        return "\(prefix)****\(suffix)"
+    }
+
+    
 
     
 }

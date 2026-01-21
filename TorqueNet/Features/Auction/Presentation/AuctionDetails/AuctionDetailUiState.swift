@@ -15,6 +15,7 @@ struct AuctionDetailUiState{
     var showBidSheet = false
     var selectedTab = 0
     var fetchedAuction: AuctionUploadModel? = nil
+    var fetchedBids:[AuctionBidModel] = []
     
     var errorMessage: String? = nil
     var showError: Bool = false
