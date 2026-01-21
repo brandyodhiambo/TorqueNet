@@ -554,31 +554,37 @@ struct SpecBadge: View {
 }
 
 struct BidRowView: View {
+
     let bidder: String
     let amount: Double
     let time: String
     let isHighest: Bool
-    
+
     var body: some View {
         HStack {
-            Text(bidder)
-                .font(.custom("Exo2-Medium", size: 14))
-                .foregroundColor(.theme.onSurfaceColor)
-            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(bidder)
+                    .font(.custom("Exo2-Medium", size: 14))
+
+                Text(time)
+                    .font(.custom("Exo2-Regular", size: 12))
+                    .foregroundColor(.gray)
+            }
+
             Spacer()
-            
-            Text(String(format: "$%.0f", amount))
+
+            Text("KES \(Int(amount))")
                 .font(.custom("Exo2-SemiBold", size: 14))
-                .foregroundColor(isHighest ? .theme.primaryColor : .theme.onSurfaceColor)
-            
-            Text(time)
-                .font(.custom("Exo2-Regular", size: 12))
-                .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
-                .frame(width: 50, alignment: .trailing)
+                .foregroundColor(isHighest ? .green : .theme.onSurfaceColor)
         }
-        .padding(.vertical, 4)
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(isHighest ? Color.green : Color.gray.opacity(0.3), lineWidth: 1)
+        )
     }
 }
+
 
 struct TabButton: View {
     let title: String
@@ -796,5 +802,7 @@ struct BidSheetView: View {
 }
 
 #Preview {
-    // AuctionCarDetailView()
+    AuctionCarDetailView(
+        auctionId:""
+    )
 }
