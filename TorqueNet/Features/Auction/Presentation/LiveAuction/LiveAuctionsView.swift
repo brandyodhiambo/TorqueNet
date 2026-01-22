@@ -173,7 +173,6 @@ struct LiveAuctionCard2: View {
                     .frame(width: 170, height: 120)
                     .cornerRadius(12)
                 
-                // Live pulse animation
                 HStack(spacing: 4) {
                     Circle()
                         .fill(Color.red)

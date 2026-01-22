@@ -23,7 +23,6 @@ class AuctionDetailsViewModel: ObservableObject {
             .sorted { $0.bidTime.dateValue() > $1.bidTime.dateValue() }
     }
 
-
     
     func updateBidAmount(value: String) {
         auctionDetailsUiState.bidAmount = value
@@ -77,11 +76,12 @@ class AuctionDetailsViewModel: ObservableObject {
     }
     
     func fetchBids(
+        auctionId: String,
         onSuccess:() -> Void,
         onFailure: (String) -> Void
     ) async {
         auctionDetailsUiState.auctionState = .isLoading
-        let result = await auctionUseCase.fetchBids()
+        let result = await auctionUseCase.fetchBids(auctionId: auctionId)
         switch result {
         case .success(let bids):
             self.auctionDetailsUiState.fetchedBids = bids
