@@ -96,6 +96,17 @@ class AuctionDetailsViewModel: ObservableObject {
         }
     }
     
+    func updateAuctionStatus(
+        auctionId: String,
+        newStatus: String,
+        newEndTime: Date?,
+        onSuccess: () -> Void,
+        onFailure: (String) -> Void
+    ) async {
+        // Your implementation to update auction in Firebase
+        // Update the status and optionally the end time
+    }
+    
     func resetForm() {
         auctionDetailsUiState = AuctionDetailUiState()
     }

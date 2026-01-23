@@ -144,9 +144,7 @@ class AuctionUploadRepositoryImpl: AuctionUploadRepository {
             let snapshot = try await FirestoreConstants.BidsCollection
                 .document(auctionId)
                 .getDocument()
-            
-            let auctionBids: [AuctionBidModel] = try! snapshot.data(as: [AuctionBidModel].self)
-
+            let auctionBids = try snapshot.data(as: [AuctionBidModel].self)
             if auctionBids.isEmpty {
                 return .success([])
             }

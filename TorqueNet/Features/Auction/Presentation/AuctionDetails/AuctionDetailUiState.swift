@@ -13,6 +13,7 @@ struct AuctionDetailUiState{
     var bidAmount = ""
     var timeRemaining: TimeInterval = 0
     var showBidSheet = false
+    var showStatusManagementSheet = false
     var selectedTab = 0
     var fetchedAuction: AuctionUploadModel? = nil
     var fetchedBids:[AuctionBidModel] = []
