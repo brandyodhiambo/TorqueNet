@@ -922,19 +922,13 @@ struct AuctionStatusManagementSheet: View {
     let onStatusUpdated: (String, Date?) -> Void
     @Environment(\.presentationMode) var presentationMode
     
-    @State private var selectedStatus: String = "live"
-    @State private var selectedHours: Int = 24
-    @State private var customDate: Date = Date().addingTimeInterval(86400)
-    @State private var useCustomDate: Bool = false
-    
-    let statusOptions = ["live", "closed", "sold"]
-    let hourOptions = [1, 6, 12, 24, 48, 72]
+  
     
     var calculatedEndDate: Date {
-        if useCustomDate {
-            return customDate
+        if auctionDetailsUiState.useCustomDate {
+            return auctionDetailsUiState.customDate
         } else {
-            return Date().addingTimeInterval(TimeInterval(selectedHours * 3600))
+            return Date().addingTimeInterval(TimeInterval(auctionDetailsUiState.selectedHours * 3600))
         }
     }
     
@@ -964,42 +958,42 @@ struct AuctionStatusManagementSheet: View {
                             .foregroundColor(.theme.onSurfaceColor)
                         
                         VStack(spacing: 12) {
-                            ForEach(statusOptions, id: \.self) { status in
+                            ForEach(auctionDetailsUiState.statusOptions, id: \.self) { status in
                                 StatusOptionButton(
                                     status: status,
-                                    isSelected: selectedStatus == status,
-                                    action: { selectedStatus = status }
+                                    isSelected: auctionDetailsUiState.selectedStatus == status,
+                                    action: { auctionDetailsUiState.selectedStatus = status }
                                 )
                             }
                         }
                     }
                     .padding(.horizontal, 20)
                     
-                    if selectedStatus == "live" {
+                    if auctionDetailsUiState.selectedStatus == "Ongoing" {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Extend Auction Time")
                                 .font(.custom("Exo2-SemiBold", size: 16))
                                 .foregroundColor(.theme.onSurfaceColor)
                             
-                            if !useCustomDate {
+                            if !auctionDetailsUiState.useCustomDate {
                                 VStack(spacing: 12) {
                                     Text("Select duration to extend:")
                                         .font(.custom("Exo2-Regular", size: 14))
                                         .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
                                     
                                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                                        ForEach(hourOptions, id: \.self) { hours in
+                                        ForEach(auctionDetailsUiState.hourOptions, id: \.self) { hours in
                                             HourOptionButton(
                                                 hours: hours,
-                                                isSelected: selectedHours == hours,
-                                                action: { selectedHours = hours }
+                                                isSelected: auctionDetailsUiState.selectedHours == hours,
+                                                action: { auctionDetailsUiState.selectedHours = hours }
                                             )
                                         }
                                     }
                                 }
                                 
                                 Button(action: {
-                                    useCustomDate = true
+                                    auctionDetailsUiState.useCustomDate = true
                                 }) {
                                     HStack {
                                         Image(systemName: "calendar")
@@ -1017,11 +1011,11 @@ struct AuctionStatusManagementSheet: View {
                                 .padding(.top, 8)
                             }
                             
-                            if useCustomDate {
+                            if auctionDetailsUiState.useCustomDate {
                                 VStack(spacing: 12) {
                                     DatePicker(
                                         "End Date & Time",
-                                        selection: $customDate,
+                                        selection: $auctionDetailsUiState.customDate,
                                         in: Date()...,
                                         displayedComponents: [.date, .hourAndMinute]
                                     )
@@ -1033,7 +1027,7 @@ struct AuctionStatusManagementSheet: View {
                                     )
                                     
                                     Button(action: {
-                                        useCustomDate = false
+                                        auctionDetailsUiState.useCustomDate = false
                                     }) {
                                         HStack {
                                             Image(systemName: "clock")
@@ -1057,7 +1051,7 @@ struct AuctionStatusManagementSheet: View {
                                         .font(.custom("Exo2-Regular", size: 12))
                                         .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
                                     
-                                    Text(formatDate(calculatedEndDate))
+                                    Text(Utils.shared.formatDate(calculatedEndDate))
                                         .font(.custom("Exo2-SemiBold", size: 14))
                                         .foregroundColor(.theme.primaryColor)
                                 }
@@ -1085,8 +1079,8 @@ struct AuctionStatusManagementSheet: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
-                        let endTime = selectedStatus == "live" ? calculatedEndDate : nil
-                        onStatusUpdated(selectedStatus, endTime)
+                        let endTime = auctionDetailsUiState.selectedStatus == "Ongoing" ? calculatedEndDate : nil
+                        onStatusUpdated(auctionDetailsUiState.selectedStatus, endTime)
                         presentationMode.wrappedValue.dismiss()
                     }
                     .font(.custom("Exo2-SemiBold", size: 16))
@@ -1094,13 +1088,6 @@ struct AuctionStatusManagementSheet: View {
                 }
             }
         }
-    }
-    
-    private func formatDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
     }
 }
 

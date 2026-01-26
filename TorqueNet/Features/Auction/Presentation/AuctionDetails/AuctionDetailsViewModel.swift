@@ -103,8 +103,31 @@ class AuctionDetailsViewModel: ObservableObject {
         onSuccess: () -> Void,
         onFailure: (String) -> Void
     ) async {
-        // Your implementation to update auction in Firebase
-        // Update the status and optionally the end time
+        auctionDetailsUiState.auctionState = .isLoading
+        let result = await auctionUseCase.fetchAuction(auctionId: auctionId)
+        switch result {
+        case .success(let auction):
+            self.auctionDetailsUiState.fetchedAuction = auction
+            let updateResult = await auctionUseCase.executeUpdateAuction(auction: auction, auctionId: auctionId, newStatus: newStatus, newEndTime: newEndTime)
+            switch updateResult {
+            case .success(let bids):
+                auctionDetailsUiState.auctionState = .good
+                onSuccess()
+            case .failure(let error):
+                let message = error.errorDescription?.description ?? "An unexpected error occurred."
+                auctionDetailsUiState.auctionState = .error(message)
+                auctionDetailsUiState.errorMessage = message
+                auctionDetailsUiState.showError = true
+                onFailure(message)
+            }
+        case .failure(let error):
+            let message = error.errorDescription?.description ?? "An unexpected error occurred."
+            auctionDetailsUiState.auctionState = .error(message)
+            auctionDetailsUiState.errorMessage = message
+            auctionDetailsUiState.showError = true
+            onFailure(message)
+        }
+        
     }
     
     func resetForm() {

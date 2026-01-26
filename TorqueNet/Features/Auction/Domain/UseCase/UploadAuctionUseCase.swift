@@ -13,7 +13,6 @@ import FirebaseStorage
 import Combine
 
 
-//MARK: ADD updateAuction
 class UploadAuctionUseCase {
     private let repository: AuctionUploadRepository
     
@@ -144,6 +143,48 @@ class UploadAuctionUseCase {
             _ = await repository.deleteAuctionImages(imageUrls)
             return .failure(error)
         }
+    }
+    
+    func executeUpdateAuction(
+        auction: AuctionUploadModel,
+        auctionId: String,
+        newStatus: String,
+        newEndTime: Date?,
+    ) async -> Result<Bool, UploadError> {
+        let updatedAuction = AuctionUploadModel(
+            id: auctionId,
+            imageUrls: auction.imageUrls,
+            carTitle: auction.carTitle,
+            subtitle: auction.subtitle,
+            lotNumber: auction.lotNumber,
+            rating: auction.rating,
+            startingBid: auction.startingBid,
+            currentBid: auction.currentBid,
+            auctionEndDate: Timestamp(date: newEndTime ?? Date()),
+            auctionStatus: newStatus,
+            createdAt: auction.createdAt,
+            updatedAt: Timestamp(date: Date()),
+            mileage: auction.mileage,
+            year: auction.year,
+            engine: auction.engine,
+            transmission: auction.transmission,
+            make: auction.make,
+            model: auction.model,
+            drivetrain: auction.drivetrain,
+            exteriorColor: auction.exteriorColor,
+            interiorColor: auction.interiorColor,
+            vin: auction.vin,
+            location: auction.location,
+            seller: auction.seller,
+            performanceFeatures: auction.performanceFeatures,
+            technologyFeatures: auction.technologyFeatures,
+            comfortFeatures: auction.comfortFeatures,
+            historyEvents: auction.historyEvents,
+            inspection: auction.inspection,
+            bidCount: auction.bidCount,
+            bidHistory: auction.bidHistory
+        )
+        return await repository.updateAuction(updatedAuction)
     }
     
     func fetchAuctions() async -> Result<[AuctionUploadModel], UploadError> {
