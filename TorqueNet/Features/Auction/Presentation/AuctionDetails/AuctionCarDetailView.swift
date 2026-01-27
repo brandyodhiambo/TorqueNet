@@ -323,7 +323,7 @@ struct AuctionCarDetailView: View {
                         Image(systemName: "arrow.up")
                             .foregroundColor(.green)
                             .font(.system(size: 12))
-                        Text("\(auction?.bidCount) bids")
+                        Text("\(auction?.bidCount ?? 0) bids")
                             .font(.custom("Exo2-Medium", size: 12))
                             .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
                     }
