@@ -13,7 +13,6 @@ import FirebaseStorage
 import Combine
 
 
-//MARK: ADD updateAuction
 class UploadAuctionUseCase {
     private let repository: AuctionUploadRepository
     
@@ -146,12 +145,88 @@ class UploadAuctionUseCase {
         }
     }
     
+    func executeUpdateAuction(
+        auction: AuctionUploadModel,
+        auctionId: String,
+        newStatus: String,
+        newEndTime: Date?,
+    ) async -> Result<Bool, UploadError> {
+        let updatedAuction = AuctionUploadModel(
+            id: auctionId,
+            imageUrls: auction.imageUrls,
+            carTitle: auction.carTitle,
+            subtitle: auction.subtitle,
+            lotNumber: auction.lotNumber,
+            rating: auction.rating,
+            startingBid: auction.startingBid,
+            currentBid: auction.currentBid,
+            auctionEndDate: Timestamp(date: newEndTime ?? Date()),
+            auctionStatus: newStatus,
+            createdAt: auction.createdAt,
+            updatedAt: Timestamp(date: Date()),
+            mileage: auction.mileage,
+            year: auction.year,
+            engine: auction.engine,
+            transmission: auction.transmission,
+            make: auction.make,
+            model: auction.model,
+            drivetrain: auction.drivetrain,
+            exteriorColor: auction.exteriorColor,
+            interiorColor: auction.interiorColor,
+            vin: auction.vin,
+            location: auction.location,
+            seller: auction.seller,
+            performanceFeatures: auction.performanceFeatures,
+            technologyFeatures: auction.technologyFeatures,
+            comfortFeatures: auction.comfortFeatures,
+            historyEvents: auction.historyEvents,
+            inspection: auction.inspection,
+            bidCount: auction.bidCount,
+            bidHistory: auction.bidHistory
+        )
+        return await repository.updateAuction(updatedAuction)
+    }
+    
     func fetchAuctions() async -> Result<[AuctionUploadModel], UploadError> {
         return await repository.fetchAuctions()
     }
     
     func fetchAuction(auctionId: String) async -> Result<AuctionUploadModel, UploadError> {
         return await repository.fetchAuction(auctionId: auctionId)
+    }
+    
+    func placeBid(
+        bidUser:String,
+        bidAmount:String,
+    ) async -> Result<String, UploadError> {
+        
+        guard let bidAmount = Double(bidAmount), bidAmount > 0 else {
+            return .failure(.invalidData("Valid starting bid is required"))
+        }
+        
+        let auctionBidId = UUID().uuidString
+        
+        let bidAuction = AuctionBidModel(
+            id:auctionBidId,
+            bidUser:bidUser,
+            bidAmount:bidAmount,
+            bidTime: Timestamp(date: Date())
+        )
+        
+        let uploadResult = await repository.placeBid(bidAuction)
+        
+        switch uploadResult {
+        case .success(let documentId):
+            return .success(documentId)
+            
+        case .failure(let error):
+            return .failure(error)
+        }
+        
+    }
+    
+    func fetchBids(auctionId: String) async -> Result<[AuctionBidModel], UploadError> {
+        return await repository.fetchBids(auctionId: auctionId)
     }
 }
 

@@ -129,9 +129,33 @@ class AuctionUploadRepositoryImpl: AuctionUploadRepository {
         }
     }
     
-    /**
-     let snapshot = try await FirestoreConstants.UserCollection.document(uid).getDocument()
-     guard snapshot.exists else { return .failure(.custom("User not found")) }
-     let user = try snapshot.data(as: User.self)
-     */
+    func placeBid(_ auctionBid: AuctionBidModel) async -> Result<String, UploadError> {
+        do {
+            let docRef = FirestoreConstants.BidsCollection.document(auctionBid.id)
+            try docRef.setData(from: auctionBid)
+            return .success(auctionBid.id)
+        } catch {
+            return .failure(.firestoreWriteFailed(error.localizedDescription))
+        }
+    }
+    
+    func fetchBids(auctionId: String) async -> Result<[AuctionBidModel], UploadError> {
+        do {
+            let snapshot = try await FirestoreConstants.BidsCollection
+                .document(auctionId)
+                .getDocument()
+            let auctionBids = try snapshot.data(as: [AuctionBidModel].self)
+            if auctionBids.isEmpty {
+                return .success([])
+            }
+
+            return .success(auctionBids)
+
+        } catch {
+            return .failure(
+                .firestoreFetchFailed(error.localizedDescription, "bids")
+            )
+        }
+    }
+    
 }
