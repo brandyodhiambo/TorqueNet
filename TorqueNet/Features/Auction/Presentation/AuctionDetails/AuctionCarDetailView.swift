@@ -112,6 +112,7 @@ struct AuctionCarDetailView: View {
                 onBidSubmitted: { amount in
                     Task{
                         await auctionDetailViewModel.placeBid(
+                            auctionId: auctionId,
                             bidUser: settingsViewModel.currentUser?.name ?? "",
                             onSuccess: {
                                 auctionDetailViewModel.auctionDetailsUiState.toast = Toast(style: .success, message: "Bid placed successfully")
@@ -291,7 +292,6 @@ struct AuctionCarDetailView: View {
                 }
             }
             
-            // Key Specs
             HStack(spacing: 20) {
                 if let auction = auction {
                     SpecBadge(icon: "speedometer", value: auction.mileage, unit: "miles")
@@ -323,7 +323,7 @@ struct AuctionCarDetailView: View {
                         Image(systemName: "arrow.up")
                             .foregroundColor(.green)
                             .font(.system(size: 12))
-                        Text("\(auction?.bidCount ?? 0) bids")
+                        Text("\(auctionDetailViewModel.sortedBids.count) bids")
                             .font(.custom("Exo2-Medium", size: 12))
                             .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
                     }
@@ -340,18 +340,19 @@ struct AuctionCarDetailView: View {
                         .font(.custom("Exo2-Bold", size: 20))
                         .foregroundColor(auctionDetailViewModel.auctionDetailsUiState.timeRemaining > 3600 ? .green : .orange)
                     
-                    HStack(spacing: 4) {
-                        Circle()
-                            .fill(.green)
-                            .frame(width: 8, height: 8)
-                        Text("Live Bidding")
-                            .font(.custom("Exo2-Medium", size: 12))
-                            .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
+                    if (auctionDetailViewModel.auctionDetailsUiState.fetchedAuction?.auctionStatus == "Ongoing"){
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(.green)
+                                .frame(width: 8, height: 8)
+                            Text("Live Bidding")
+                                .font(.custom("Exo2-Medium", size: 12))
+                                .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
+                        }
                     }
                 }
             }
             
-            // Bid History Preview
             bidHistoryPreview
         }
         .padding(20)
@@ -503,7 +504,7 @@ struct AuctionCarDetailView: View {
                 
                 Spacer()
                 
-                Text("\(auction?.rating.rounded())/10")
+                Text("\(auction?.rating.rounded() ?? 0)/10")
                     .font(.custom("Exo2-Bold", size: 18))
                     .foregroundColor(.green)
             }

@@ -196,6 +196,7 @@ class UploadAuctionUseCase {
     }
     
     func placeBid(
+        auctionId: String,
         bidUser:String,
         bidAmount:String,
     ) async -> Result<String, UploadError> {
@@ -208,6 +209,7 @@ class UploadAuctionUseCase {
         
         let bidAuction = AuctionBidModel(
             id:auctionBidId,
+            auctionId: auctionId,
             bidUser:bidUser,
             bidAmount:bidAmount,
             bidTime: Timestamp(date: Date())

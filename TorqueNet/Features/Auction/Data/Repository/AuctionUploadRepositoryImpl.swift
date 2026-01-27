@@ -148,13 +148,7 @@ class AuctionUploadRepositoryImpl: AuctionUploadRepository {
                 try? document.data(as: AuctionBidModel.self)
             }
             
-            let finalAuctionBids = auctionBids.filter { $0.id == auctionId }
-            if finalAuctionBids.isEmpty {
-                return .success([])
-            }
-
-            print ("Repo Fetched bids: \(finalAuctionBids)")
-
+            let finalAuctionBids = auctionBids.filter { $0.auctionId.contains(auctionId)}
             return .success(finalAuctionBids)
 
         } catch {

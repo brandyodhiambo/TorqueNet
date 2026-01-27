@@ -50,12 +50,13 @@ class AuctionDetailsViewModel: ObservableObject {
     }
     
     func placeBid(
+        auctionId:String,
         bidUser:String,
         onSuccess: () -> Void,
         onFailure: (String) -> Void) async {
         
         auctionDetailsUiState.auctionState = .isLoading
-        let result = await auctionUseCase.placeBid(bidUser: bidUser, bidAmount: auctionDetailsUiState.bidAmount)
+            let result = await auctionUseCase.placeBid(auctionId:auctionId,bidUser: bidUser, bidAmount: auctionDetailsUiState.bidAmount)
 
         switch result {
         case .success(let id):
