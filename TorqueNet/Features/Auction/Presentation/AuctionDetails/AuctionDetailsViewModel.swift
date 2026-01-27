@@ -50,12 +50,13 @@ class AuctionDetailsViewModel: ObservableObject {
     }
     
     func placeBid(
+        auctionId:String,
         bidUser:String,
         onSuccess: () -> Void,
         onFailure: (String) -> Void) async {
         
         auctionDetailsUiState.auctionState = .isLoading
-        let result = await auctionUseCase.placeBid(bidUser: bidUser, bidAmount: auctionDetailsUiState.bidAmount)
+            let result = await auctionUseCase.placeBid(auctionId:auctionId,bidUser: bidUser, bidAmount: auctionDetailsUiState.bidAmount)
 
         switch result {
         case .success(let id):
@@ -85,10 +86,12 @@ class AuctionDetailsViewModel: ObservableObject {
         switch result {
         case .success(let bids):
             self.auctionDetailsUiState.fetchedBids = bids
+            print ("Vm Fetched bids: \(bids)")
             auctionDetailsUiState.auctionState = .good
             onSuccess()
         case .failure(let error):
             let message = error.errorDescription?.description ?? "An unexpected error occurred."
+            print("FetchBids Error: \(message)")
             auctionDetailsUiState.auctionState = .error(message)
             auctionDetailsUiState.errorMessage = message
             auctionDetailsUiState.showError = true

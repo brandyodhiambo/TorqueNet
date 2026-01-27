@@ -9,12 +9,14 @@ import FirebaseCore
 
 struct AuctionBidModel: Identifiable, Codable {
     let id: String
+    let auctionId: String
     let bidUser: String
     let bidAmount: Double
     let bidTime: Timestamp
     
     enum CodingKeys: String, CodingKey {
         case id
+        case auctionId
         case bidUser = "bid_user"
         case bidAmount = "bid_amount"
         case bidTime = "bid_time"
