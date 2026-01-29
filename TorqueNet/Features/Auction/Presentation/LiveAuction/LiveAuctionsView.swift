@@ -11,7 +11,7 @@ struct LiveAuctionsView: View {
     @EnvironmentObject var router: Router
     @StateObject var liveAuctionViewModel =  LiveAuctionViewModel()
     
-    let categories = ["All", "Ongoing", "Closed"]
+    let categories = ["All", "Ongoing", "Completed"]
     
     var filteredAuctions: [AuctionUploadModel] {
         let categoryFiltered = liveAuctionViewModel.liveAuctionUiState.selectedCategory == "All" ? liveAuctionViewModel.liveAuctionUiState.fetchedAuctions : liveAuctionViewModel.liveAuctionUiState.fetchedAuctions.filter { $0.auctionStatus == liveAuctionViewModel.liveAuctionUiState.selectedCategory}
