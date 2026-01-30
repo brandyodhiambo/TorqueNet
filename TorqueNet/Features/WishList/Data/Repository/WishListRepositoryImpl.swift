@@ -29,7 +29,7 @@ class WishListRepositoryImpl: WishListRepository {
         return result.map{WishList.from(entity: $0)}
     }
     
-    func getWishById(id: UUID) throws -> WishList? {
+    func getWishById(id: String) throws -> WishList? {
         let wishes = try? getAll()
         let wish = wishes?.filter { $0.id == id }.first
         guard let wishUnrwapped = wish else {
@@ -51,7 +51,7 @@ class WishListRepositoryImpl: WishListRepository {
         try context.save( )
     }
     
-    func deleteWishById(id:UUID) throws {
+    func deleteWishById(id:String) throws {
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         if let entity = try context.fetch(fetchRequest).first {
             context.delete(entity)

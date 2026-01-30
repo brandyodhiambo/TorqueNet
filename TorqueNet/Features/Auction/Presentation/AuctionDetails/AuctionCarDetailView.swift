@@ -10,6 +10,7 @@ import SwiftUI
 struct AuctionCarDetailView: View {
     @EnvironmentObject var router: Router
     @StateObject var auctionDetailViewModel = AuctionDetailsViewModel()
+    @StateObject var wishlistViewModel = WishListViewModel()
     @EnvironmentObject var settingsViewModel : SettingsViewModel
     let auctionId:String
     
@@ -89,6 +90,11 @@ struct AuctionCarDetailView: View {
         .padding(.horizontal, 20)
         .onAppear {
             updateTimeRemaining()
+            wishlistViewModel.loadWishList(
+                onSuccess: {
+                    auctionDetailViewModel.auctionDetailsUiState.isFavorite = wishlistViewModel.wishListUiState.wishList.contains(where: { $0.id == auctionId })
+                }
+            )
             Task{
                 await auctionDetailViewModel.fetchAuction(
                     auctionId: auctionId,
@@ -98,7 +104,8 @@ struct AuctionCarDetailView: View {
                     auctionId:auctionId,
                     onSuccess: {},
                     onFailure: {_ in})
-            }
+           }
+            
         }
         .fullScreenProgressOverlay(isShowing: auctionDetailViewModel.auctionDetailsUiState.auctionState == .isLoading)
         .onReceive(timer) { _ in
@@ -204,20 +211,48 @@ struct AuctionCarDetailView: View {
                     Spacer()
                     
                     HStack(spacing: 12) {
-                        Button(action: {
-                            withAnimation(.spring()) {
-                                auctionDetailViewModel.auctionDetailsUiState.isFavorite.toggle()
+                        if (auctionDetailViewModel.auctionDetailsUiState.fetchedAuction?.auctionStatus == "Ongoing"){
+                            Button(action: {
+                                withAnimation(.spring()) {
+                                    if !auctionDetailViewModel.auctionDetailsUiState.isFavorite {
+                                        wishlistViewModel.createWish(
+                                            wish:WishList(
+                                                id:auctionId,
+                                                image:auction?.imageUrls.first ?? "",
+                                                title:auction?.carTitle ?? "",
+                                                currentPrice: auctionDetailViewModel.sortedBids.map(\.bidAmount).max() ?? auction?.currentBid ?? 0,
+                                                auctionEndDate: auction?.auctionEndDate.dateValue() ?? Date()
+                                            ),
+                                            onSuccess: {
+                                                auctionDetailViewModel.auctionDetailsUiState.isFavorite.toggle()
+                                            },
+                                            onFaliure: { error in
+                                                
+                                            }
+                                        )
+                                    }
+                                    else {
+                                        wishlistViewModel.deleteWishById(
+                                            id:auctionId,
+                                            onSuccess: {
+                                                auctionDetailViewModel.auctionDetailsUiState.isFavorite.toggle()
+                                            },
+                                            onFaliure: { error in
+                                                
+                                            }
+                                        )
+                                    }
+                                }
+                            }) {
+                                Image(systemName: auctionDetailViewModel.auctionDetailsUiState.isFavorite ? "heart.fill" : "heart")
+                                    .font(.system(size: 18, weight: .medium))
+                                    .foregroundColor(auctionDetailViewModel.auctionDetailsUiState.isFavorite ? .red : .white)
+                                    .frame(width: 44, height: 44)
+                                    .background(.ultraThinMaterial)
+                                    .clipShape(Circle())
                             }
-                        }) {
-                            Image(systemName: auctionDetailViewModel.auctionDetailsUiState.isFavorite ? "heart.fill" : "heart")
-                                .font(.system(size: 18, weight: .medium))
-                                .foregroundColor(auctionDetailViewModel.auctionDetailsUiState.isFavorite ? .red : .white)
-                                .frame(width: 44, height: 44)
-                                .background(.ultraThinMaterial)
-                                .clipShape(Circle())
+                            .scaleEffect(auctionDetailViewModel.auctionDetailsUiState.isFavorite ? 1.1 : 1.0)
                         }
-                        .scaleEffect(auctionDetailViewModel.auctionDetailsUiState.isFavorite ? 1.1 : 1.0)
-                        
                         Button(action: {}) {
                             Image(systemName: "square.and.arrow.up")
                                 .font(.system(size: 16, weight: .medium))

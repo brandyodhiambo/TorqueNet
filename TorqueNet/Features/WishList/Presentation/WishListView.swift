@@ -8,53 +8,13 @@
 import SwiftUI
 
 struct WishListView: View {
-    @State var text: String = ""
-    @State private var selectedCategory = 0
-    @State private var showingDeleteAlert = false
     @EnvironmentObject var router: Router
+    @StateObject var wishlistViewModel = WishListViewModel()
     
-    let wishListCars: [WishList] = [
-        WishList(
-            image: "car",
-            title: "Red Mazda 6 - Elite Estate",
-            currentPrice: 25000.00,
-            auctionEndDate: Date().addingTimeInterval(3600 * 5)
-        ),
-        WishList(
-            image: "car",
-            title: "Blue BMW X5 - Premium Series",
-            currentPrice: 45000.00,
-            auctionEndDate: Date().addingTimeInterval(3600 * 8)
-        ),
-        WishList(
-            image: "car",
-            title: "Silver Tesla Model S - Luxury",
-            currentPrice: 65000.00,
-            auctionEndDate: Date().addingTimeInterval(3600 * 2)
-        ),
-    ]
-    
-    @State var carCategoryList = [
-        CarCategory(id: 0, name: "All", icon: "square.grid.2x2", isSelected: true),
-        CarCategory(id: 1, name: "Year", icon: "calendar", isSelected: false),
-        CarCategory(id: 2, name: "Make", icon: "car.fill", isSelected: false),
-        CarCategory(id: 3, name: "Model", icon: "list.bullet", isSelected: false),
-        CarCategory(id: 4, name: "Location", icon: "location.fill", isSelected: false),
-    ]
-    
-    private func selectCategory(withId id: Int) {
-        withAnimation(.easeInOut(duration: 0.3)) {
-            selectedCategory = id
-            for index in carCategoryList.indices {
-                carCategoryList[index].isSelected = (carCategoryList[index].id == id)
-            }
-        }
-    }
     
     var body: some View {
         NavigationView {
             ZStack {
-                // Background gradient
                 LinearGradient(
                     gradient: Gradient(colors: [
                         Color.theme.surfaceColor,
@@ -67,20 +27,19 @@ struct WishListView: View {
                 
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVStack(spacing: 20) {
-                        // Header Section
                         headerSection
                         
-                        // Categories Section
-                        categoriesSection
-                            .zIndex(1)
-                        
-                        // Cars Grid Section
                         carsSection
                             .zIndex(0)
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
                 }
+            }
+            .onAppear {
+                wishlistViewModel.loadWishList(
+                    onSuccess: {}
+                )
             }
             .customTopAppBar(
                 title: "My Wishlist",
@@ -89,14 +48,18 @@ struct WishListView: View {
                 onLeadingTap: {},
                 trailingIcon: "trash.fill",
                 onTrailingTap: {
-                    showingDeleteAlert = true
+                    wishlistViewModel.wishListUiState.showingDeleteAlert = true
                 },
                 trailingMenu: {}
             )
-            .alert("Clear Wishlist", isPresented: $showingDeleteAlert) {
+            .alert("Clear Wishlist", isPresented: $wishlistViewModel.wishListUiState.showingDeleteAlert) {
                 Button("Cancel", role: .cancel) { }
                 Button("Clear All", role: .destructive) {
-                    // Handle clear all action
+                    wishlistViewModel.deleteAllWish(onSuccess: {
+                        router.pop()
+                    }, onFaliure:{ error in
+                        
+                    })
                 }
             } message: {
                 Text("Are you sure you want to remove all items from your wishlist?")
@@ -104,12 +67,11 @@ struct WishListView: View {
         }
     }
     
-    // MARK: - Header Section
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("\(wishListCars.count) Cars")
+                    Text("\(wishlistViewModel.wishListUiState.wishList.count) Cars")
                         .font(.custom("Exo2-Bold", size: 28))
                         .foregroundColor(.theme.onSurfaceColor)
                     
@@ -126,7 +88,7 @@ struct WishListView: View {
                         .font(.custom("Exo2-Regular", size: 12))
                         .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
                     
-                    Text("$\(Int(wishListCars.reduce(0) { $0 + $1.currentPrice }))K")
+                    Text("$\(Int(wishlistViewModel.wishListUiState.wishList.reduce(0) { $0 + $1.currentPrice }))K")
                         .font(.custom("Exo2-Bold", size: 18))
                         .foregroundColor(.theme.primaryColor)
                 }
@@ -141,28 +103,10 @@ struct WishListView: View {
         }
     }
     
-    // MARK: - Categories Section
-    private var categoriesSection: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                ForEach($carCategoryList, id: \.self) { $category in
-                    CategoryChip(
-                        category: category,
-                        isSelected: category.isSelected,
-                        onTap: {
-                            selectCategory(withId: category.id)
-                        }
-                    )
-                }
-            }
-            .padding(.horizontal, 8)
-        }
-    }
     
-    // MARK: - Cars Section
     private var carsSection: some View {
         LazyVStack(spacing: 20) {
-            ForEach(Array(wishListCars.enumerated()), id: \.element.id) { index, wishListCar in
+            ForEach(Array(wishlistViewModel.wishListUiState.wishList.enumerated()), id: \.element.id) { index, wishListCar in
                 WishListCarCard(
                     imageName: wishListCar.image,
                     title: wishListCar.title,
@@ -172,7 +116,7 @@ struct WishListView: View {
                         // Handle favorite toggle
                     },
                     onCardTapped: {
-                        //router.push(.auctionDetails(auctionId: auction.id))
+                        router.push(.auctionDetails(auctionId: wishListCar.id))
                     }
                 )
                 .transition(.asymmetric(
@@ -184,7 +128,6 @@ struct WishListView: View {
     }
 }
 
-// MARK: - Category Chip Component
 struct CategoryChip: View {
     let category: CarCategory
     let isSelected: Bool
@@ -236,16 +179,13 @@ struct WishListCarCard: View {
     var body: some View {
         Button(action: onCardTapped) {
             VStack(spacing: 0) {
-                // Image Section
                 ZStack {
-                    // Main Image
                     Image(imageName)
                         .resizable()
                         .scaledToFill()
                         .frame(height: 220)
                         .clipped()
                     
-                    // Gradient Overlay
                     LinearGradient(
                         gradient: Gradient(colors: [
                             .clear,
@@ -256,13 +196,11 @@ struct WishListCarCard: View {
                         endPoint: .bottom
                     )
                     
-                    // Top Right Controls
                     VStack {
                         HStack {
                             Spacer()
                             
                             VStack(spacing: 8) {
-                                // Favorite Button
                                 Button(action: {
                                     withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                                         isFavorite.toggle()
@@ -279,7 +217,6 @@ struct WishListCarCard: View {
                                 }
                                 .scaleEffect(isFavorite ? 1.1 : 1.0)
                                 
-                                // Share Button
                                 Button(action: {}) {
                                     Image(systemName: "square.and.arrow.up")
                                         .font(.system(size: 16, weight: .medium))
@@ -296,7 +233,6 @@ struct WishListCarCard: View {
                         Spacer()
                     }
                     
-                    // Auction Status Badge
                     VStack {
                         Spacer()
                         HStack {
@@ -307,7 +243,6 @@ struct WishListCarCard: View {
                     }
                 }
                 
-                // Content Section
                 VStack(alignment: .leading, spacing: 12) {
                     Text(title)
                         .font(.custom("Exo2-SemiBold", size: 18))

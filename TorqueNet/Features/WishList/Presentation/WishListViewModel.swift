@@ -11,11 +11,14 @@ class WishListViewModel: ObservableObject {
     @Published var wishListUiState = WishListUiState()
     private let repository: WishListRepository = WishListRepositoryImpl.shared
     
-    func loadWishList() {
+    func loadWishList(
+        onSuccess:()->Void,
+    ) {
         do{
             wishListUiState.wishlistState = .isLoading
             wishListUiState.wishList = try repository.getAll()
             wishListUiState.wishlistState = .good
+            onSuccess()
         } catch {
             wishListUiState.wishlistState = .error("Failed to fetch wishlist")
             wishListUiState.errorMessage = "Failed to fetch wishlist"
@@ -23,7 +26,7 @@ class WishListViewModel: ObservableObject {
         }
     }
     
-    func loadWish(id:UUID){
+    func loadWish(id:String){
         do{
             wishListUiState.wishlistState = .isLoading
             let wish = try repository.getWishById(id: id)
@@ -54,7 +57,7 @@ class WishListViewModel: ObservableObject {
     }
     
     func deleteWishById(
-        id:UUID,
+        id:String,
         onSuccess:()->Void,
         onFaliure:(String)->Void){
         do{

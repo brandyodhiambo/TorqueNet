@@ -8,7 +8,7 @@ import Foundation
 
 
 struct WishList:Identifiable {
-    let id = UUID()
+    let id:String
     let image: String
     let title: String
     let currentPrice: Double
@@ -17,6 +17,7 @@ struct WishList:Identifiable {
     
     static func from(entity: WishListEntity) -> WishList {
         return WishList(
+            id: entity.id ?? "",
             image: entity.image ?? "",
             title: entity.title ?? "",
             currentPrice: entity.currentPrice ?? 0.0,

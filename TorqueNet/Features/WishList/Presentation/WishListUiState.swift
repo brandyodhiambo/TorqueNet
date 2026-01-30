@@ -11,6 +11,7 @@ struct WishListUiState {
     var errorMessage: String? = nil
     var showError: Bool = false
     var savedSuccess: Bool = false
+    var showingDeleteAlert = false
     
     var wishlistState: FetchState = .good
     var toast: Toast? = nil

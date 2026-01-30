@@ -10,8 +10,8 @@ import Foundation
 protocol WishListRepository {
     func createWish(wish: WishList) throws
     func getAll() throws -> [WishList]
-    func getWishById(id: UUID) throws -> WishList?
+    func getWishById(id: String) throws -> WishList?
     func updateWish(wish: WishList) throws
-    func deleteWishById(id:UUID) throws
+    func deleteWishById(id:String) throws
     func deleteAll() throws
 }

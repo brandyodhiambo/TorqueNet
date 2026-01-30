@@ -14,7 +14,7 @@
     <entity name="WishListEntity" representedClassName="WishListEntity" syncable="YES" codeGenerationType="class">
         <attribute name="auctionEndDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="currentPrice" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="image" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
     </entity>
