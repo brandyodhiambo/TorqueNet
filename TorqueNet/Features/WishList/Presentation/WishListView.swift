@@ -180,11 +180,13 @@ struct WishListCarCard: View {
         Button(action: onCardTapped) {
             VStack(spacing: 0) {
                 ZStack {
-                    Image(imageName)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(height: 220)
-                        .clipped()
+                    CustomImageView(
+                        url: imageName,
+                        maxWidth: .infinity,
+                        height: 200
+                    )
+                    .scaledToFill()
+                    .clipped()
                     
                     LinearGradient(
                         gradient: Gradient(colors: [
