@@ -272,13 +272,18 @@ struct AllCategoriesView: View {
                     
                     LazyVStack(spacing: 12) {
                         ForEach(viewModel.viewAuctionUiState.upcomingAuctions.prefix(5)) { auction in
-                            UpcomingAuctionRow(auction: auction) {
-                                router.push(.auctionDetails(auctionId: auction.id))
+                            UpcomingAuctionRow(
+                                auction: auction,
+                                onTap: {
+                                    router.push(.auctionDetails(auctionId: auction.id))
+                                },
+                                onScheduleAuction: {
+                                    router.push(.auctionSchedule)
+                                })
+                                .padding(.horizontal, 16)
                             }
-                            .padding(.horizontal, 16)
                         }
                     }
-                }
             } else {
                 EmptyStateView(
                     imageName: "empty_recent",
@@ -651,17 +656,9 @@ struct LiveAuctionCard: View {
                     .foregroundColor(.theme.onSurfaceColor)
                     .lineLimit(2)
                 
-                HStack {
-                    Text("$\(Int(auction.currentBid ?? auction.startingBid))")
-                        .font(.custom("Exo2-Bold", size: 16))
-                        .foregroundColor(.theme.primaryColor)
-                    
-                    Spacer()
-                    
-                    Text("\(auction.bidCount ?? 0) bids")
-                        .font(.custom("Exo2-Regular", size: 12))
-                        .foregroundColor(.gray)
-                }
+                Text("$\(Int(auction.currentBid ?? auction.startingBid))")
+                    .font(.custom("Exo2-Bold", size: 16))
+                    .foregroundColor(.theme.primaryColor)
             }
         }
         .frame(width: 200)
@@ -674,6 +671,7 @@ struct LiveAuctionCard: View {
 struct UpcomingAuctionRow: View {
     let auction: AuctionUploadModel
     let onTap: () -> Void
+    let onScheduleAuction: () -> Void
     
     var body: some View {
         HStack(spacing: 12) {
@@ -686,16 +684,6 @@ struct UpcomingAuctionRow: View {
                     .foregroundColor(.theme.onSurfaceColor)
                     .lineLimit(1)
                 
-//                if let startDate = auction.auctionEndDate {
-//                    Text("Starts \(Utils.shared.formatStartDate(Utils.shared.dateFromFirestoreTimestamp(startDate)))")
-//                        .font(.custom("Exo2-Regular", size: 12))
-//                        .foregroundColor(.gray)
-//                } else {
-//                    Text("Start date TBA")
-//                        .font(.custom("Exo2-Regular", size: 12))
-//                        .foregroundColor(.gray)
-//                }
-                
                 Text("Starting at $\(Int(auction.startingBid))")
                     .font(.custom("Exo2-Medium", size: 12))
                     .foregroundColor(.theme.primaryColor)
@@ -704,7 +692,7 @@ struct UpcomingAuctionRow: View {
             Spacer()
             
             Button(action: {
-                // Set reminder
+                onScheduleAuction()
             }) {
                 Image(systemName: "bell")
                     .font(.system(size: 16))

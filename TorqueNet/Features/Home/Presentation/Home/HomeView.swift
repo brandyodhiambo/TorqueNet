@@ -424,7 +424,7 @@ struct LiveAuctionsBanner: View {
                     .font(.custom("Exo2-Regular", size: 14))
                     .foregroundColor(.white.opacity(0.9))
                 
-                Text("Starting from \(String(format: "%.2f", liveAuctionUiState.fetchedAuctions.first?.startingBid ?? 00))")
+                Text("Starting from \(String(format: "%.1f", liveAuctionUiState.fetchedAuctions.first?.startingBid ?? 00))")
                     .font(.custom("Exo2-Bold", size: 16))
                     .foregroundColor(.white)
             }

@@ -107,7 +107,9 @@ struct AuctionCarDetailView: View {
         .toastView(toast: $auctionDetailViewModel.auctionDetailsUiState.toast)
         .sheet(isPresented: $auctionDetailViewModel.auctionDetailsUiState.showBidSheet) {
             BidSheetView(
-                currentBid: auction?.currentBid ?? 0,
+                currentBid: auctionDetailViewModel.sortedBids
+                    .map(\.bidAmount)
+                    .max() ?? auction?.currentBid ?? 0,
                 auctionDetailsUiState: $auctionDetailViewModel.auctionDetailsUiState,
                 onBidSubmitted: { amount in
                     Task{
@@ -277,7 +279,7 @@ struct AuctionCarDetailView: View {
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text("Lot #\(auction?.lotNumber)")
+                    Text("Lot #\(auction?.lotNumber ?? "")")
                         .font(.custom("Exo2-Regular", size: 14))
                         .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
                     
@@ -315,7 +317,7 @@ struct AuctionCarDetailView: View {
                         .font(.custom("Exo2-Regular", size: 14))
                         .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
                     
-                    Text(auction?.currentBid.description ?? "")
+                    Text(String(format: "%.1f", auctionDetailViewModel.sortedBids.map(\.bidAmount).max() ?? auction?.currentBid ?? 0))
                         .font(.custom("Exo2-Bold", size: 32))
                         .foregroundColor(.theme.primaryColor)
                     
@@ -338,7 +340,7 @@ struct AuctionCarDetailView: View {
                     
                     Text(countdownString())
                         .font(.custom("Exo2-Bold", size: 20))
-                        .foregroundColor(auctionDetailViewModel.auctionDetailsUiState.timeRemaining > 3600 ? .green : .orange)
+                        .foregroundColor(auctionDetailViewModel.auctionDetailsUiState.timeRemaining > 3600 ? .green : .red)
                     
                     if (auctionDetailViewModel.auctionDetailsUiState.fetchedAuction?.auctionStatus == "Ongoing"){
                         HStack(spacing: 4) {
@@ -504,7 +506,7 @@ struct AuctionCarDetailView: View {
                 
                 Spacer()
                 
-                Text("\(auction?.rating.rounded() ?? 0)/10")
+                Text("\(String(format: "%.1f", auction?.rating.rounded() ?? 0))/10")
                     .font(.custom("Exo2-Bold", size: 18))
                     .foregroundColor(.green)
             }
