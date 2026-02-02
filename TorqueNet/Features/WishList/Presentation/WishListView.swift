@@ -106,6 +106,15 @@ struct WishListView: View {
     
     private var carsSection: some View {
         LazyVStack(spacing: 20) {
+            if wishlistViewModel.wishListUiState.wishList.isEmpty{
+                EmptyStateView(
+                    imageName: "empty_recent",
+                    title: "No wishlisted Auction found",
+                    subtitle: "Please add auction to wishlist and see it here.",
+                    height: 160
+                )
+            }
+            else {
             ForEach(Array(wishlistViewModel.wishListUiState.wishList.enumerated()), id: \.element.id) { index, wishListCar in
                 WishListCarCard(
                     imageName: wishListCar.image,
@@ -119,12 +128,23 @@ struct WishListView: View {
                         router.push(.auctionDetails(auctionId: wishListCar.id))
                     }
                 )
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    Button(role: .destructive) {
+                        withAnimation {
+                            wishlistViewModel.deleteWishById(id: wishListCar.id, onSuccess: {}, onFaliure: {error in })
+                        }
+                    } label: {
+                        Label("Remove", systemImage: "trash")
+                    }
+                }
                 .transition(.asymmetric(
                     insertion: .scale.combined(with: .opacity).animation(.spring().delay(Double(index) * 0.1)),
                     removal: .scale.combined(with: .opacity)
                 ))
             }
         }
+      }
+        
     }
 }
 
