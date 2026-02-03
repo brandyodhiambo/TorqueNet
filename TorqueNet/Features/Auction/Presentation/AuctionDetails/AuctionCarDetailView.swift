@@ -328,6 +328,7 @@ struct AuctionCarDetailView: View {
                     }
                 }
             }
+            .padding()
             
             HStack(spacing: 20) {
                 if let auction = auction {
