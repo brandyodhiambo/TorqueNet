@@ -10,6 +10,7 @@ import SwiftUI
 struct AuctionCarDetailView: View {
     @EnvironmentObject var router: Router
     @StateObject var auctionDetailViewModel = AuctionDetailsViewModel()
+    @StateObject var wishlistViewModel = WishListViewModel()
     @EnvironmentObject var settingsViewModel : SettingsViewModel
     let auctionId:String
     
@@ -89,6 +90,11 @@ struct AuctionCarDetailView: View {
         .padding(.horizontal, 20)
         .onAppear {
             updateTimeRemaining()
+            wishlistViewModel.loadWishList(
+                onSuccess: {
+                    auctionDetailViewModel.auctionDetailsUiState.isFavorite = wishlistViewModel.wishListUiState.wishList.contains(where: { $0.id == auctionId })
+                }
+            )
             Task{
                 await auctionDetailViewModel.fetchAuction(
                     auctionId: auctionId,
@@ -98,7 +104,8 @@ struct AuctionCarDetailView: View {
                     auctionId:auctionId,
                     onSuccess: {},
                     onFailure: {_ in})
-            }
+           }
+            
         }
         .fullScreenProgressOverlay(isShowing: auctionDetailViewModel.auctionDetailsUiState.auctionState == .isLoading)
         .onReceive(timer) { _ in
@@ -107,7 +114,9 @@ struct AuctionCarDetailView: View {
         .toastView(toast: $auctionDetailViewModel.auctionDetailsUiState.toast)
         .sheet(isPresented: $auctionDetailViewModel.auctionDetailsUiState.showBidSheet) {
             BidSheetView(
-                currentBid: auction?.currentBid ?? 0,
+                currentBid: auctionDetailViewModel.sortedBids
+                    .map(\.bidAmount)
+                    .max() ?? auction?.currentBid ?? 0,
                 auctionDetailsUiState: $auctionDetailViewModel.auctionDetailsUiState,
                 onBidSubmitted: { amount in
                     Task{
@@ -202,20 +211,48 @@ struct AuctionCarDetailView: View {
                     Spacer()
                     
                     HStack(spacing: 12) {
-                        Button(action: {
-                            withAnimation(.spring()) {
-                                auctionDetailViewModel.auctionDetailsUiState.isFavorite.toggle()
+                        if (auctionDetailViewModel.auctionDetailsUiState.fetchedAuction?.auctionStatus == "Ongoing"){
+                            Button(action: {
+                                withAnimation(.spring()) {
+                                    if !auctionDetailViewModel.auctionDetailsUiState.isFavorite {
+                                        wishlistViewModel.createWish(
+                                            wish:WishList(
+                                                id:auctionId,
+                                                image:auction?.imageUrls.first ?? "",
+                                                title:auction?.carTitle ?? "",
+                                                currentPrice: auctionDetailViewModel.sortedBids.map(\.bidAmount).max() ?? auction?.currentBid ?? 0,
+                                                auctionEndDate: auction?.auctionEndDate.dateValue() ?? Date()
+                                            ),
+                                            onSuccess: {
+                                                auctionDetailViewModel.auctionDetailsUiState.isFavorite.toggle()
+                                            },
+                                            onFaliure: { error in
+                                                
+                                            }
+                                        )
+                                    }
+                                    else {
+                                        wishlistViewModel.deleteWishById(
+                                            id:auctionId,
+                                            onSuccess: {
+                                                auctionDetailViewModel.auctionDetailsUiState.isFavorite.toggle()
+                                            },
+                                            onFaliure: { error in
+                                                
+                                            }
+                                        )
+                                    }
+                                }
+                            }) {
+                                Image(systemName: auctionDetailViewModel.auctionDetailsUiState.isFavorite ? "heart.fill" : "heart")
+                                    .font(.system(size: 18, weight: .medium))
+                                    .foregroundColor(auctionDetailViewModel.auctionDetailsUiState.isFavorite ? .red : .white)
+                                    .frame(width: 44, height: 44)
+                                    .background(.ultraThinMaterial)
+                                    .clipShape(Circle())
                             }
-                        }) {
-                            Image(systemName: auctionDetailViewModel.auctionDetailsUiState.isFavorite ? "heart.fill" : "heart")
-                                .font(.system(size: 18, weight: .medium))
-                                .foregroundColor(auctionDetailViewModel.auctionDetailsUiState.isFavorite ? .red : .white)
-                                .frame(width: 44, height: 44)
-                                .background(.ultraThinMaterial)
-                                .clipShape(Circle())
+                            .scaleEffect(auctionDetailViewModel.auctionDetailsUiState.isFavorite ? 1.1 : 1.0)
                         }
-                        .scaleEffect(auctionDetailViewModel.auctionDetailsUiState.isFavorite ? 1.1 : 1.0)
-                        
                         Button(action: {}) {
                             Image(systemName: "square.and.arrow.up")
                                 .font(.system(size: 16, weight: .medium))
@@ -277,7 +314,7 @@ struct AuctionCarDetailView: View {
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text("Lot #\(auction?.lotNumber)")
+                    Text("Lot #\(auction?.lotNumber ?? "")")
                         .font(.custom("Exo2-Regular", size: 14))
                         .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
                     
@@ -291,6 +328,7 @@ struct AuctionCarDetailView: View {
                     }
                 }
             }
+            .padding()
             
             HStack(spacing: 20) {
                 if let auction = auction {
@@ -315,7 +353,7 @@ struct AuctionCarDetailView: View {
                         .font(.custom("Exo2-Regular", size: 14))
                         .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
                     
-                    Text(auction?.currentBid.description ?? "")
+                    Text(String(format: "%.1f", auctionDetailViewModel.sortedBids.map(\.bidAmount).max() ?? auction?.currentBid ?? 0))
                         .font(.custom("Exo2-Bold", size: 32))
                         .foregroundColor(.theme.primaryColor)
                     
@@ -338,7 +376,7 @@ struct AuctionCarDetailView: View {
                     
                     Text(countdownString())
                         .font(.custom("Exo2-Bold", size: 20))
-                        .foregroundColor(auctionDetailViewModel.auctionDetailsUiState.timeRemaining > 3600 ? .green : .orange)
+                        .foregroundColor(auctionDetailViewModel.auctionDetailsUiState.timeRemaining > 3600 ? .green : .red)
                     
                     if (auctionDetailViewModel.auctionDetailsUiState.fetchedAuction?.auctionStatus == "Ongoing"){
                         HStack(spacing: 4) {
@@ -504,7 +542,7 @@ struct AuctionCarDetailView: View {
                 
                 Spacer()
                 
-                Text("\(auction?.rating.rounded() ?? 0)/10")
+                Text("\(String(format: "%.1f", auction?.rating.rounded() ?? 0))/10")
                     .font(.custom("Exo2-Bold", size: 18))
                     .foregroundColor(.green)
             }

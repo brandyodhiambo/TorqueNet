@@ -13,6 +13,7 @@ struct HomeView: View {
     @StateObject var locationManager = LocationManager()
     @StateObject var homeViewModel = HomeViewModel()
     @StateObject var carViewModel = CarViewModel()
+    @StateObject var liveAuctionViewModel =  LiveAuctionViewModel()
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -51,6 +52,7 @@ struct HomeView: View {
                 
                 // Live Auctions Banner
                 LiveAuctionsBanner(
+                    liveAuctionUiState:liveAuctionViewModel.liveAuctionUiState,
                     onViewAuction:{
                         router.push(.auctionLiveBids)
                     }
@@ -156,6 +158,10 @@ struct HomeView: View {
                     onFailure: { error in
                         print("DEBUG: fetchCars error: \(error)")
                     }
+                )
+                await liveAuctionViewModel.fetchAuctions(
+                    onSuccess: {},
+                    onFailure: { _ in }
                 )
             }
         }
@@ -399,6 +405,7 @@ struct QuickActionCard: View {
 
 
 struct LiveAuctionsBanner: View {
+    let liveAuctionUiState:LiveAuctionUiState
     let onViewAuction: () -> Void
     var body: some View {
         HStack(spacing: 16) {
@@ -413,11 +420,11 @@ struct LiveAuctionsBanner: View {
                         .foregroundColor(.white)
                 }
                 
-                Text("23 active auctions")
+                Text("\(liveAuctionUiState.fetchedAuctions.filter { $0.auctionStatus == "Ongoing"}.count) active auctions")
                     .font(.custom("Exo2-Regular", size: 14))
                     .foregroundColor(.white.opacity(0.9))
                 
-                Text("Starting from $15,000")
+                Text("Starting from \(String(format: "%.1f", liveAuctionUiState.fetchedAuctions.first?.startingBid ?? 00))")
                     .font(.custom("Exo2-Bold", size: 16))
                     .foregroundColor(.white)
             }
