@@ -1,0 +1,127 @@
+name: Build with Firebase CLI
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  build:
+    name: Build iOS app IPA
+    runs-on: macos-latest
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      # Step 2: Set up the Build environment
+      - name: Setup Build Environment
+        run: |
+          # Set BUILD_ENV based on branch name
+          echo "BUILD_ENV=DEV" >> $GITHUB_ENV
+          echo "FIREBASE_APP_ID_SECRET_NAME=FIREBASE_APP_ID_DEV" >> $GITHUB_ENV
+          echo "PROVISIONING_PROFILE_NAME=PROVISIONING_PROFILE" >> $GITHUB_ENV
+          echo "PROVISIONING_PROFILE_SPECIFIER_NAME=<PROFILE_NAME>" >> $GITHUB_ENV
+          echo "SCHEME_NAME=<SCHEME_NAME>" >> $GITHUB_ENV
+          echo "PRODUCT_NAME=PETRO-PASS\ DEV" >> $GITHUB_ENV
+          echo "PLIST_FILE_NAME=GoogleService-Info-dev.plist" >> $GITHUB_ENV
+          
+      - name: Verify BUILD_ENV
+        run: |
+          echo "Current BUILD_ENV: ${{ env.BUILD_ENV }}"
+          echo "Firebase App Id: ${{ secrets[env.FIREBASE_APP_ID_SECRET_NAME] }}"
+          echo "Provisioning Profile: ${{ secrets[env.PROVISIONING_PROFILE_NAME] }}"
+          echo "Provisioning Profile Specifier: ${{ env.PROVISIONING_PROFILE_SPECIFIER_NAME}}"
+          echo "Scheme Name: ${{ env.SCHEME_NAME }}"
+          echo "Product Name: ${{ env.PRODUCT_NAME }}"
+          echo "Plist File Name: ${{ env.PLIST_FILE_NAME }}"
+          
+      #Step 3: Set up the environment (CocoaPods, etc)
+      - name: Set up Ruby for CocoaPods
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1.0'
+          
+      - name: Get xcodebuild version
+        run: |
+          sudo xcode-select -s "/Applications/Xcode_16.1.app"
+          xcodebuild -version
+          
+      - name: Install CocoaPods Dependencies
+        run: |
+          gem install cocoapods
+          pod install
+          
+      #Step 4: Set up Provisioning Profile and Certificates
+      - name: Set up Provisioning Profile and Certificates
+        env:
+          CERT_DATA: ${{ secrets.P12_CERTIFICATE }}
+          CERT_PW: ${{ secrets.P12_PASSWORD }}
+        run: |
+
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo "${{ secrets[env.PROVISIONING_PROFILE_NAME] }}" | base64 --decode > ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+          
+          # Create and unlock keychain
+          security create-keychain -p "" build.keychain
+          security list-keychains -s build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security set-keychain-settings
+          
+          echo $CERT_DATA | base64 --decode > signingCertificate.p12
+          echo "certificate decoded"
+          security import signingCertificate.p12 -f pkcs12 -k build.keychain -P $CERT_PW -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "" build.keychain
+          
+          file signingCertificate.p12
+          
+          rm signingCertificate.p12
+          
+      #Step 5: Clean and Build the iOS App
+      - name: Clean and Build the iOS App
+        run: |
+          xcodebuild clean \
+            -workspace <WORKSPACE_NAME>.xcworkspace \
+            -scheme "${{ env.SCHEME_NAME }}" \
+            -configuration "AdHoc" \
+            -sdk iphoneos \
+            -quiet
+            
+          echo "Clean success"
+
+          # Archive the app
+          xcodebuild -scheme "${{ env.SCHEME_NAME }}" -workspace <WORKSPACE_NAME>.xcworkspace -sdk iphoneos -archivePath <WORKSPACE_NAME>.xcarchive clean archive PROVISIONING_PROFILE_SPECIFIER="${{ env.PROVISIONING_PROFILE_SPECIFIER_NAME}}" CODE_SIGN_STYLE="Manual"
+
+          echo "Archive success"
+          
+      - name: Upload dSYM
+        run: |
+          ls Pods/FirebaseCrashlytics/
+          ls Pods/FirebaseCrashlytics 
+          Pods/FirebaseCrashlytics/upload-symbols -gsp <WORKSPACE_NAME>/Firebase/${{ env.PLIST_FILE_NAME }} -p ios <WORKSPACE_NAME>.xcarchive/dSYMs/${{ env.PRODUCT_NAME }}.app.dSYM
+            
+      - name: Export the IPA
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath <WORKSPACE_NAME>.xcarchive \
+            -exportOptionsPlist plist/ExportOptions.plist \
+            -exportPath build
+            
+          ls build
+          
+      - name: Install Firebase Tools
+        run: |
+          curl -sL https://firebase.tools | bash
+
+      - name: Get Firebase Tools Version
+        run: |
+          firebase --version
+
+        ## For dev should be update to APK
+      - name: Publish App to Firebase App Distribution
+        run: |
+          firebase appdistribution:distribute build/${{ env.PRODUCT_NAME }}.ipa \
+            --app ${{ secrets[env.FIREBASE_APP_ID_SECRET_NAME] }} \
+            --groups "${{ env.BUILD_ENV }}" \
+            --release-notes "${{ github.event.head_commit.message }}" \
+            --token ${{ secrets.FIREBASE_TOKEN }}
