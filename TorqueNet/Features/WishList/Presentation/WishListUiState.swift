@@ -12,6 +12,7 @@ struct WishListUiState {
     var showError: Bool = false
     var savedSuccess: Bool = false
     var showingDeleteAlert = false
+    var dialogEntity = DialogEntity()
     
     var wishlistState: FetchState = .good
     var toast: Toast? = nil

@@ -49,20 +49,49 @@ struct WishListView: View {
                 trailingIcon: "trash.fill",
                 onTrailingTap: {
                     wishlistViewModel.wishListUiState.showingDeleteAlert = true
+                    wishlistViewModel.wishListUiState.dialogEntity = DialogEntity(
+                        title: "Clear Wishlist",
+                        message: "Once you delete your wishlist. This action cannot be undone. Are you sure you want to proceed?",
+                        icon: "",
+                        confirmButtonText: "Clear All",
+                        dismissButtonText: "Cancel",
+                        onConfirm: {
+                            wishlistViewModel.deleteAllWish(onSuccess: {
+                                wishlistViewModel.loadWishList(
+                                    onSuccess: {
+                                        router.pop()
+                                    }
+                                )
+                            }, onFaliure:{ error in
+                                
+                            })
+                        },
+                        onDismiss: {
+                            wishlistViewModel.wishListUiState.showingDeleteAlert = false
+                        }
+                    )
                 },
                 trailingMenu: {}
             )
-            .alert("Clear Wishlist", isPresented: $wishlistViewModel.wishListUiState.showingDeleteAlert) {
-                Button("Cancel", role: .cancel) { }
-                Button("Clear All", role: .destructive) {
-                    wishlistViewModel.deleteAllWish(onSuccess: {
-                        router.pop()
-                    }, onFaliure:{ error in
-                        
-                    })
-                }
-            } message: {
-                Text("Are you sure you want to remove all items from your wishlist?")
+            .overlay {
+                CustomAlertDialogView(
+                    isPresented: $wishlistViewModel.wishListUiState.showingDeleteAlert,
+                    title: wishlistViewModel.wishListUiState.dialogEntity.title,
+                    text: wishlistViewModel.wishListUiState.dialogEntity.message,
+                    confirmButtonText: wishlistViewModel.wishListUiState.dialogEntity.confirmButtonText,
+                    dismissButtonText: wishlistViewModel.wishListUiState.dialogEntity.dismissButtonText,
+                    imageName: wishlistViewModel.wishListUiState.dialogEntity.icon,
+                    onDismiss: {
+                        if let onDismiss = wishlistViewModel.wishListUiState.dialogEntity.onDismiss {
+                            onDismiss()
+                        }
+                    },
+                    onConfirmation: {
+                        if let onConfirm = wishlistViewModel.wishListUiState.dialogEntity.onConfirm {
+                            onConfirm()
+                        }
+                    }
+                )
             }
         }
     }
