@@ -7,6 +7,7 @@
 
 class Constants {
     static let isDashboardBottomNavigationVisible = "isDashboardBottomNavigationVisible"
+    static var FCM_TOKEN: String = ""
 }
 
 
