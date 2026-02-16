@@ -47,5 +47,10 @@ struct AuctionFormState {
     var transmissionDetails: String = ""
     var electronicsRating: Double = 9.0
     var electronicsDetails: String = ""
+    
+    //Schedule auction
+    var startDate: Date = Date().addingTimeInterval(3600)
+    var endDate: Date = Date().addingTimeInterval(86400)
+    var scheduleError: String = ""
 }
 

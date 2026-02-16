@@ -35,28 +35,24 @@ struct AuctionScheduleView: View {
                 // Today's auctions (if any)
                 todaysAuctionsView
             }
-            .background(Color.theme.surfaceColor)
             .customTopAppBar(
                 title: "Auction Schedule",
                 leadingIcon: "chevron.left",
                 onLeadingTap: { router.pop() },
                 trailingMenu: {
                     HStack(spacing: 16) {
-                        // Previous month
                         Button(action: previousMonth) {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 18, weight: .medium))
                                 .foregroundColor(.theme.primaryColor)
                         }
                         
-                        // Next month
                         Button(action: nextMonth) {
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 18, weight: .medium))
                                 .foregroundColor(.theme.primaryColor)
                         }
                         
-                        // Today button
                         Button("Today") {
                             withAnimation(.easeInOut) {
                                 currentMonth = Date()
@@ -75,6 +71,7 @@ struct AuctionScheduleView: View {
                 auctions: selectedDayAuctions
             )
         }
+        .background(Color.theme.surfaceColor)
     }
 
     
@@ -151,7 +148,7 @@ struct AuctionScheduleView: View {
         .padding(.top, 20)
     }
     
-    private func generateCalendarDays() -> [Date] {
+    func generateCalendarDays() -> [Date] {
         let startOfMonth = calendar.dateInterval(of: .month, for: currentMonth)?.start ?? currentMonth
         let startOfCalendar = calendar.dateInterval(of: .weekOfYear, for: startOfMonth)?.start ?? startOfMonth
         
@@ -185,7 +182,6 @@ struct AuctionScheduleView: View {
     }
 }
 
-// MARK: - Calendar Day View
 struct CalendarDayView: View {
     let date: Date
     let isSelected: Bool
@@ -223,7 +219,7 @@ struct CalendarDayView: View {
             VStack(spacing: 2) {
                 ForEach(Array(auctions.prefix(3).enumerated()), id: \.offset) { index, auction in
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(auction.category.color)
+                        .fill(Color.theme.primaryColor)
                         .frame(height: 3)
                         .opacity(isCurrentMonth ? 1 : 0.5)
                 }
@@ -243,7 +239,6 @@ struct CalendarDayView: View {
     }
 }
 
-// MARK: - Today Auction Card
 struct TodayAuctionCard: View {
     let auction: ScheduledAuction
     
@@ -269,11 +264,9 @@ struct TodayAuctionCard: View {
             }
             .frame(width: 80, alignment: .leading)
             
-            // Auction info
             HStack(spacing: 12) {
-                // Category color indicator
                 RoundedRectangle(cornerRadius: 2)
-                    .fill(auction.category.color)
+                    .fill(Color.theme.primaryColor)
                     .frame(width: 4, height: 50)
                 
                 VStack(alignment: .leading, spacing: 4) {
@@ -281,10 +274,6 @@ struct TodayAuctionCard: View {
                         .font(.custom("Exo2-SemiBold", size: 16))
                         .foregroundColor(.theme.onSurfaceColor)
                         .lineLimit(2)
-                    
-                    Text(auction.category.rawValue.capitalized)
-                        .font(.custom("Exo2-Regular", size: 12))
-                        .foregroundColor(auction.category.color)
                     
                     if let startingBid = auction.startingBid {
                         Text("Starting at $\(startingBid, specifier: "%.0f")")
@@ -295,7 +284,6 @@ struct TodayAuctionCard: View {
                 
                 Spacer()
                 
-                // Status
                 AuctionStatusBadge(status: auction.status)
             }
         }
@@ -308,7 +296,6 @@ struct TodayAuctionCard: View {
     }
 }
 
-// MARK: - Auction Status Badge
 struct AuctionStatusBadge: View {
     let status: AuctionStatus
     
@@ -325,7 +312,6 @@ struct AuctionStatusBadge: View {
     }
 }
 
-// MARK: - Day Detail View
 struct DayDetailView: View {
     let date: Date
     let auctions: [ScheduledAuction]
@@ -360,69 +346,21 @@ struct DayDetailView: View {
     }
 }
 
-// MARK: - Data Models
-struct ScheduledAuction: Identifiable {
-    let id = UUID()
-    let title: String
-    let category: AuctionCategory
-    let startDate: Date
-    let endDate: Date?
-    let startingBid: Double?
-    let status: AuctionStatus
-    let imageName: String
-}
 
-enum AuctionCategory: String, CaseIterable {
-    case art = "art"
-    case electronics = "electronics"
-    case collectibles = "collectibles"
-    case jewelry = "jewelry"
-    case vehicles = "vehicles"
-    case furniture = "furniture"
-    
-    var color: Color {
-        switch self {
-        case .art: return .purple
-        case .electronics: return .blue
-        case .collectibles: return .orange
-        case .jewelry: return .pink
-        case .vehicles: return .red
-        case .furniture: return .green
-        }
-    }
-}
 
-enum AuctionStatus: String {
-    case scheduled = "scheduled"
-    case live = "live"
-    case ending = "ending soon"
-    case ended = "ended"
-    
-    var color: Color {
-        switch self {
-        case .scheduled: return .gray
-        case .live: return .red
-        case .ending: return .orange
-        case .ended: return .green
-        }
-    }
-}
 
-// MARK: - Sample Data
 let sampleScheduledAuctions: [ScheduledAuction] = [
     // Today
     ScheduledAuction(
         title: "Vintage Watch Collection",
-        category: .collectibles,
         startDate: Date().addingTimeInterval(3600), // 1 hour from now
         endDate: Date().addingTimeInterval(7200), // 2 hours from now
         startingBid: 500,
-        status: .scheduled,
+        status: .live,
         imageName: "vintage_watch"
     ),
     ScheduledAuction(
         title: "Modern Art Paintings",
-        category: .art,
         startDate: Date().addingTimeInterval(7200), // 2 hours from now
         endDate: Date().addingTimeInterval(14400), // 4 hours from now
         startingBid: 1000,
@@ -433,7 +371,6 @@ let sampleScheduledAuctions: [ScheduledAuction] = [
     // Tomorrow
     ScheduledAuction(
         title: "Classic Car Auction",
-        category: .vehicles,
         startDate: Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date(),
         endDate: Calendar.current.date(byAdding: .day, value: 1, to: Date().addingTimeInterval(10800)),
         startingBid: 25000,
@@ -444,7 +381,6 @@ let sampleScheduledAuctions: [ScheduledAuction] = [
     // Next week
     ScheduledAuction(
         title: "Diamond Jewelry Collection",
-        category: .jewelry,
         startDate: Calendar.current.date(byAdding: .day, value: 3, to: Date()) ?? Date(),
         endDate: Calendar.current.date(byAdding: .day, value: 3, to: Date().addingTimeInterval(7200)),
         startingBid: 2000,
@@ -453,7 +389,6 @@ let sampleScheduledAuctions: [ScheduledAuction] = [
     ),
     ScheduledAuction(
         title: "Antique Furniture",
-        category: .furniture,
         startDate: Calendar.current.date(byAdding: .day, value: 5, to: Date()) ?? Date(),
         endDate: Calendar.current.date(byAdding: .day, value: 5, to: Date().addingTimeInterval(10800)),
         startingBid: 800,
@@ -464,7 +399,6 @@ let sampleScheduledAuctions: [ScheduledAuction] = [
     // Electronics spread across different days
     ScheduledAuction(
         title: "Latest Tech Gadgets",
-        category: .electronics,
         startDate: Calendar.current.date(byAdding: .day, value: 7, to: Date()) ?? Date(),
         endDate: Calendar.current.date(byAdding: .day, value: 7, to: Date().addingTimeInterval(5400)),
         startingBid: 300,
@@ -475,7 +409,6 @@ let sampleScheduledAuctions: [ScheduledAuction] = [
     // More auctions for variety
     ScheduledAuction(
         title: "Rare Book Collection",
-        category: .collectibles,
         startDate: Calendar.current.date(byAdding: .day, value: 10, to: Date()) ?? Date(),
         endDate: Calendar.current.date(byAdding: .day, value: 10, to: Date().addingTimeInterval(9000)),
         startingBid: 150,
@@ -484,7 +417,6 @@ let sampleScheduledAuctions: [ScheduledAuction] = [
     ),
     ScheduledAuction(
         title: "Contemporary Sculptures",
-        category: .art,
         startDate: Calendar.current.date(byAdding: .day, value: 12, to: Date()) ?? Date(),
         endDate: Calendar.current.date(byAdding: .day, value: 12, to: Date().addingTimeInterval(12600)),
         startingBid: 5000,
