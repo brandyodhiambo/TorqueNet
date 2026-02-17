@@ -8,7 +8,7 @@
 import Foundation
 
 struct ScheduledAuction: Identifiable {
-    let id:String = ""
+    let id:String
     let title: String
     let startDate: Date
     let endDate: Date?
