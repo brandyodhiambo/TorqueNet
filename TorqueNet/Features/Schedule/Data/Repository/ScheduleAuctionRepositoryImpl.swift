@@ -6,6 +6,7 @@
 //
 
 class ScheduleAuctionRepositoryImpl: ScheduleAuctionRepository {
+    static let shared = ScheduleAuctionRepositoryImpl()
     func fetchAuctions() async -> Result<[AuctionUploadModel], UploadError> {
         do {
             let snapshot = try await FirestoreConstants.AuctionsCollection

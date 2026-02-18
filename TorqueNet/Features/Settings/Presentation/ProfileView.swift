@@ -76,6 +76,26 @@ struct ProfileView: View {
                 }
             )
         }
+        .overlay {
+            CustomAlertDialogView(
+                isPresented: $settingsViewModel.isShowAlertDialog,
+                title: settingsViewModel.dialogEntity.title,
+                text: settingsViewModel.dialogEntity.message,
+                confirmButtonText: settingsViewModel.dialogEntity.confirmButtonText,
+                dismissButtonText: settingsViewModel.dialogEntity.dismissButtonText,
+                imageName: settingsViewModel.dialogEntity.icon,
+                onDismiss: {
+                    if let onDismiss = settingsViewModel.dialogEntity.onDismiss {
+                        onDismiss()
+                    }
+                },
+                onConfirmation: {
+                    if let onConfirm = settingsViewModel.dialogEntity.onConfirm {
+                        onConfirm()
+                    }
+                }
+            )
+        }
         .fullScreenProgressOverlay(isShowing: settingsViewModel.settingState == .isLoading )
     }
     

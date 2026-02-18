@@ -205,6 +205,8 @@ class AuctionUploadViewModel: ObservableObject {
             rating: form.rating,
             startingBid: form.startingBid,
             auctionEndDate: form.auctionEndDate,
+            startDate: form.startDate,
+            endDate: form.endDate,
             auctionStatus: form.auctionStatus,
             mileage: form.mileage,
             year: form.year,

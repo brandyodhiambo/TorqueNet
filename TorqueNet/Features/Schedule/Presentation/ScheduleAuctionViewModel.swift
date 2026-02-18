@@ -11,12 +11,8 @@ import Foundation
 @MainActor
 class ScheduledAuctionViewModel: ObservableObject {
     @Published var uiState = ScheduledAuctionUiState()
+    let fetchScheduledAuctionsUseCase: FetchScheduledAuctionsUseCase = FetchScheduledAuctionsUseCase(repository: ScheduleAuctionRepositoryImpl.shared)
 
-    private let fetchScheduledAuctionsUseCase: FetchScheduledAuctionsUseCase
-
-    init(fetchScheduledAuctionsUseCase: FetchScheduledAuctionsUseCase) {
-        self.fetchScheduledAuctionsUseCase = fetchScheduledAuctionsUseCase
-    }
 
     func loadScheduledAuctions() async {
         uiState.auctionState = .isLoading

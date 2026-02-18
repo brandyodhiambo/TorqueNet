@@ -8,11 +8,7 @@
 import SwiftUI
 
 struct AuctionScheduleView: View {
-    @State private var selectedDate = Date()
-    @State private var currentMonth = Date()
-    @State private var scheduledAuctions: [ScheduledAuction] = sampleScheduledAuctions
-    @State private var showingDayDetail = false
-    @State private var selectedDayAuctions: [ScheduledAuction] = []
+    @StateObject var scheduleAuctionViewModel = ScheduledAuctionViewModel()
     @EnvironmentObject var router: Router
     
     private let calendar = Calendar.current
@@ -26,13 +22,11 @@ struct AuctionScheduleView: View {
         ScrollView(.vertical,showsIndicators: false) {
             VStack(spacing: 0) {
                 
-                Text(dateFormatter.string(from: currentMonth))
+                Text(dateFormatter.string(from: scheduleAuctionViewModel.uiState.currentMonth))
                     .font(.custom("Exo2-Regular", size: 16))
                     .foregroundColor(.gray)
-                // Calendar
                 calendarView
                 
-                // Today's auctions (if any)
                 todaysAuctionsView
             }
             .customTopAppBar(
@@ -55,8 +49,8 @@ struct AuctionScheduleView: View {
                         
                         Button("Today") {
                             withAnimation(.easeInOut) {
-                                currentMonth = Date()
-                                selectedDate = Date()
+                                scheduleAuctionViewModel.uiState.currentMonth = Date()
+                                scheduleAuctionViewModel.uiState.selectedDate = Date()
                             }
                         }
                         .font(.custom("Exo2-Medium", size: 14))
@@ -65,22 +59,26 @@ struct AuctionScheduleView: View {
                 }
             )
         }
-        .sheet(isPresented: $showingDayDetail) {
+        .sheet(isPresented: $scheduleAuctionViewModel.uiState.showingDayDetail) {
             DayDetailView(
-                date: selectedDate,
-                auctions: selectedDayAuctions
+                date: scheduleAuctionViewModel.uiState.selectedDate,
+                auctions: scheduleAuctionViewModel.uiState.selectedDayAuctions
             )
         }
+        .onAppear(){
+            Task{
+                await scheduleAuctionViewModel.loadScheduledAuctions()
+           }
+        }
         .background(Color.theme.surfaceColor)
+        .fullScreenProgressOverlay(isShowing: scheduleAuctionViewModel.uiState.auctionState == .isLoading )
     }
 
     
     private var calendarView: some View {
         VStack(spacing: 0) {
-            // Weekday headers
             weekdayHeaders
             
-            // Calendar grid
             calendarGrid
         }
         .padding(.horizontal, 20)
@@ -106,14 +104,14 @@ struct AuctionScheduleView: View {
             ForEach(days, id: \.self) { date in
                 CalendarDayView(
                     date: date,
-                    isSelected: calendar.isDate(date, inSameDayAs: selectedDate),
-                    isCurrentMonth: calendar.isDate(date, equalTo: currentMonth, toGranularity: .month),
+                    isSelected: calendar.isDate(date, inSameDayAs: scheduleAuctionViewModel.uiState.selectedDate),
+                    isCurrentMonth: calendar.isDate(date, equalTo: scheduleAuctionViewModel.uiState.currentMonth, toGranularity: .month),
                     auctions: auctionsForDate(date)
                 ) {
-                    selectedDate = date
-                    selectedDayAuctions = auctionsForDate(date)
-                    if !selectedDayAuctions.isEmpty {
-                        showingDayDetail = true
+                    scheduleAuctionViewModel.uiState.selectedDate = date
+                    scheduleAuctionViewModel.uiState.selectedDayAuctions = auctionsForDate(date)
+                    if !scheduleAuctionViewModel.uiState.selectedDayAuctions.isEmpty {
+                        scheduleAuctionViewModel.uiState.showingDayDetail = true
                     }
                 }
             }
@@ -149,7 +147,7 @@ struct AuctionScheduleView: View {
     }
     
     func generateCalendarDays() -> [Date] {
-        let startOfMonth = calendar.dateInterval(of: .month, for: currentMonth)?.start ?? currentMonth
+        let startOfMonth = calendar.dateInterval(of: .month, for: scheduleAuctionViewModel.uiState.currentMonth)?.start ?? scheduleAuctionViewModel.uiState.currentMonth
         let startOfCalendar = calendar.dateInterval(of: .weekOfYear, for: startOfMonth)?.start ?? startOfMonth
         
         var days: [Date] = []
@@ -164,20 +162,20 @@ struct AuctionScheduleView: View {
     }
     
     private func auctionsForDate(_ date: Date) -> [ScheduledAuction] {
-        return scheduledAuctions.filter { auction in
+        return scheduleAuctionViewModel.uiState.scheduledAuctions.filter { auction in
             calendar.isDate(auction.startDate, inSameDayAs: date)
         }.sorted { $0.startDate < $1.startDate }
     }
     
     private func previousMonth() {
         withAnimation(.easeInOut) {
-            currentMonth = calendar.date(byAdding: .month, value: -1, to: currentMonth) ?? currentMonth
+            scheduleAuctionViewModel.uiState.currentMonth = calendar.date(byAdding: .month, value: -1, to: scheduleAuctionViewModel.uiState.currentMonth) ?? scheduleAuctionViewModel.uiState.currentMonth
         }
     }
     
     private func nextMonth() {
         withAnimation(.easeInOut) {
-            currentMonth = calendar.date(byAdding: .month, value: 1, to: currentMonth) ?? currentMonth
+            scheduleAuctionViewModel.uiState.currentMonth = calendar.date(byAdding: .month, value: 1, to: scheduleAuctionViewModel.uiState.currentMonth) ?? scheduleAuctionViewModel.uiState.currentMonth
         }
     }
 }
@@ -345,82 +343,3 @@ struct DayDetailView: View {
         AuctionScheduleView()
     }
 }
-
-
-
-
-let sampleScheduledAuctions: [ScheduledAuction] = [
-    // Today
-    ScheduledAuction(
-        title: "Vintage Watch Collection",
-        startDate: Date().addingTimeInterval(3600), // 1 hour from now
-        endDate: Date().addingTimeInterval(7200), // 2 hours from now
-        startingBid: 500,
-        status: .live,
-        imageName: "vintage_watch"
-    ),
-    ScheduledAuction(
-        title: "Modern Art Paintings",
-        startDate: Date().addingTimeInterval(7200), // 2 hours from now
-        endDate: Date().addingTimeInterval(14400), // 4 hours from now
-        startingBid: 1000,
-        status: .scheduled,
-        imageName: "modern_art"
-    ),
-    
-    // Tomorrow
-    ScheduledAuction(
-        title: "Classic Car Auction",
-        startDate: Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date(),
-        endDate: Calendar.current.date(byAdding: .day, value: 1, to: Date().addingTimeInterval(10800)),
-        startingBid: 25000,
-        status: .scheduled,
-        imageName: "classic_car"
-    ),
-    
-    // Next week
-    ScheduledAuction(
-        title: "Diamond Jewelry Collection",
-        startDate: Calendar.current.date(byAdding: .day, value: 3, to: Date()) ?? Date(),
-        endDate: Calendar.current.date(byAdding: .day, value: 3, to: Date().addingTimeInterval(7200)),
-        startingBid: 2000,
-        status: .scheduled,
-        imageName: "diamond_ring"
-    ),
-    ScheduledAuction(
-        title: "Antique Furniture",
-        startDate: Calendar.current.date(byAdding: .day, value: 5, to: Date()) ?? Date(),
-        endDate: Calendar.current.date(byAdding: .day, value: 5, to: Date().addingTimeInterval(10800)),
-        startingBid: 800,
-        status: .scheduled,
-        imageName: "antique_furniture"
-    ),
-    
-    // Electronics spread across different days
-    ScheduledAuction(
-        title: "Latest Tech Gadgets",
-        startDate: Calendar.current.date(byAdding: .day, value: 7, to: Date()) ?? Date(),
-        endDate: Calendar.current.date(byAdding: .day, value: 7, to: Date().addingTimeInterval(5400)),
-        startingBid: 300,
-        status: .scheduled,
-        imageName: "tech_gadgets"
-    ),
-    
-    // More auctions for variety
-    ScheduledAuction(
-        title: "Rare Book Collection",
-        startDate: Calendar.current.date(byAdding: .day, value: 10, to: Date()) ?? Date(),
-        endDate: Calendar.current.date(byAdding: .day, value: 10, to: Date().addingTimeInterval(9000)),
-        startingBid: 150,
-        status: .scheduled,
-        imageName: "rare_books"
-    ),
-    ScheduledAuction(
-        title: "Contemporary Sculptures",
-        startDate: Calendar.current.date(byAdding: .day, value: 12, to: Date()) ?? Date(),
-        endDate: Calendar.current.date(byAdding: .day, value: 12, to: Date().addingTimeInterval(12600)),
-        startingBid: 5000,
-        status: .scheduled,
-        imageName: "sculptures"
-    )
-]
