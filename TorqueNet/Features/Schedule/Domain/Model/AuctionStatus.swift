@@ -8,17 +8,18 @@
 import SwiftUI
 
 enum AuctionStatus: String {
-    case scheduled = "scheduled"
-    case live = "live"
-    case ending = "ending soon"
-    case ended = "ended"
+    
+    case upcoming = "Upcoming"
+    case ongoing = "Ongoing"
+    case completed = "Completed"
+    case featured = "Featured"
     
     var color: Color {
         switch self {
-        case .scheduled: return .gray
-        case .live: return .red
-        case .ending: return .orange
-        case .ended: return .green
+        case .upcoming: return .gray
+        case .ongoing: return .red
+        case .completed: return .orange
+        case .featured: return .green
         }
     }
 }

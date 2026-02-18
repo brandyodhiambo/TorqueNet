@@ -31,7 +31,7 @@ class ScheduleAuctionRepositoryImpl: ScheduleAuctionRepository {
            switch result {
            case .success(let auctions):
                let scheduled = auctions
-                   .filter { $0.auctionStatus.lowercased() == AuctionStatus.scheduled.rawValue }
+                   .filter { $0.auctionStatus.lowercased() == AuctionStatus.upcoming.rawValue }
                    .compactMap { mapToScheduledAuction($0) }
 
                return .success(scheduled)
