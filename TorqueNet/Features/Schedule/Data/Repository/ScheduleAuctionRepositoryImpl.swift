@@ -31,9 +31,8 @@ class ScheduleAuctionRepositoryImpl: ScheduleAuctionRepository {
            switch result {
            case .success(let auctions):
                let scheduled = auctions
-                   .filter { $0.auctionStatus.lowercased() == AuctionStatus.upcoming.rawValue }
+                   .filter { $0.auctionStatus == AuctionStatus.upcoming.rawValue || $0.auctionStatus == AuctionStatus.ongoing.rawValue}
                    .compactMap { mapToScheduledAuction($0) }
-
                return .success(scheduled)
 
            case .failure(let error):
@@ -43,10 +42,10 @@ class ScheduleAuctionRepositoryImpl: ScheduleAuctionRepository {
 
 
        private func mapToScheduledAuction(_ model: AuctionUploadModel) -> ScheduledAuction? {
-           guard let status = AuctionStatus(rawValue: model.auctionStatus.lowercased()) else {
+           guard let status = AuctionStatus(rawValue: model.auctionStatus) else {
                return nil
            }
-
+           
            return ScheduledAuction(
                id: model.id,
                title: model.carTitle,
