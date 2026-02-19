@@ -205,6 +205,8 @@ class AuctionUploadViewModel: ObservableObject {
             rating: form.rating,
             startingBid: form.startingBid,
             auctionEndDate: form.auctionEndDate,
+            startDate: form.startDate,
+            endDate: form.endDate,
             auctionStatus: form.auctionStatus,
             mileage: form.mileage,
             year: form.year,
@@ -268,6 +270,37 @@ class AuctionUploadViewModel: ObservableObject {
         ui = AuctionUploadUIState()
         form = AuctionFormState()
     }
+    
+    func validateSchedule() {
+        form.scheduleError = ""
+            
+        if form.startDate <= Date() {
+            form.scheduleError = "Start date must be in the future"
+                return
+            }
+            
+        let oneHourFromNow = Date().addingTimeInterval(3600)
+        if form.startDate < oneHourFromNow {
+            form.scheduleError = "Start date must be at least 1 hour from now"
+                return
+            }
+            
+        if form.endDate <= form.startDate {
+            form.scheduleError = "End date must be after start date"
+                return
+            }
+            
+        if !form.startingBid.isEmpty {
+            if let bid = Double(form.startingBid), bid <= 0 {
+                form.scheduleError = "Starting bid must be greater than 0"
+                    return
+            } else if Double(form.startingBid) == nil {
+                form.scheduleError = "Please enter a valid starting bid"
+                    return
+                }
+            }
+        }
+        
 
     
     func saveDraft() {

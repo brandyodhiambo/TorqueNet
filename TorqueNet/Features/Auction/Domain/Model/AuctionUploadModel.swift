@@ -21,6 +21,8 @@ struct AuctionUploadModel: Identifiable, Codable {
     let startingBid: Double
     let currentBid: Double
     let auctionEndDate: Timestamp
+    let startDate: Timestamp
+    let endDate: Timestamp
     let auctionStatus: String
     let createdAt: Timestamp
     let updatedAt: Timestamp
@@ -66,6 +68,8 @@ struct AuctionUploadModel: Identifiable, Codable {
         case startingBid = "starting_bid"
         case currentBid = "current_bid"
         case auctionEndDate = "auction_end_date"
+        case startDate = "start_date"
+        case endDate = "end_date"
         case auctionStatus = "auction_status"
         case createdAt = "created_at"
         case updatedAt = "updated_at"

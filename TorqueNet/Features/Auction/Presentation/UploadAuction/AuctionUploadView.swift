@@ -227,6 +227,17 @@ struct AuctionUploadView: View {
                         }
                     }
                     .pickerStyle(.segmented)
+                    
+                    AuctionScheduleComponent(
+                        startDate: $uploadAuctionViewModel.form.startDate,
+                        endDate: $uploadAuctionViewModel.form.endDate,
+                        startingBid: $uploadAuctionViewModel.form.startingBid,
+                        scheduleError: $uploadAuctionViewModel.form.scheduleError,
+                        onValidate: {
+                            uploadAuctionViewModel.validateSchedule()
+                        }
+                    )
+                    .transition(.opacity.combined(with: .scale))
                 }
                 .padding()
                 .background(

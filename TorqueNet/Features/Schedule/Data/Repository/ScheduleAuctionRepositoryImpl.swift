@@ -1,0 +1,59 @@
+//
+//  ScheduleAuctionRepositoryImpl.swift
+//  TorqueNet
+//
+//  Created by MAC on 17/02/2026.
+//
+
+class ScheduleAuctionRepositoryImpl: ScheduleAuctionRepository {
+    static let shared = ScheduleAuctionRepositoryImpl()
+    func fetchAuctions() async -> Result<[AuctionUploadModel], UploadError> {
+        do {
+            let snapshot = try await FirestoreConstants.AuctionsCollection
+                .getDocuments()
+
+            let auctions: [AuctionUploadModel] = snapshot.documents.compactMap { document in
+                try? document.data(as: AuctionUploadModel.self)
+            }
+
+            return .success(auctions)
+
+        } catch {
+            return .failure(
+                .firestoreFetchFailed(error.localizedDescription, "auctions")
+            )
+        }
+    }
+    
+       func fetchScheduledAuctions() async -> Result<[ScheduledAuction], UploadError> {
+           let result = await fetchAuctions()
+
+           switch result {
+           case .success(let auctions):
+               let scheduled = auctions
+                   .filter { $0.auctionStatus == AuctionStatus.upcoming.rawValue || $0.auctionStatus == AuctionStatus.ongoing.rawValue}
+                   .compactMap { mapToScheduledAuction($0) }
+               return .success(scheduled)
+
+           case .failure(let error):
+               return .failure(error)
+           }
+       }
+
+
+       private func mapToScheduledAuction(_ model: AuctionUploadModel) -> ScheduledAuction? {
+           guard let status = AuctionStatus(rawValue: model.auctionStatus) else {
+               return nil
+           }
+           
+           return ScheduledAuction(
+               id: model.id,
+               title: model.carTitle,
+               startDate: model.startDate.dateValue(),
+               endDate: model.endDate.dateValue(),
+               startingBid: model.startingBid,
+               status: status,
+               imageName: model.imageUrls.first ?? ""
+           )
+       }
+}

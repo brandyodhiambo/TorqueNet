@@ -177,40 +177,6 @@ struct WishListView: View {
     }
 }
 
-struct CategoryChip: View {
-    let category: CarCategory
-    let isSelected: Bool
-    let onTap: () -> Void
-    
-    var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: 8) {
-                Image(systemName: category.icon)
-                    .font(.system(size: 14, weight: .medium))
-                
-                Text(category.name)
-                    .font(.custom("Exo2-Medium", size: 14))
-            }
-            .foregroundColor(isSelected ? .theme.onPrimaryColor : .theme.onSurfaceColor)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(isSelected ? Color.theme.primaryColor : Color.gray.opacity(0.1))
-                    .shadow(
-                        color: isSelected ? .theme.primaryColor.opacity(0.3) : Color.theme.onSurfaceColor.opacity(0.05),
-                        radius: isSelected ? 8 : 4,
-                        x: 0,
-                        y: isSelected ? 4 : 2
-                    )
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
-        .scaleEffect(isSelected ? 1.05 : 1.0)
-        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
-    }
-}
-
 struct WishListCarCard: View {
     var imageName: String
     var title: String
