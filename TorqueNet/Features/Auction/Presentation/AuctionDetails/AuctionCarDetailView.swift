@@ -944,7 +944,6 @@ struct BidSheetView: View {
             }
             .disabled(auctionDetailsUiState.bidAmount.isEmpty)
         }
-        .background(Color.theme.surfaceColor)
         .padding()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(
@@ -952,6 +951,7 @@ struct BidSheetView: View {
                 presentationMode.wrappedValue.dismiss()
             }
         )
+        .background(Color.theme.surfaceColor)
         
     }
 }
