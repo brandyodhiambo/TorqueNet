@@ -49,6 +49,16 @@ struct SettingsView: View {
                     )
                     
                     SettingsRowView(
+                        icon: "wallet.bifold.fill",
+                        iconColor: .accentColor,
+                        title: "Auctions",
+                        subtitle: "Manage your auctions",
+                        action: {
+                            //router.push(.changePassword)
+                        }
+                    )
+                    
+                    SettingsRowView(
                         icon: "star.circle.fill",
                         iconColor: .orange,
                         title: "Rate the app",
