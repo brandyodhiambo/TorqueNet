@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum AuctionStatus: String {
+enum AuctionStatus: String,CaseIterable {
     
     case upcoming = "Upcoming"
     case ongoing = "Ongoing"
