@@ -6,43 +6,29 @@
 //
 
 import Foundation
+import FirebaseAuth
 
 @MainActor
 class ManageAuctionViewModel: ObservableObject {
     @Published var uiState = ManageAuctionUiState()
-    
-    private let fetchSellerAuctionsUseCase: FetchSellerAuctionsUseCase
-    private let updateAuctionUseCase: UpdateAuctionUseCase
-    private let currentUserId: String
-    
-    init(
-        fetchSellerAuctionsUseCase: FetchSellerAuctionsUseCase,
-        updateAuctionUseCase: UpdateAuctionUseCase,
-        currentUserId: String
-    ) {
-        self.fetchSellerAuctionsUseCase = fetchSellerAuctionsUseCase
-        self.updateAuctionUseCase = updateAuctionUseCase
-        self.currentUserId = currentUserId
-    }
+    let fetchSellerAuctionsUseCase: FetchSellerAuctionsUseCase = FetchSellerAuctionsUseCase(repository: ManageAuctionRepositoryImpl.shared)
+    let updateAuctionUseCase: UpdateAuctionUseCase = UpdateAuctionUseCase(repository: ManageAuctionRepositoryImpl.shared)
+    let currentUserId: String = Auth.auth().currentUser?.uid ?? ""
     
     func loadAuctions() async {
-        uiState.isLoading = true
-        uiState.hasError = false
-        uiState.errorMessage = ""
+        uiState.auctionState = .isLoading
         
         let result = await fetchSellerAuctionsUseCase.execute(sellerId: currentUserId)
-        
         switch result {
         case .success(let auctions):
             uiState.auctions = auctions
             applyFilter()
             
         case .failure(let error):
-            uiState.hasError = true
+            uiState.showError = true
             uiState.errorMessage = error.localizedDescription
         }
-        
-        uiState.isLoading = false
+        uiState.auctionState = .good
     }
     
     func filterByStatus(_ status: AuctionStatus?) {
@@ -65,8 +51,7 @@ class ManageAuctionViewModel: ObservableObject {
     
     func updateAuction(status: AuctionStatus, startDate: Date, endDate: Date) async {
         guard let auctionId = uiState.selectedAuction?.id else { return }
-        
-        uiState.isLoading = true
+        uiState.auctionState = .isLoading
         
         let result = await updateAuctionUseCase.execute(
             auctionId: auctionId,
@@ -81,10 +66,10 @@ class ManageAuctionViewModel: ObservableObject {
             await loadAuctions()
             
         case .failure(let error):
-            uiState.hasError = true
+            uiState.showError = true
             uiState.errorMessage = error.localizedDescription
         }
         
-        uiState.isLoading = false
+        uiState.auctionState = .good
     }
 }

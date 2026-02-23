@@ -9,11 +9,12 @@ import Foundation
 import FirebaseCore
 
 class ManageAuctionRepositoryImpl: ManageAuctionRepository {
+    static let shared = ManageAuctionRepositoryImpl()
     
     func fetchSellerAuctions(sellerId: String) async -> Result<[ManageAuctionItem], UploadError> {
         do {
             let snapshot = try await FirestoreConstants.AuctionsCollection
-                .whereField("seller", isEqualTo: sellerId)
+                .whereField("sellerId", isEqualTo: sellerId)
                 .getDocuments()
             
             let auctions: [ManageAuctionItem] = snapshot.documents.compactMap { document in
@@ -22,6 +23,8 @@ class ManageAuctionRepositoryImpl: ManageAuctionRepository {
                 }
                 return ManageAuctionItem(from: model)
             }
+            
+            print("Seller Auctions: \(auctions.count)")
             
             return .success(auctions)
             

@@ -10,34 +10,17 @@ import FirebaseAuth
 
 
 struct ManageAuctionsView: View {
-    @StateObject private var viewModel: ManageAuctionViewModel
+    @StateObject private var viewModel: ManageAuctionViewModel = ManageAuctionViewModel()
     @EnvironmentObject var router: Router
-    
-    init() {
-        let repository = ManageAuctionRepositoryImpl()
-        let fetchUseCase = FetchSellerAuctionsUseCase(repository: repository)
-        let updateUseCase = UpdateAuctionUseCase(repository: repository)
-        let userId = Auth.auth().currentUser?.uid ?? ""
-        
-        _viewModel = StateObject(wrappedValue: ManageAuctionViewModel(
-            fetchSellerAuctionsUseCase: fetchUseCase,
-            updateAuctionUseCase: updateUseCase,
-            currentUserId: userId
-        ))
-    }
     
     var body: some View {
         VStack(spacing: 0) {
-            // Filter Chips
             filterChipsView
             
             Divider()
             
-            // Content
             Group {
-                if viewModel.uiState.isLoading {
-                    loadingView
-                } else if viewModel.uiState.hasError {
+               if viewModel.uiState.showError {
                     errorView
                 } else if viewModel.uiState.filteredAuctions.isEmpty {
                     emptyView
@@ -58,6 +41,7 @@ struct ManageAuctionsView: View {
             onTrailingTap: {},
             trailingMenu: {}
         )
+        .fullScreenProgressOverlay(isShowing: viewModel.uiState.auctionState == .isLoading)
         .sheet(isPresented: $viewModel.uiState.showEditSheet) {
             if let auction = viewModel.uiState.selectedAuction {
                 EditAuctionSheet(auction: auction, viewModel: viewModel)
@@ -66,7 +50,7 @@ struct ManageAuctionsView: View {
         .task {
             await viewModel.loadAuctions()
         }
-        .alert("Error", isPresented: $viewModel.uiState.hasError) {
+        .alert("Error", isPresented: $viewModel.uiState.showError) {
             Button("OK", role: .cancel) { }
         } message: {
             Text(viewModel.uiState.errorMessage)
@@ -98,18 +82,6 @@ struct ManageAuctionsView: View {
             .padding()
         }
         .background(Color.theme.surfaceColor)
-    }
-    
-    private var loadingView: some View {
-        VStack(spacing: 16) {
-            ProgressView()
-                .progressViewStyle(CircularProgressViewStyle(tint: .theme.primaryColor))
-                .scaleEffect(1.5)
-            Text("Loading your auctions...")
-                .font(.custom("Exo2-Regular", size: 14))
-                .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     private var errorView: some View {
@@ -166,8 +138,6 @@ struct ManageAuctionsView: View {
     }
 }
 
-// MARK: - Filter Chip Component
-
 struct FilterChip: View {
     let title: String
     let count: Int
@@ -192,8 +162,6 @@ struct FilterChip: View {
         }
     }
 }
-
-// MARK: - Auction Card Component
 
 struct ManageAuctionCard: View {
     let auction: ManageAuctionItem
@@ -306,8 +274,6 @@ struct ManageAuctionCard: View {
         return formatter.string(from: date)
     }
 }
-
-// MARK: - Edit Auction Sheet
 
 struct EditAuctionSheet: View {
     let auction: ManageAuctionItem
@@ -446,20 +412,16 @@ struct EditAuctionSheet: View {
                         }
                     }) {
                         HStack {
-                            if viewModel.uiState.isLoading {
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                            }
-                            Text(viewModel.uiState.isLoading ? "Updating..." : "Update Auction")
+                            Text(viewModel.uiState.auctionState == .isLoading ? "Updating..." : "Update Auction")
                                 .font(.custom("Exo2-SemiBold", size: 16))
                         }
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(viewModel.uiState.isLoading ? Color.gray : Color.theme.primaryColor)
+                        .background(viewModel.uiState.auctionState == .isLoading ? Color.gray : Color.theme.primaryColor)
                         .cornerRadius(12)
                     }
-                    .disabled(viewModel.uiState.isLoading)
+                    .disabled(viewModel.uiState.auctionState == .isLoading )
                 }
                 .padding()
             }
