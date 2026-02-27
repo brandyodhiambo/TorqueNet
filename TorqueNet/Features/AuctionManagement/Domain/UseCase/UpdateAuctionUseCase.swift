@@ -19,7 +19,7 @@ class UpdateAuctionUseCase {
             return .failure(.invalidData("End date must be after start date"))
         }
         
-        if status == .ongoing && startDate <= Date() {
+        if status == .upcoming && startDate <= Date() {
             return .failure(.invalidData("Scheduled auctions must have a future start date"))
         }
         

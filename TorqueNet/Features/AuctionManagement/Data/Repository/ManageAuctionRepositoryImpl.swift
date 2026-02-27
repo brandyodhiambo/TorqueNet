@@ -14,7 +14,7 @@ class ManageAuctionRepositoryImpl: ManageAuctionRepository {
     func fetchSellerAuctions(sellerId: String) async -> Result<[ManageAuctionItem], UploadError> {
         do {
             let snapshot = try await FirestoreConstants.AuctionsCollection
-                .whereField("sellerId", isEqualTo: sellerId)
+                .whereField("seller_id", isEqualTo: sellerId)
                 .getDocuments()
             
             let auctions: [ManageAuctionItem] = snapshot.documents.compactMap { document in
@@ -23,8 +23,6 @@ class ManageAuctionRepositoryImpl: ManageAuctionRepository {
                 }
                 return ManageAuctionItem(from: model)
             }
-            
-            print("Seller Auctions: \(auctions.count)")
             
             return .success(auctions)
             
