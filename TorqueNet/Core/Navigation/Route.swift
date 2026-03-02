@@ -30,4 +30,5 @@ enum Route: Hashable {
     case changePassword
     case notification
     case editProfile
+    case manageAuction
 }

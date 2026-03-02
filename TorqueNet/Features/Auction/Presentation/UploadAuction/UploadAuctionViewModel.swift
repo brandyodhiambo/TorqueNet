@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import SwiftUI
+import FirebaseAuth
 
 @MainActor
 class AuctionUploadViewModel: ObservableObject {
@@ -199,6 +200,7 @@ class AuctionUploadViewModel: ObservableObject {
         
         let result = await uploadUseCase.executeCreateAuction(
             images: form.selectedImages,
+            sellerId: Auth.auth().currentUser?.uid ?? "",
             carTitle: form.carTitle,
             subtitle: form.subtitle,
             lotNumber: form.lotNumber,

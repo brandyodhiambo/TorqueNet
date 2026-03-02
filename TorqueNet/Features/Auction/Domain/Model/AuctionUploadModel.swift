@@ -14,6 +14,7 @@ import Combine
 struct AuctionUploadModel: Identifiable, Codable {
     let id: String
     let imageUrls: [String]
+    let sellerId: String
     let carTitle: String
     let subtitle: String
     let lotNumber: String
@@ -61,6 +62,7 @@ struct AuctionUploadModel: Identifiable, Codable {
     enum CodingKeys: String, CodingKey {
         case id
         case imageUrls = "image_urls"
+        case sellerId = "seller_id"
         case carTitle = "car_title"
         case subtitle
         case lotNumber = "lot_number"

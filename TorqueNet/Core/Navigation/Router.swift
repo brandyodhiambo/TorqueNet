@@ -182,5 +182,9 @@ func viewForRoute(_ route: Route, router: Router) -> some View{
         EditProfileView()
         .navigationBarBackButtonHidden()
         
+    case .manageAuction:
+        ManageAuctionsView()
+        .navigationBarBackButtonHidden()
+        
     }
 }

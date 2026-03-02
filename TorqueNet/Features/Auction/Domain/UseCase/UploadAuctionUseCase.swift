@@ -22,6 +22,7 @@ class UploadAuctionUseCase {
     
     func executeCreateAuction(
         images: [UIImage],
+        sellerId: String,
         carTitle: String,
         subtitle: String,
         lotNumber: String,
@@ -104,6 +105,7 @@ class UploadAuctionUseCase {
         let auction = AuctionUploadModel(
             id: auctionId,
             imageUrls: imageUrls,
+            sellerId: sellerId,
             carTitle: carTitle,
             subtitle: subtitle,
             lotNumber: lotNumber,
@@ -158,6 +160,7 @@ class UploadAuctionUseCase {
         let updatedAuction = AuctionUploadModel(
             id: auctionId,
             imageUrls: auction.imageUrls,
+            sellerId: auction.sellerId,
             carTitle: auction.carTitle,
             subtitle: auction.subtitle,
             lotNumber: auction.lotNumber,

@@ -54,7 +54,7 @@ struct SettingsView: View {
                         title: "Auctions",
                         subtitle: "Manage your auctions",
                         action: {
-                            //router.push(.changePassword)
+                            router.push(.manageAuction)
                         }
                     )
                     
