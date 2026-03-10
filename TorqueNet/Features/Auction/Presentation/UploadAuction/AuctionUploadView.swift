@@ -193,7 +193,7 @@ struct AuctionUploadView: View {
                     placeHolder: "85500",
                     text: $uploadAuctionViewModel.form.startingBid,
                     foregroundColor: .theme.surfaceColor,
-                    backgroundColor: .theme.onSurfaceColor.opacity(0.1),
+                    backgroundColor: .theme.onSurfaceColor,
                     keyboardType: .numberPad,
                     inputFieldStyle: .outlined,
                     onTextChange: {text in
