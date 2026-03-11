@@ -27,7 +27,6 @@ class ScheduledAuctionViewModel: ObservableObject {
             let message = error.errorDescription?.description ?? "An unexpected error occurred."
             uiState.auctionState = .error(message)
             uiState.errorMessage = message
-            //onFailure(message)
         }
     }
 }

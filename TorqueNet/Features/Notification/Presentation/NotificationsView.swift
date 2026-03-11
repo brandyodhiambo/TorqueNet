@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+//MARK:TO BE IMPLEMENTED WE NEED APNS
+
 struct NotificationsView: View {
     @State private var notifications: [AuctionNotification] = sampleNotifications
     @State private var selectedFilter: NotificationFilter = .all
@@ -119,7 +121,6 @@ struct NotificationsView: View {
     }
 }
 
-// MARK: - Notification Card
 struct NotificationCard: View {
     let notification: AuctionNotification
     let onTap: () -> Void
@@ -205,7 +206,6 @@ struct NotificationCard: View {
     }
 }
 
-// MARK: - Filter Tab
 struct FilterTab: View {
     let title: String
     let count: Int
@@ -243,7 +243,6 @@ struct FilterTab: View {
     }
 }
 
-// MARK: - In-App Notification Banner
 struct NotificationBanner: View {
     let notification: AuctionNotification
     @State private var isVisible = false
@@ -252,7 +251,6 @@ struct NotificationBanner: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            // Icon
             ZStack {
                 Circle()
                     .fill(notification.type.color)
@@ -263,7 +261,6 @@ struct NotificationBanner: View {
                     .foregroundColor(.white)
             }
             
-            // Content
             VStack(alignment: .leading, spacing: 2) {
                 Text(notification.title)
                     .font(.custom("Exo2-SemiBold", size: 14))
@@ -315,24 +312,6 @@ struct NotificationBanner: View {
 
 #Preview{
     NotificationsView()
-}
-
-// MARK: - Data Models
-struct AuctionNotification: Identifiable {
-    let id = UUID()
-    let type: NotificationType
-    let title: String
-    let message: String
-    let timestamp: Date
-    var isRead: Bool = false
-    let bidAmount: Double?
-    let auctionId: String
-    
-    var timeAgo: String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .short
-        return formatter.localizedString(for: timestamp, relativeTo: Date())
-    }
 }
 
 enum NotificationType: CaseIterable {
@@ -403,6 +382,7 @@ enum NotificationFilter: CaseIterable {
         return notificationType?.color ?? .theme.primaryColor
     }
 }
+
 
 // MARK: - Sample Data
 let sampleNotifications: [AuctionNotification] = [
