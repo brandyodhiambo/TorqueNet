@@ -1,5 +1,5 @@
 
-<p align="center"><img src="project/128.png" alt="Majira" height="300px"></p>
+<p align="center"><img src="project/128.png" alt="TorqueNet" height="300px"></p>
 
 # Torquenet App
 TorqueNet Auctions is a modern mobile platform that allows users to discover, bid on, and manage vehicle auctions in real time. The app provides a seamless auction experience where users can explore featured cars, view detailed vehicle specifications, track live bids, and place competitive bids directly from their mobile devices.
@@ -28,17 +28,14 @@ The app follows the Model-View-ViewModel (MVVM) pattern, enhanced with principle
 
 By combining MVVM with clean architecture layers (such as Use Cases, Repositories, and Services), the codebase stays modular, testable, and easy to scale as the app grows.
 
-### Aucth Screen
-<img src="project/majira_location.png" width="250"/> <img src="project/majira_start_screen.png" width="250"/>
+### Auth Screen
+<img src="project/SignUp.png" width="250"/> <img src="project/SignIn.png" width="250"/> <img src="project/ResetPassword.png" width="250"/>
 
 ### Home Screen
  <img src="project/Home.png" width="250"/>
 
 ### Auction Screen
  <img src="project/Auctions.png" width="250"/> <img src="project/Auction Details.png" width="250"/> <img src="project/Upload Auction.png" width="250"/>
-
-<!-- ### Auction Details Screen
-<img src="project/majira_city_details_dark.png" width="250"/> <img src="project/majira_city_details_light.png" width="250"/> -->
 
 ### Wishlist Screen
 <img src="project/Wishlist.png" width="250"/>
@@ -89,9 +86,9 @@ In order to get the app running yourself, you need to:
 
 1.  Clone this project
 2.  Import the project into XCode
-3.  Get weather Api key from [Here](https://openweathermap.org/api) and add it to data source within the codebase.
-3.  Connect your IOS device with USB or just start your Simulator
-4.  After the project has finished setting up it stuffs, click the run button
+3.  Get googleService info from firebase setup and add it to the codebase.
+4.  Connect your IOS device with USB or just start your Simulator
+5.  After the project has finished setting up it stuffs, click the run button
 
 ## Support
 - Found this project useful ❤️? Support by clicking the ⭐️ button on the upper right of this page. ✌️
