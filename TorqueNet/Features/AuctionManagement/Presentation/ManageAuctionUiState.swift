@@ -9,10 +9,7 @@ struct ManageAuctionUiState {
     var auctions: [ManageAuctionItem] = []
     var filteredAuctions: [ManageAuctionItem] = []
     var selectedFilter: AuctionStatus? = nil
-    
-   // var isLoading: Bool = false
     var errorMessage: String = ""
-  //  var hasError: Bool = false
     var showError: Bool = false
     var auctionState: FetchState = .good
     var showEditSheet: Bool = false
