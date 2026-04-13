@@ -10,7 +10,33 @@ import FirebaseAuth
 @MainActor
 class LoginViewModel:ObservableObject {
     @Published var uiState = LoginState()
+    @Published var effect: LoginEffect?
     let authUseCase: AuthUseCase = AuthUseCase(authRepository: AuthenticationRepositoryImpl.shared)
+    
+    
+    func onAction(_ intent: LoginIntent) {
+        switch intent {
+        case .onEmailChange(let value):
+            uiState.email = value
+            let error = ValidatorUtils.shared.validateEmail(email: value)
+            uiState.loginErrors["email"] = error
+            validateIfLoginIsEnabled()
+            
+        case .onPasswordChange(let value):
+            uiState.password = value
+            let error = ValidatorUtils.shared.validatePassword(password: value)
+            uiState.loginErrors["password"] = error.first ?? ""
+            validateIfLoginIsEnabled()
+            
+        case .onRememberMe(let value):
+            uiState.rememberMe = value
+            
+        case .login:
+            Task {
+                await handleLogin()
+            }
+        }
+    }
     
     
     func validateIfLoginIsEnabled(){
@@ -28,18 +54,6 @@ class LoginViewModel:ObservableObject {
         validateIfLoginIsEnabled()
     }
     
-    func updateEmail(value: String) {
-        uiState.email = value
-        let error = ValidatorUtils.shared.validateEmail(email: uiState.email)
-        updateLoginErrors(key: "email", value:  error)
-    }
-    
-    func updatePassword(value: String) {
-        uiState.password = value
-        let error = ValidatorUtils.shared.validatePassword(password: uiState.password)
-        updateLoginErrors(key: "password", value: error.first ?? "")
-    }
-    
     func updateDialogEntity(value: DialogEntity) {
         uiState.dialogEntity = value
     }
@@ -48,23 +62,22 @@ class LoginViewModel:ObservableObject {
         uiState.isShowAlertDialog = value
     }
     
-    func loginUser(
-        onSuccess: () -> Void,
-        onFailure: (String) -> Void
-    ) async {
+    private func handleLogin() async {
         uiState.loginState = .isLoading
         
-        var result:  Result<AuthDataResult, FirebaseAuthError>
-        result = await authUseCase.executeLoginUser(email: uiState.email, password: uiState.password)
-    
+        let result = await authUseCase.executeLoginUser(
+            email: uiState.email,
+            password: uiState.password
+        )
+
         switch result {
-        case .success(let authDataResult):
-            onSuccess()
+        case .success:
             uiState.loginState = .good
+            effect = .navigateToDashboard
+            
         case .failure(let error):
             uiState.loginState = .error(error.description)
-            onFailure(error.description)
+            effect = .showError(error.description)
         }
-        
     }
 }

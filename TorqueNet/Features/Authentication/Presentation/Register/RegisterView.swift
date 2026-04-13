@@ -30,7 +30,6 @@ struct RegisterView: View {
             .padding(.horizontal,12)
             Spacer()
             
-            // Card Section
             VStack(spacing: 20) {
                 ScrollView(.vertical,showsIndicators: false) {
                     VStack(){
@@ -48,7 +47,7 @@ struct RegisterView: View {
                             errorMessage: registerViewModel.uiState.registerErrors["firstName"] ?? "",
                             inputFieldStyle: .outlined,
                             onTextChange: { text in
-                                registerViewModel.updateFirstName(value: text)
+                                registerViewModel.onAction(_intent: .onFirstNameChange(text))
                             }
                         )
                         
@@ -61,7 +60,7 @@ struct RegisterView: View {
                             errorMessage: registerViewModel.uiState.registerErrors["lastName"] ?? "",
                             inputFieldStyle: .outlined,
                             onTextChange: { text in
-                                registerViewModel.updateLastName(value: text)
+                                registerViewModel.onAction(_intent: .onLastNameChange(text))
                             }
                         )
                         
@@ -74,7 +73,7 @@ struct RegisterView: View {
                             errorMessage: registerViewModel.uiState.registerErrors["email"] ?? "",
                             inputFieldStyle: .outlined,
                             onTextChange: { text in
-                                registerViewModel.updateEmail(value: text)
+                                registerViewModel.onAction(_intent: .onEmailChange(text))
                             }
                         )
                         
@@ -87,7 +86,7 @@ struct RegisterView: View {
                             errorMessage: registerViewModel.uiState.registerErrors["phoneNumber"] ?? "",
                             inputFieldStyle: .outlined,
                             onTextChange: { text in
-                                registerViewModel.updatePhoneNumber(value: text)
+                                registerViewModel.onAction(_intent: .onPhoneNumberChange(text))
                             }
                         )
                         
@@ -99,7 +98,7 @@ struct RegisterView: View {
                             errorMessage: registerViewModel.uiState.registerErrors["password"] ?? "",
                             inputFieldStyle: .outlined,
                             onTextChange: { text in
-                                registerViewModel.updatePassword(value: text)
+                                registerViewModel.onAction(_intent: .onPasswordChange(text))
                             }
                         )
                         
@@ -111,56 +110,15 @@ struct RegisterView: View {
                             errorMessage: registerViewModel.uiState.registerErrors["confirmPassword"] ?? "",
                             inputFieldStyle: .outlined,
                             onTextChange: { text in
-                                registerViewModel.updateConfirmPassword(value: text)
+                                registerViewModel.onAction(_intent: .onConfirmPasswordChange(text))
                             }
                         )
-                        
                         
                         CustomButtonView(
                             buttonName:"Sign Up",
                             isDisabled: !registerViewModel.uiState.isRegisterEnabled,
                             onTap: {
-                                Task {
-                                    await registerViewModel.registerUser(
-                                        onSuccess: {
-                                            registerViewModel.updateIsShowAlertDialog(value: true)
-                                            registerViewModel.updateDialogEntity(
-                                                value: DialogEntity(
-                                                    title: "Registration Successful!",
-                                                    message: "Welcome to the community!\nPlease check your email for verification link and proceed to login.",
-                                                    icon: "",
-                                                    confirmButtonText: "Proceed",
-                                                    dismissButtonText: "",
-                                                    onConfirm: {
-                                                        registerViewModel.updateIsShowAlertDialog(value: false)
-                                                        dismiss()
-                                                    },
-                                                    onDismiss: {
-                                                        registerViewModel.updateIsShowAlertDialog(value: false)
-                                                    }
-                                                )
-                                            )
-                                        },
-                                        onFailure: { error in
-                                            registerViewModel.updateIsShowAlertDialog(value: true)
-                                            registerViewModel.updateDialogEntity(
-                                                value: DialogEntity(
-                                                    title: "Registration Failed.",
-                                                    message: error,
-                                                    icon: "",
-                                                    confirmButtonText: "",
-                                                    dismissButtonText: "Okay",
-                                                    onConfirm: {
-                                                        registerViewModel.updateIsShowAlertDialog(value: false)
-                                                    },
-                                                    onDismiss: {
-                                                        registerViewModel.updateIsShowAlertDialog(value: false)
-                                                    }
-                                                )
-                                            )
-                                        }
-                                    )
-                                }
+                                registerViewModel.onAction(_intent: .register)
                             }
                         )
                         
@@ -231,6 +189,48 @@ struct RegisterView: View {
         .background(Color.theme.surfaceColor)
         .ignoresSafeArea(edges: .all)
         .fullScreenProgressOverlay(isShowing: registerViewModel.uiState.registeState == .isLoading )
+        .onReceive(registerViewModel.$effect) { effect in
+            guard let effect = effect else { return }
+            switch effect {
+                case .successDialog:
+                registerViewModel.updateIsShowAlertDialog(value: true)
+                registerViewModel.updateDialogEntity(
+                    value: DialogEntity(
+                        title: "Registration Successful!",
+                        message: "Welcome to the community!\nPlease check your email for verification link and proceed to login.",
+                        icon: "",
+                        confirmButtonText: "Proceed",
+                        dismissButtonText: "",
+                        onConfirm: {
+                            registerViewModel.updateIsShowAlertDialog(value: false)
+                            dismiss()
+                        },
+                        onDismiss: {
+                            registerViewModel.updateIsShowAlertDialog(value: false)
+                        }
+                    )
+                )
+                case .showError(let message):
+                registerViewModel.updateIsShowAlertDialog(value: true)
+                registerViewModel.updateDialogEntity(
+                    value: DialogEntity(
+                        title: "Registration Failed.",
+                        message: message,
+                        icon: "",
+                        confirmButtonText: "",
+                        dismissButtonText: "Okay",
+                        onConfirm: {
+                            registerViewModel.updateIsShowAlertDialog(value: false)
+                        },
+                        onDismiss: {
+                            registerViewModel.updateIsShowAlertDialog(value: false)
+                        }
+                    )
+                )
+                registerViewModel.effect = nil
+                
+            }
+        }
         
     }
 }

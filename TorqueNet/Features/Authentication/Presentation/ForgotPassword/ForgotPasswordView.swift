@@ -11,7 +11,6 @@ struct ForgotPasswordView: View {
     @EnvironmentObject var router: Router
     @StateObject var forgotPasswordViewModel = ForgotPasswordViewModel()
     
-    @State private var email: String = ""
     
     var body: some View {
         VStack(spacing: 0) {
@@ -31,7 +30,6 @@ struct ForgotPasswordView: View {
             .padding(.horizontal,12)
             Spacer()
             
-            // Card Section
             VStack(spacing: 20) {
                 Text("Forgot Password?")
                     .font(.custom("Exo2-Bold", size: 20))
@@ -45,64 +43,36 @@ struct ForgotPasswordView: View {
                 InputFieldView(
                     description: "Email",
                     placeHolder: "johndoe@gmail.com",
-                    text: $email,
+                    text: $forgotPasswordViewModel.uiState.email,
                     foregroundColor: Color.theme.onSurfaceColor,
                     keyboardType: .emailAddress,
-                    errorMessage: forgotPasswordViewModel.forgotPasswordErrors["email"] ?? "",
+                    errorMessage: forgotPasswordViewModel.uiState.forgotPasswordErrors["email"] ?? "",
                     inputFieldStyle: .outlined,
                     onTextChange: { text in
-                        forgotPasswordViewModel.updateEmail(value: text)
+                        forgotPasswordViewModel.onAction(_intent: .onEmailChanged(text))
                     }
                 )
                 
                 
                 CustomButtonView(
                     buttonName:"Send",
-                    isDisabled: !forgotPasswordViewModel.isForgotPasswordEnable,
+                    isDisabled: !forgotPasswordViewModel.uiState.isForgotPasswordEnable,
                     onTap: {
-                        Task{
-                            await forgotPasswordViewModel.forgotPassword(
-                                onSuccess: {
-                                    forgotPasswordViewModel.updateIsShowAlertDialog(value: true)
-                                    forgotPasswordViewModel.updateDialogEntity(
-                                        value: DialogEntity(
-                                            title: "Request Password Change Successful!",
-                                            message: "Please check your email for password reset link and proceed to login.",
-                                            icon: "",
-                                            confirmButtonText: "Proceed",
-                                            dismissButtonText: "",
-                                            onConfirm: {
-                                                forgotPasswordViewModel.updateIsShowAlertDialog(value: false)
-                                                router.push(.login)
-                                            },
-                                            onDismiss: {
-                                                forgotPasswordViewModel.updateIsShowAlertDialog(value: false)
-                                            }
-                                        )
-                                    )
-                                    
-                                }, onFailure:{error in
-                                    forgotPasswordViewModel.updateIsShowAlertDialog(value: true)
-                                    forgotPasswordViewModel.updateDialogEntity(
-                                        value: DialogEntity(
-                                            title: "Forgot Password Request Failed.",
-                                            message: error,
-                                            icon: "",
-                                            confirmButtonText: "",
-                                            dismissButtonText: "Okay",
-                                            onConfirm: {
-                                                forgotPasswordViewModel.updateIsShowAlertDialog(value: false)
-                                            },
-                                            onDismiss: {
-                                                forgotPasswordViewModel.updateIsShowAlertDialog(value: false)
-                                            }
-                                        )
-                                    )
-                                }
-                            )
-                        }
+                        forgotPasswordViewModel.onAction(_intent: .forgotPassword)
                     }
                 )
+                
+                HStack {
+                    Text("Just Remembered your password?")
+                        .foregroundColor(Color.theme.onSurfaceColor)
+                    Button("Sign In") {
+                        router.push(.login)
+                    }
+                    .foregroundColor(Color.theme.primaryColor)
+                    .fontWeight(.semibold)
+                }
+                .font(.custom("Exo2-Regular", size: 14))
+                .padding(.top, 8)
             }
             .padding(.vertical, 50)
             .padding(.horizontal, 16)
@@ -115,7 +85,70 @@ struct ForgotPasswordView: View {
             )
         }
         .background(Color.theme.surfaceColor)
+        .overlay {
+            CustomAlertDialogView(
+                isPresented: $forgotPasswordViewModel.uiState.isShowAlertDialog,
+                title: forgotPasswordViewModel.uiState.dialogEntity.title,
+                text: forgotPasswordViewModel.uiState.dialogEntity.message,
+                confirmButtonText: forgotPasswordViewModel.uiState.dialogEntity.confirmButtonText,
+                dismissButtonText: forgotPasswordViewModel.uiState.dialogEntity.dismissButtonText,
+                imageName: forgotPasswordViewModel.uiState.dialogEntity.icon,
+                onDismiss: {
+                    if let onDismiss = forgotPasswordViewModel.uiState.dialogEntity.onDismiss {
+                        onDismiss()
+                    }
+                },
+                onConfirmation: {
+                    if let onConfirm = forgotPasswordViewModel.uiState.dialogEntity.onConfirm {
+                        onConfirm()
+                    }
+                }
+            )
+        }
+        .fullScreenProgressOverlay(isShowing: forgotPasswordViewModel.uiState.forgotPasswordState == .isLoading )
         .ignoresSafeArea(edges: .all)
+        .onReceive(forgotPasswordViewModel.$effect) { effect in
+            guard let effect = effect else { return }
+            switch effect {
+                case .successDialog:
+                forgotPasswordViewModel.updateIsShowAlertDialog(value: true)
+                forgotPasswordViewModel.updateDialogEntity(
+                    value: DialogEntity(
+                        title: "Request Password Change Successful!",
+                        message: "Please check your email for password reset link and proceed to login.",
+                        icon: "",
+                        confirmButtonText: "Proceed",
+                        dismissButtonText: "",
+                        onConfirm: {
+                            forgotPasswordViewModel.updateIsShowAlertDialog(value: false)
+                            router.push(.login)
+                        },
+                        onDismiss: {
+                            forgotPasswordViewModel.updateIsShowAlertDialog(value: false)
+                        }
+                    )
+                )
+                case .showError(let message):
+                forgotPasswordViewModel.updateIsShowAlertDialog(value: true)
+                forgotPasswordViewModel.updateDialogEntity(
+                    value: DialogEntity(
+                        title: "Forgot Password Request Failed.",
+                        message: message,
+                        icon: "",
+                        confirmButtonText: "",
+                        dismissButtonText: "Okay",
+                        onConfirm: {
+                            forgotPasswordViewModel.updateIsShowAlertDialog(value: false)
+                        },
+                        onDismiss: {
+                            forgotPasswordViewModel.updateIsShowAlertDialog(value: false)
+                        }
+                    )
+                )
+                forgotPasswordViewModel.effect = nil
+                
+            }
+        }
     }
 }
 
