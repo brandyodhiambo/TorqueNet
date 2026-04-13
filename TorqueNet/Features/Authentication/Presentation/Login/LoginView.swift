@@ -12,8 +12,6 @@ struct LoginView: View {
     @EnvironmentObject var router: Router
     @StateObject var loginViewModel = LoginViewModel()
     
-    
-
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 12) {
@@ -21,7 +19,7 @@ struct LoginView: View {
                 Text("TorqueNet")
                     .font(.custom("Exo2-ExtraBold", size: 40))
                     .foregroundColor(Color.theme.primaryColor)
-
+                
                 Image("appCar")
                     .resizable()
                     .scaledToFit()
@@ -31,14 +29,14 @@ struct LoginView: View {
             }
             .padding(.horizontal,12)
             Spacer()
-
+            
             // Card Section
             VStack(spacing: 20) {
                 Text("Sign in Your Account")
                     .font(.custom("Exo2-Bold", size: 20))
                     .foregroundColor(.theme.primaryColor)
                     .frame(maxWidth: .infinity, alignment: .leading)
-
+                
                 InputFieldView(
                     description: "Email",
                     placeHolder: "johndoe@gmail.com",
@@ -48,9 +46,9 @@ struct LoginView: View {
                     errorMessage: loginViewModel.uiState.loginErrors["email"] ?? "",
                     inputFieldStyle: .outlined,
                     onTextChange: { text in
-                        loginViewModel.updateEmail(value: text)
+                        loginViewModel.onAction(.onEmailChange(text))
                     }
-
+                    
                 )
                 
                 PasswordInputFieldView(
@@ -61,20 +59,25 @@ struct LoginView: View {
                     errorMessage: loginViewModel.uiState.loginErrors["password"] ?? "",
                     inputFieldStyle: .outlined,
                     onTextChange: { text in
-                        loginViewModel.updatePassword(value: text)
+                        loginViewModel.onAction(.onPasswordChange(text))
                     }
-
+                    
                 )
-
+                
                 HStack {
-                    Toggle(isOn: $loginViewModel.uiState.rememberMe) {
+                    Toggle(
+                        isOn: Binding(
+                            get: { loginViewModel.uiState.rememberMe },
+                            set: { loginViewModel.onAction(.onRememberMe($0)) }
+                        )
+                    ) {
                         Text("Remember me")
                             .font(.custom("Exo2-Medium", size: 15))
                             .foregroundColor(Color.theme.primaryColor)
                     }
                     .toggleStyle(CheckboxToggleStyle())
                     .foregroundColor(Color.theme.onSurfaceColor)
-
+                    
                     Spacer()
                     Button("Forgot Password?") {
                         router.push(.forgotPassword)
@@ -82,44 +85,20 @@ struct LoginView: View {
                     .foregroundColor(.theme.primaryColor)
                     .font(.custom("Exo2-Medium", size: 15))
                 }
-
+                
                 CustomButtonView(
                     buttonName:"Sign In",
                     isDisabled: !loginViewModel.uiState.isLoginEnable,
                     onTap: {
-                        Task{
-                            await loginViewModel.loginUser(onSuccess: {
-                                if loginViewModel.uiState.rememberMe {
-                                    onLoginSuccess()
-                                }
-                                router.push(.dashboard)
-                            }, onFailure: {error in
-                                loginViewModel.updateIsShowAlertDialog(value: true)
-                                loginViewModel.updateDialogEntity(
-                                    value: DialogEntity(
-                                        title: "Login Failed.",
-                                        message: error,
-                                        icon: "",
-                                        confirmButtonText: "",
-                                        dismissButtonText: "Okay",
-                                        onConfirm: {
-                                            loginViewModel.updateIsShowAlertDialog(value: false)
-                                        },
-                                        onDismiss: {
-                                            loginViewModel.updateIsShowAlertDialog(value: false)
-                                        }
-                                    )
-                                )
-                            })
-                        }
+                        loginViewModel.onAction(.login)
                     }
                 )
-
+                
                 VStack(spacing: 12) {
                     Text("Or sign in with")
                         .font(.custom("Exo2-Medium", size: 15))
                         .foregroundColor(.gray)
-
+                    
                     HStack(spacing: 16) {
                         ForEach(["google", "facebook" ], id: \.self) { iconName in
                             Button(action: {}) {
@@ -134,7 +113,7 @@ struct LoginView: View {
                         }
                     }
                 }
-
+                
                 HStack {
                     Text("Don’t have an account?")
                         .foregroundColor(Color.theme.onSurfaceColor)
@@ -180,6 +159,35 @@ struct LoginView: View {
         .background(Color.theme.surfaceColor)
         .ignoresSafeArea(edges: .all)
         .fullScreenProgressOverlay(isShowing: loginViewModel.uiState.loginState == .isLoading )
+        .onReceive(loginViewModel.$effect) { effect in
+            guard let effect = effect else { return }
+            switch effect {
+            case .navigateToDashboard:
+                if loginViewModel.uiState.rememberMe {
+                    onLoginSuccess()
+                }
+                router.push(.dashboard)
+            case .showError(let message):
+                loginViewModel.updateIsShowAlertDialog(value: true)
+                loginViewModel.updateDialogEntity(
+                    value: DialogEntity(
+                        title: "Login Failed.",
+                        message: message,
+                        icon: "",
+                        confirmButtonText: "",
+                        dismissButtonText: "Okay",
+                        onConfirm: {
+                            loginViewModel.updateIsShowAlertDialog(value: false)
+                        },
+                        onDismiss: {
+                            loginViewModel.updateIsShowAlertDialog(value: false)
+                        }
+                    )
+                )
+            }
+            
+            loginViewModel.effect = nil
+        }
     }
 }
 

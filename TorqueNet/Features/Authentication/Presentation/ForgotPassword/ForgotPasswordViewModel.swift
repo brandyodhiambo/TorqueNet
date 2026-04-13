@@ -10,62 +10,63 @@ import FirebaseAuth
 
 @MainActor
 class ForgotPasswordViewModel:ObservableObject {
-    @Published var dialogEntity = DialogEntity()
-    @Published var isShowAlertDialog = false
-    @Published var email: String = ""
-    @Published var isForgotPasswordEnable: Bool = false
-    @Published var forgotPasswordErrors = [String: String]()
-    @Published var forgotPasswordState: FetchState = FetchState.good
-    
+    @Published var uiState = ForgotPasswordState()
+    @Published var effect: ForgotEffect?
     let authUseCase: AuthUseCase = AuthUseCase(authRepository: AuthenticationRepositoryImpl.shared)
+    
+    func onAction(_intent:ForgotIntent){
+        switch _intent {
+        case .onEmailChanged(let email):
+            uiState.email = email
+            let error = ValidatorUtils.shared.validateEmail(email: uiState.email)
+            updateForgotErrors(key: "email", value:  error)
+        case .forgotPassword:
+            Task{
+                await handleForgotPassword()
+            }
+        }
+        
+    }
     
     func validateIfForgotPasswordIsEnabled(){
         var isFormValid = true
         
-        if !forgotPasswordErrors.values.allSatisfy({ $0.isEmpty }) || email.isEmpty{
+        if !uiState.forgotPasswordErrors.values.allSatisfy({ $0.isEmpty }) || uiState.email.isEmpty{
             isFormValid = false
         }
         
-        isForgotPasswordEnable = isFormValid
+        uiState.isForgotPasswordEnable = isFormValid
     }
     
     func updateForgotErrors(key: String, value: String) {
-        forgotPasswordErrors[key] = value
+        uiState.forgotPasswordErrors[key] = value
         validateIfForgotPasswordIsEnabled()
-    }
-    
-    func updateEmail(value: String) {
-        email = value
-        let error = ValidatorUtils.shared.validateEmail(email: email)
-        updateForgotErrors(key: "email", value:  error)
     }
 
     
     func updateDialogEntity(value: DialogEntity) {
-        dialogEntity = value
+        uiState.dialogEntity = value
     }
     
     func updateIsShowAlertDialog(value: Bool) {
-        isShowAlertDialog = value
+        uiState.isShowAlertDialog = value
     }
     
-    func forgotPassword(
-        onSuccess: () -> Void,
-        onFailure: (String) -> Void
-    ) async {
-        forgotPasswordState = .isLoading
+    
+    private func handleForgotPassword() async {
+        uiState.forgotPasswordState = .isLoading
         
         var result:  Result<Bool, FirebaseAuthError>
-        result = await authUseCase.executeForgotPassword(email: email)
-    
+        result = await authUseCase.executeForgotPassword(email: uiState.email)
+
         switch result {
-        case .success(let authDataResult):
-            onSuccess()
-            forgotPasswordState = .good
+        case .success:
+            uiState.forgotPasswordState = .good
+            effect = .successDialog
+            
         case .failure(let error):
-            forgotPasswordState = .error(error.description)
-            onFailure(error.description)
+            uiState.forgotPasswordState = .error(error.description)
+            effect = .showError(error.description)
         }
-        
     }
 }
