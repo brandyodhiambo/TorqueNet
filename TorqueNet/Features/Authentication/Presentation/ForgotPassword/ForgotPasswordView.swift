@@ -17,7 +17,7 @@ struct ForgotPasswordView: View {
             VStack(spacing: 12) {
                 Spacer().frame(height: 50)
                 Text("TorqueNet")
-                    .font(.custom("Exo2-ExtraBold", size: 40))
+                    .font(.theme.brand(size: 40))
                     .foregroundColor(Color.theme.primaryColor)
                 
                 Image("appCar")
@@ -32,11 +32,11 @@ struct ForgotPasswordView: View {
             
             VStack(spacing: 20) {
                 Text("Forgot Password?")
-                    .font(.custom("Exo2-Bold", size: 20))
+                    .font(.theme.title(size: 20))
                     .foregroundColor(.theme.primaryColor)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Text("Enter your email below and we will send you a reset link.")
-                    .font(.custom("Exo2-Regular", size: 16))
+                    .font(.theme.body(size: 16))
                     .foregroundColor(.theme.onSurfaceColor)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -71,7 +71,7 @@ struct ForgotPasswordView: View {
                     .foregroundColor(Color.theme.primaryColor)
                     .fontWeight(.semibold)
                 }
-                .font(.custom("Exo2-Regular", size: 14))
+                .font(.theme.caption(size: 14))
                 .padding(.top, 8)
             }
             .padding(.vertical, 50)
