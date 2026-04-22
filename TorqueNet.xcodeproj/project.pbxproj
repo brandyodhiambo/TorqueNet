@@ -68,17 +68,17 @@
 		04356D5F2E40B85B00D1C0A6 /* TorqueNet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TorqueNet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04356D6F2E40B85B00D1C0A6 /* TorqueNetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TorqueNetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		04356D792E40B85B00D1C0A6 /* TorqueNetUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TorqueNetUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0477CF872E40BCFC00A9DB5F /* Exo2-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo2-Black.ttf"; sourceTree = "<group>"; };
-		0477CF882E40BCFC00A9DB5F /* Exo2-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo2-Bold.ttf"; sourceTree = "<group>"; };
-		0477CF892E40BCFC00A9DB5F /* Exo2-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo2-ExtraBold.ttf"; sourceTree = "<group>"; };
-		0477CF8A2E40BCFC00A9DB5F /* Exo2-ExtraLight.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo2-ExtraLight.ttf"; sourceTree = "<group>"; };
-		0477CF8B2E40BCFC00A9DB5F /* Exo2-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo2-Italic.ttf"; sourceTree = "<group>"; };
-		0477CF8C2E40BCFC00A9DB5F /* Exo2-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo2-Light.ttf"; sourceTree = "<group>"; };
-		0477CF8D2E40BCFC00A9DB5F /* Exo2-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo2-LightItalic.ttf"; sourceTree = "<group>"; };
-		0477CF8E2E40BCFC00A9DB5F /* Exo2-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo2-Medium.ttf"; sourceTree = "<group>"; };
-		0477CF8F2E40BCFC00A9DB5F /* Exo2-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo2-Regular.ttf"; sourceTree = "<group>"; };
-		0477CF902E40BCFC00A9DB5F /* Exo2-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo2-SemiBold.ttf"; sourceTree = "<group>"; };
-		0477CF912E40BCFC00A9DB5F /* Exo2-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo2-Thin.ttf"; sourceTree = "<group>"; };
+		0477CF872E40BCFC00A9DB5F /* Exo2-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TorqueNet/Resources/Fonts/Exo2-Black.ttf"; sourceTree = "<group>"; };
+		0477CF882E40BCFC00A9DB5F /* Exo2-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TorqueNet/Resources/Fonts/Exo2-Bold.ttf"; sourceTree = "<group>"; };
+		0477CF892E40BCFC00A9DB5F /* Exo2-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TorqueNet/Resources/Fonts/Exo2-ExtraBold.ttf"; sourceTree = "<group>"; };
+		0477CF8A2E40BCFC00A9DB5F /* Exo2-ExtraLight.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TorqueNet/Resources/Fonts/Exo2-ExtraLight.ttf"; sourceTree = "<group>"; };
+		0477CF8B2E40BCFC00A9DB5F /* Exo2-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TorqueNet/Resources/Fonts/Exo2-Italic.ttf"; sourceTree = "<group>"; };
+		0477CF8C2E40BCFC00A9DB5F /* Exo2-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TorqueNet/Resources/Fonts/Exo2-Light.ttf"; sourceTree = "<group>"; };
+		0477CF8D2E40BCFC00A9DB5F /* Exo2-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TorqueNet/Resources/Fonts/Exo2-LightItalic.ttf"; sourceTree = "<group>"; };
+		0477CF8E2E40BCFC00A9DB5F /* Exo2-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TorqueNet/Resources/Fonts/Exo2-Medium.ttf"; sourceTree = "<group>"; };
+		0477CF8F2E40BCFC00A9DB5F /* Exo2-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TorqueNet/Resources/Fonts/Exo2-Regular.ttf"; sourceTree = "<group>"; };
+		0477CF902E40BCFC00A9DB5F /* Exo2-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TorqueNet/Resources/Fonts/Exo2-SemiBold.ttf"; sourceTree = "<group>"; };
+		0477CF912E40BCFC00A9DB5F /* Exo2-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TorqueNet/Resources/Fonts/Exo2-Thin.ttf"; sourceTree = "<group>"; };
 		0477D0822E40EBCB00A9DB5F /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
