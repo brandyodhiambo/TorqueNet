@@ -17,7 +17,7 @@ struct LoginView: View {
             VStack(spacing: 12) {
                 Spacer().frame(height: 50)
                 Text("TorqueNet")
-                    .font(.custom("Exo2-ExtraBold", size: 40))
+                    .font(.theme.extraBold(size: 40))
                     .foregroundColor(Color.theme.primaryColor)
                 
                 Image("appCar")
@@ -33,7 +33,7 @@ struct LoginView: View {
             // Card Section
             VStack(spacing: 20) {
                 Text("Sign in Your Account")
-                    .font(.custom("Exo2-Bold", size: 20))
+                    .font(.theme.bold(size: 20))
                     .foregroundColor(.theme.primaryColor)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -72,7 +72,7 @@ struct LoginView: View {
                         )
                     ) {
                         Text("Remember me")
-                            .font(.custom("Exo2-Medium", size: 15))
+                            .font(.theme.medium(size: 15))
                             .foregroundColor(Color.theme.primaryColor)
                     }
                     .toggleStyle(CheckboxToggleStyle())
@@ -96,7 +96,7 @@ struct LoginView: View {
                 
                 VStack(spacing: 12) {
                     Text("Or sign in with")
-                        .font(.custom("Exo2-Medium", size: 15))
+                        .font(.theme.medium(size: 15))
                         .foregroundColor(.gray)
                     
                     HStack(spacing: 16) {
@@ -123,7 +123,7 @@ struct LoginView: View {
                     .foregroundColor(Color.theme.primaryColor)
                     .fontWeight(.semibold)
                 }
-                .font(.custom("Exo2-Regular", size: 14))
+                .font(.theme.regular(size: 14))
                 .padding(.top, 8)
             }
             .padding(.vertical, 30)

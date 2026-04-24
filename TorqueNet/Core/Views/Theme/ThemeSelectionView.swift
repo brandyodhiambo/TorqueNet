@@ -15,7 +15,7 @@ struct ThemeSelectionView: View {
             VStack(spacing: 20) {
                 VStack(spacing: 16) {
                     Text("Choose your preferred theme")
-                        .font(.custom("Exo2-Regular", size: 16))
+                        .font(.theme.regular(size: 16))
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                         .padding(.top, 20)
@@ -66,7 +66,7 @@ struct ThemeSelectionView: View {
                 trailing: Button("Done") {
                     presentationMode.wrappedValue.dismiss()
                 }
-                    .font(.custom("Exo2-Medium", size: 16))
+                    .font(.theme.medium(size: 16))
             )
         
     }
@@ -95,12 +95,12 @@ struct ThemeOptionView: View {
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.custom("Exo2-Medium", size: 16))
+                        .font(.theme.medium(size: 16))
                         .foregroundColor(.primary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     Text(subtitle)
-                        .font(.custom("Exo2-Regular", size: 14))
+                        .font(.theme.regular(size: 14))
                         .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }

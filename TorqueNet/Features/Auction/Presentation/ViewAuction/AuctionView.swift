@@ -62,7 +62,7 @@ struct AuctionView: View {
                                     viewAuctionViewModel.updateSelectedCategory(index)
                                 }) {
                                     Text(category)
-                                        .font(.custom("Exo2-Medium", size: 14))
+                                        .font(.theme.medium(size: 14))
                                         .foregroundColor(
                                             viewAuctionViewModel.viewAuctionUiState.selectedCategory == index
                                                 ? .white
@@ -89,10 +89,10 @@ struct AuctionView: View {
                                 .font(.system(size: 50))
                                 .foregroundColor(.red.opacity(0.6))
                             Text("Failed to Load Auctions")
-                                .font(.custom("Exo2-Bold", size: 18))
+                                .font(.theme.bold(size: 18))
                                 .foregroundColor(.theme.onSurfaceColor)
                             Text(message)
-                                .font(.custom("Exo2-Regular", size: 14))
+                                .font(.theme.regular(size: 14))
                                 .foregroundColor(.gray)
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, 32)
@@ -105,7 +105,7 @@ struct AuctionView: View {
                                     )
                                 }
                             }
-                            .font(.custom("Exo2-Bold", size: 14))
+                            .font(.theme.bold(size: 14))
                             .foregroundColor(.white)
                             .padding(.horizontal, 24)
                             .padding(.vertical, 12)
@@ -170,11 +170,11 @@ struct AllCategoriesView: View {
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Featured Auctions")
-                                .font(.custom("Exo2-Bold", size: 20))
+                                .font(.theme.bold(size: 20))
                                 .foregroundColor(.theme.onSurfaceColor)
                             
                             Text("Premium vehicles ending soon")
-                                .font(.custom("Exo2-Regular", size: 14))
+                                .font(.theme.regular(size: 14))
                                 .foregroundColor(.gray)
                         }
                     }
@@ -211,7 +211,7 @@ struct AllCategoriesView: View {
                                 .frame(width: 8, height: 8)
                             
                             Text("Live Auctions")
-                                .font(.custom("Exo2-Bold", size: 20))
+                                .font(.theme.bold(size: 20))
                                 .foregroundColor(.theme.onSurfaceColor)
                         }
                         
@@ -220,7 +220,7 @@ struct AllCategoriesView: View {
                         Button("View All") {
                             router.push(.auctionLiveBids)
                         }
-                        .font(.custom("Exo2-Medium", size: 14))
+                        .font(.theme.medium(size: 14))
                         .foregroundColor(.theme.primaryColor)
                     }
                     .padding(.horizontal, 16)
@@ -265,7 +265,7 @@ struct AllCategoriesView: View {
                         Button("Calendar") {
                             // Calendar action
                         }
-                        .font(.custom("Exo2-Medium", size: 14))
+                        .font(.theme.medium(size: 14))
                         .foregroundColor(.theme.primaryColor)
                     }
                     .padding(.horizontal, 16)
@@ -309,10 +309,10 @@ struct FilteredCategoryView: View {
                         .font(.system(size: 50))
                         .foregroundColor(.gray.opacity(0.4))
                     Text("No Auctions Found")
-                        .font(.custom("Exo2-Bold", size: 18))
+                        .font(.theme.bold(size: 18))
                         .foregroundColor(.theme.onSurfaceColor)
                     Text("Try adjusting your filters or search terms")
-                        .font(.custom("Exo2-Regular", size: 14))
+                        .font(.theme.regular(size: 14))
                         .foregroundColor(.gray)
                         .multilineTextAlignment(.center)
                 }
@@ -322,11 +322,11 @@ struct FilteredCategoryView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(getCategoryTitle())
-                            .font(.custom("Exo2-Bold", size: 20))
+                            .font(.theme.bold(size: 20))
                             .foregroundColor(.theme.onSurfaceColor)
                         
                         Text("\(viewModel.viewAuctionUiState.filteredAuctions.count) auctions found")
-                            .font(.custom("Exo2-Regular", size: 14))
+                            .font(.theme.regular(size: 14))
                             .foregroundColor(.gray)
                     }
                     Spacer()
@@ -378,7 +378,7 @@ struct FilteredAuctionCard: View {
                             .fill(Color.red)
                             .frame(width: 6, height: 6)
                         Text("LIVE")
-                            .font(.custom("Exo2-Bold", size: 8))
+                            .font(.theme.bold(size: 8))
                             .foregroundColor(.white)
                     }
                     .padding(.horizontal, 6)
@@ -392,7 +392,7 @@ struct FilteredAuctionCard: View {
                             .font(.system(size: 8))
                             .foregroundColor(.yellow)
                         Text("FEATURED")
-                            .font(.custom("Exo2-Bold", size: 8))
+                            .font(.theme.bold(size: 8))
                             .foregroundColor(.white)
                     }
                     .padding(.horizontal, 6)
@@ -406,7 +406,7 @@ struct FilteredAuctionCard: View {
             // Content
             VStack(alignment: .leading, spacing: 8) {
                 Text(auction.carTitle)
-                    .font(.custom("Exo2-Bold", size: 16))
+                    .font(.theme.bold(size: 16))
                     .foregroundColor(.theme.onSurfaceColor)
                     .lineLimit(2)
                 
@@ -416,17 +416,17 @@ struct FilteredAuctionCard: View {
                         .foregroundColor(.gray)
                     
                     Text(auction.auctionStatus == "Upcoming" ? "Starts Soon" : "Ends in \(formatTimeRemaining())")
-                        .font(.custom("Exo2-Regular", size: 12))
+                        .font(.theme.regular(size: 12))
                         .foregroundColor(.gray)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(auction.auctionStatus == "Upcoming" ? "Starting Bid" : "Current Bid")
-                        .font(.custom("Exo2-Regular", size: 11))
+                        .font(.theme.regular(size: 11))
                         .foregroundColor(.gray)
                     
                     Text("$\(Int(auction.currentBid ?? auction.startingBid))")
-                        .font(.custom("Exo2-Bold", size: 18))
+                        .font(.theme.bold(size: 18))
                         .foregroundColor(.theme.primaryColor)
                 }
                 
@@ -436,7 +436,7 @@ struct FilteredAuctionCard: View {
                         .font(.system(size: 10))
                     
                     Text("\(auction.bidCount ?? 0) bids")
-                        .font(.custom("Exo2-Medium", size: 11))
+                        .font(.theme.medium(size: 11))
                         .foregroundColor(.gray)
                     
                     Spacer()
@@ -444,7 +444,7 @@ struct FilteredAuctionCard: View {
                     Button(auction.auctionStatus == "Upcoming" ? "Notify" : "Bid Now") {
                         onTap()
                     }
-                    .font(.custom("Exo2-Bold", size: 11))
+                    .font(.theme.bold(size: 11))
                     .foregroundColor(.white)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
@@ -507,7 +507,7 @@ struct FeaturedAuctionCard: View {
                             .fill(Color.red)
                             .frame(width: 6, height: 6)
                         Text("LIVE")
-                            .font(.custom("Exo2-Bold", size: 10))
+                            .font(.theme.bold(size: 10))
                             .foregroundColor(.white)
                     }
                     .padding(.horizontal, 8)
@@ -523,10 +523,10 @@ struct FeaturedAuctionCard: View {
                         Spacer()
                         VStack(spacing: 2) {
                             Text("ENDS IN")
-                                .font(.custom("Exo2-Bold", size: 8))
+                                .font(.theme.bold(size: 8))
                                 .foregroundColor(.white.opacity(0.8))
                             Text(formatTimeRemaining())
-                                .font(.custom("Exo2-Bold", size: 12))
+                                .font(.theme.bold(size: 12))
                                 .foregroundColor(.white)
                         }
                         .padding(.horizontal, 10)
@@ -541,12 +541,12 @@ struct FeaturedAuctionCard: View {
             VStack(alignment: .leading, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(auction.carTitle)
-                        .font(.custom("Exo2-Bold", size: 16))
+                        .font(.theme.bold(size: 16))
                         .foregroundColor(.theme.onSurfaceColor)
                         .lineLimit(2)
                     
                     Text("Good Condition")
-                        .font(.custom("Exo2-Medium", size: 12))
+                        .font(.theme.medium(size: 12))
                         .foregroundColor(.green)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 2)
@@ -557,10 +557,10 @@ struct FeaturedAuctionCard: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Current Bid")
-                            .font(.custom("Exo2-Regular", size: 12))
+                            .font(.theme.regular(size: 12))
                             .foregroundColor(.gray)
                         Text("$\(Int(auction.currentBid ?? auction.startingBid))")
-                            .font(.custom("Exo2-Bold", size: 18))
+                            .font(.theme.bold(size: 18))
                             .foregroundColor(.theme.primaryColor)
                     }
                     
@@ -568,10 +568,10 @@ struct FeaturedAuctionCard: View {
                     
                     VStack(alignment: .trailing, spacing: 2) {
                         Text("Starting Bid")
-                            .font(.custom("Exo2-Regular", size: 12))
+                            .font(.theme.regular(size: 12))
                             .foregroundColor(.gray)
                         Text("$\(Int(auction.startingBid))")
-                            .font(.custom("Exo2-Medium", size: 14))
+                            .font(.theme.medium(size: 14))
                             .foregroundColor(.gray)
                     }
                 }
@@ -581,7 +581,7 @@ struct FeaturedAuctionCard: View {
                         .foregroundColor(.theme.primaryColor)
                         .font(.system(size: 12))
                     Text("\(auction.bidCount ?? 0) bids")
-                        .font(.custom("Exo2-Medium", size: 12))
+                        .font(.theme.medium(size: 12))
                         .foregroundColor(.gray)
                     
                     Spacer()
@@ -589,7 +589,7 @@ struct FeaturedAuctionCard: View {
                     Button("Place Bid") {
                         onTap()
                     }
-                    .font(.custom("Exo2-Bold", size: 12))
+                    .font(.theme.bold(size: 12))
                     .foregroundColor(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 6)
@@ -640,7 +640,7 @@ struct LiveAuctionCard: View {
                         .fill(Color.red)
                         .frame(width: 6, height: 6)
                     Text("LIVE")
-                        .font(.custom("Exo2-Bold", size: 8))
+                        .font(.theme.bold(size: 8))
                         .foregroundColor(.white)
                 }
                 .padding(.horizontal, 6)
@@ -652,12 +652,12 @@ struct LiveAuctionCard: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(auction.carTitle)
-                    .font(.custom("Exo2-Medium", size: 14))
+                    .font(.theme.medium(size: 14))
                     .foregroundColor(.theme.onSurfaceColor)
                     .lineLimit(2)
                 
                 Text("$\(Int(auction.currentBid ?? auction.startingBid))")
-                    .font(.custom("Exo2-Bold", size: 16))
+                    .font(.theme.bold(size: 16))
                     .foregroundColor(.theme.primaryColor)
             }
         }
@@ -680,12 +680,12 @@ struct UpcomingAuctionRow: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(auction.carTitle)
-                    .font(.custom("Exo2-Medium", size: 16))
+                    .font(.theme.medium(size: 16))
                     .foregroundColor(.theme.onSurfaceColor)
                     .lineLimit(1)
                 
                 Text("Starting at $\(Int(auction.startingBid))")
-                    .font(.custom("Exo2-Medium", size: 12))
+                    .font(.theme.medium(size: 12))
                     .foregroundColor(.theme.primaryColor)
             }
             

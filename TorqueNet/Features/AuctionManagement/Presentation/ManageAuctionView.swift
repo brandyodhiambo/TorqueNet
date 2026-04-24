@@ -90,14 +90,14 @@ struct ManageAuctionsView: View {
                 .font(.system(size: 40))
                 .foregroundColor(.red)
             Text(viewModel.uiState.errorMessage)
-                .font(.custom("Exo2-Regular", size: 14))
+                .font(.theme.regular(size: 14))
                 .foregroundColor(.theme.onSurfaceColor)
                 .multilineTextAlignment(.center)
             Button(action: {
                 Task { await viewModel.loadAuctions() }
             }) {
                 Text("Retry")
-                    .font(.custom("Exo2-SemiBold", size: 16))
+                    .font(.theme.semiBold(size: 16))
                     .foregroundColor(.white)
                     .padding(.horizontal, 32)
                     .padding(.vertical, 12)
@@ -115,10 +115,10 @@ struct ManageAuctionsView: View {
                 .font(.system(size: 40))
                 .foregroundColor(.theme.onSurfaceColor.opacity(0.4))
             Text(viewModel.uiState.selectedFilter == nil ? "No auctions yet" : "No \(viewModel.uiState.selectedFilter?.rawValue ?? "") auctions")
-                .font(.custom("Exo2-SemiBold", size: 16))
+                .font(.theme.semiBold(size: 16))
                 .foregroundColor(.theme.onSurfaceColor)
             Text("Start by uploading your first car for auction")
-                .font(.custom("Exo2-Regular", size: 14))
+                .font(.theme.regular(size: 14))
                 .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -149,10 +149,10 @@ struct FilterChip: View {
         Button(action: action) {
             HStack(spacing: 6) {
                 Text(title)
-                    .font(.custom("Exo2-SemiBold", size: 13))
+                    .font(.theme.semiBold(size: 13))
                 
                 Text("(\(count))")
-                    .font(.custom("Exo2-Regular", size: 12))
+                    .font(.theme.regular(size: 12))
             }
             .foregroundColor(isSelected ? .white : .theme.onSurfaceColor)
             .padding(.horizontal, 16)
@@ -190,14 +190,14 @@ struct ManageAuctionCard: View {
                     // Title & Status
                     HStack {
                         Text(auction.carTitle)
-                            .font(.custom("Exo2-SemiBold", size: 15))
+                            .font(.theme.semiBold(size: 15))
                             .foregroundColor(.theme.onSurfaceColor)
                             .lineLimit(1)
                         
                         Spacer()
                         
                         Text(auction.status.rawValue)
-                            .font(.custom("Exo2-Regular", size: 10))
+                            .font(.theme.regular(size: 10))
                             .foregroundColor(.white)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
@@ -207,7 +207,7 @@ struct ManageAuctionCard: View {
                     
                     // Lot Number
                     Text("Lot #\(auction.lotNumber)")
-                        .font(.custom("Exo2-Regular", size: 12))
+                        .font(.theme.regular(size: 12))
                         .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
                     
                     // Bids
@@ -216,7 +216,7 @@ struct ManageAuctionCard: View {
                             .font(.system(size: 10))
                             .foregroundColor(.theme.primaryColor)
                         Text("\(auction.bidCount) bids")
-                            .font(.custom("Exo2-Regular", size: 12))
+                            .font(.theme.regular(size: 12))
                             .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
                     }
                 }
@@ -228,19 +228,19 @@ struct ManageAuctionCard: View {
             HStack(spacing: 16) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Start Date")
-                        .font(.custom("Exo2-Regular", size: 11))
+                        .font(.theme.regular(size: 11))
                         .foregroundColor(.theme.onSurfaceColor.opacity(0.5))
                     Text(formatDate(auction.startDate))
-                        .font(.custom("Exo2-SemiBold", size: 12))
+                        .font(.theme.semiBold(size: 12))
                         .foregroundColor(.theme.onSurfaceColor)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("End Date")
-                        .font(.custom("Exo2-Regular", size: 11))
+                        .font(.theme.regular(size: 11))
                         .foregroundColor(.theme.onSurfaceColor.opacity(0.5))
                     Text(formatDate(auction.endDate))
-                        .font(.custom("Exo2-SemiBold", size: 12))
+                        .font(.theme.semiBold(size: 12))
                         .foregroundColor(.theme.onSurfaceColor)
                 }
                 
@@ -251,7 +251,7 @@ struct ManageAuctionCard: View {
                         Image(systemName: "pencil")
                             .font(.system(size: 12))
                         Text("Edit")
-                            .font(.custom("Exo2-SemiBold", size: 13))
+                            .font(.theme.semiBold(size: 13))
                     }
                     .foregroundColor(.theme.primaryColor)
                     .padding(.horizontal, 12)
@@ -312,10 +312,10 @@ struct EditAuctionSheet: View {
                         
                         VStack(alignment: .leading, spacing: 4) {
                             Text(auction.carTitle)
-                                .font(.custom("Exo2-SemiBold", size: 16))
+                                .font(.theme.semiBold(size: 16))
                                 .foregroundColor(.theme.onSurfaceColor)
                             Text("Lot #\(auction.lotNumber)")
-                                .font(.custom("Exo2-Regular", size: 13))
+                                .font(.theme.regular(size: 13))
                                 .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
                         }
                     }
@@ -326,7 +326,7 @@ struct EditAuctionSheet: View {
                     // Status Picker
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Auction Status")
-                            .font(.custom("Exo2-Medium", size: 16))
+                            .font(.theme.medium(size: 16))
                             .foregroundColor(.theme.onSurfaceColor)
                         
                         Picker("Status", selection: $selectedStatus) {
@@ -340,7 +340,7 @@ struct EditAuctionSheet: View {
                     // Start Date
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Start Date & Time")
-                            .font(.custom("Exo2-Medium", size: 16))
+                            .font(.theme.medium(size: 16))
                             .foregroundColor(.theme.onSurfaceColor)
                         
                         Button(action: { showStartDatePicker.toggle() }) {
@@ -348,7 +348,7 @@ struct EditAuctionSheet: View {
                                 Image(systemName: "calendar")
                                     .foregroundColor(.theme.primaryColor)
                                 Text(formatDateTime(startDate))
-                                    .font(.custom("Exo2-Regular", size: 14))
+                                    .font(.theme.regular(size: 14))
                                     .foregroundColor(.theme.onSurfaceColor)
                                 Spacer()
                                 Image(systemName: "chevron.down")
@@ -372,7 +372,7 @@ struct EditAuctionSheet: View {
                     // End Date
                     VStack(alignment: .leading, spacing: 12) {
                         Text("End Date & Time")
-                            .font(.custom("Exo2-Medium", size: 16))
+                            .font(.theme.medium(size: 16))
                             .foregroundColor(.theme.onSurfaceColor)
                         
                         Button(action: { showEndDatePicker.toggle() }) {
@@ -380,7 +380,7 @@ struct EditAuctionSheet: View {
                                 Image(systemName: "calendar")
                                     .foregroundColor(.theme.primaryColor)
                                 Text(formatDateTime(endDate))
-                                    .font(.custom("Exo2-Regular", size: 14))
+                                    .font(.theme.regular(size: 14))
                                     .foregroundColor(.theme.onSurfaceColor)
                                 Spacer()
                                 Image(systemName: "chevron.down")
@@ -413,7 +413,7 @@ struct EditAuctionSheet: View {
                     }) {
                         HStack {
                             Text(viewModel.uiState.auctionState == .isLoading ? "Updating..." : "Update Auction")
-                                .font(.custom("Exo2-SemiBold", size: 16))
+                                .font(.theme.semiBold(size: 16))
                         }
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)

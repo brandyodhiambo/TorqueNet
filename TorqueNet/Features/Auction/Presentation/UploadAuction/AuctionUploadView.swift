@@ -98,7 +98,7 @@ struct AuctionUploadView: View {
                 
                 
                 Text("\(uploadAuctionViewModel.ui.currentStep + 1) of \(uploadAuctionViewModel.steps.count): \(uploadAuctionViewModel.steps[uploadAuctionViewModel.ui.currentStep])")
-                    .font(.custom("Exo2-Regular", size: 14))
+                    .font(.theme.regular(size: 14))
                     .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
             }
             .padding(.horizontal, 20)
@@ -169,7 +169,7 @@ struct AuctionUploadView: View {
                 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Vehicle Rating")
-                        .font(.custom("Exo2-Medium", size: 16))
+                        .font(.theme.medium(size: 16))
                         .foregroundColor(.theme.onSurfaceColor)
                     
                     HStack {
@@ -177,7 +177,7 @@ struct AuctionUploadView: View {
                             .accentColor(.theme.primaryColor)
                         
                         Text(String(format: "%.1f", uploadAuctionViewModel.form.rating))
-                            .font(.custom("Exo2-SemiBold", size: 16))
+                            .font(.theme.semiBold(size: 16))
                             .foregroundColor(.theme.primaryColor)
                             .frame(width: 40)
                     }
@@ -204,7 +204,7 @@ struct AuctionUploadView: View {
                 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Auction End Date")
-                        .font(.custom("Exo2-Medium", size: 16))
+                        .font(.theme.medium(size: 16))
                         .foregroundColor(.theme.onSurfaceColor)
                     
                     DatePicker("", selection: $uploadAuctionViewModel.form.auctionEndDate, displayedComponents: [.date, .hourAndMinute])
@@ -218,7 +218,7 @@ struct AuctionUploadView: View {
                 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Auction Status")
-                        .font(.custom("Exo2-Medium", size: 16))
+                        .font(.theme.medium(size: 16))
                         .foregroundColor(.theme.onSurfaceColor)
                     
                     Picker("Status", selection: $uploadAuctionViewModel.form.auctionStatus) {
@@ -448,7 +448,7 @@ struct AuctionUploadView: View {
             // Add Feature Input
             HStack {
                 TextField("Add a feature...", text: $uploadAuctionViewModel.form.newFeature)
-                    .font(.custom("Exo2-Regular", size: 16))
+                    .font(.theme.regular(size: 16))
                     .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 12)
@@ -492,7 +492,7 @@ struct AuctionUploadView: View {
                     Image(systemName: "plus.circle")
                     Text("Add History Event")
                 }
-                .font(.custom("Exo2-Medium", size: 16))
+                .font(.theme.medium(size: 16))
                 .foregroundColor(.theme.primaryColor)
                 .padding()
                 .frame(maxWidth: .infinity)
@@ -527,12 +527,12 @@ struct AuctionUploadView: View {
                 ReviewCard(title: "Basic Information") {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("\(uploadAuctionViewModel.form.carTitle) - \(uploadAuctionViewModel.form.subtitle)")
-                            .font(.custom("Exo2-SemiBold", size: 16))
+                            .font(.theme.semiBold(size: 16))
                         Text("Lot #\(uploadAuctionViewModel.form.lotNumber) • Rating: \(String(format: "%.1f", uploadAuctionViewModel.form.rating))")
-                            .font(.custom("Exo2-Regular", size: 14))
+                            .font(.theme.regular(size: 14))
                             .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
                         Text("Starting Bid: $\(uploadAuctionViewModel.form.startingBid)")
-                            .font(.custom("Exo2-Medium", size: 14))
+                            .font(.theme.medium(size: 14))
                             .foregroundColor(.theme.primaryColor)
                     }
                 }
@@ -540,16 +540,16 @@ struct AuctionUploadView: View {
                 ReviewCard(title: "Specifications") {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("\(uploadAuctionViewModel.form.year) \(uploadAuctionViewModel.form.make) \(uploadAuctionViewModel.form.model)")
-                            .font(.custom("Exo2-Medium", size: 14))
+                            .font(.theme.medium(size: 14))
                         Text("\(uploadAuctionViewModel.form.mileage) miles • \(uploadAuctionViewModel.form.engine)")
-                            .font(.custom("Exo2-Regular", size: 12))
+                            .font(.theme.regular(size: 12))
                             .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
                     }
                 }
                 
                 ReviewCard(title: "Images") {
                     Text("\(uploadAuctionViewModel.form.selectedImages.count) photos uploaded")
-                        .font(.custom("Exo2-Regular", size: 14))
+                        .font(.theme.regular(size: 14))
                         .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
                 }
                 
@@ -559,7 +559,7 @@ struct AuctionUploadView: View {
                         Text("\(uploadAuctionViewModel.form.technologyFeatures.count) Technology features")
                         Text("\(uploadAuctionViewModel.form.comfortFeatures.count) Comfort features")
                     }
-                    .font(.custom("Exo2-Regular", size: 14))
+                    .font(.theme.regular(size: 14))
                     .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
                 }
             }
@@ -575,7 +575,7 @@ struct AuctionUploadView: View {
                     }
                 }) {
                     Text("Previous")
-                        .font(.custom("Exo2-Medium", size: 16))
+                        .font(.theme.medium(size: 16))
                         .foregroundColor(.theme.onSurfaceColor)
                         .padding(.horizontal, 24)
                         .padding(.vertical, 12)
@@ -607,7 +607,7 @@ struct AuctionUploadView: View {
                 }
             }) {
                 Text(uploadAuctionViewModel.ui.currentStep == uploadAuctionViewModel.steps.count - 1 ? "Submit Auction" : "Next")
-                    .font(.custom("Exo2-SemiBold", size: 16))
+                    .font(.theme.semiBold(size: 16))
                     .foregroundColor(.white)
                     .padding(.horizontal, 32)
                     .padding(.vertical, 12)
@@ -634,11 +634,11 @@ struct SectionHeader: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.custom("Exo2-Bold", size: 20))
+                .font(.theme.bold(size: 20))
                 .foregroundColor(.theme.onSurfaceColor)
             
             Text(subtitle)
-                .font(.custom("Exo2-Regular", size: 14))
+                .font(.theme.regular(size: 14))
                 .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
         }
     }
@@ -651,7 +651,7 @@ struct FeatureGroupEditor: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
-                .font(.custom("Exo2-SemiBold", size: 16))
+                .font(.theme.semiBold(size: 16))
                 .foregroundColor(.theme.onSurfaceColor)
             
             ForEach(features.indices, id: \.self) { index in
@@ -660,7 +660,7 @@ struct FeatureGroupEditor: View {
                         .foregroundColor(.green)
                     
                     Text(features[index])
-                        .font(.custom("Exo2-Regular", size: 14))
+                        .font(.theme.regular(size: 14))
                         .foregroundColor(.theme.onSurfaceColor)
                     
                     Spacer()
@@ -692,7 +692,7 @@ struct HistoryEventEditor: View {
         VStack(spacing: 12) {
             HStack {
                 Text("History Event")
-                    .font(.custom("Exo2-Medium", size: 16))
+                    .font(.theme.medium(size: 16))
                     .foregroundColor(.theme.onSurfaceColor)
                 
                 Spacer()
@@ -704,7 +704,7 @@ struct HistoryEventEditor: View {
             }
             
             TextField("Date (e.g., March 2023)", text: $event.date)
-                .font(.custom("Exo2-Regular", size: 14))
+                .font(.theme.regular(size: 14))
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 8)
@@ -712,7 +712,7 @@ struct HistoryEventEditor: View {
                 )
             
             TextField("Event (e.g., Vehicle Manufactured)", text: $event.event)
-                .font(.custom("Exo2-Regular", size: 14))
+                .font(.theme.regular(size: 14))
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 8)
@@ -720,7 +720,7 @@ struct HistoryEventEditor: View {
                 )
             
             TextField("Details", text: $event.details)
-                .font(.custom("Exo2-Regular", size: 14))
+                .font(.theme.regular(size: 14))
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 8)
@@ -744,13 +744,13 @@ struct InspectionRatingEditor: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text(title)
-                    .font(.custom("Exo2-Medium", size: 14))
+                    .font(.theme.medium(size: 14))
                     .foregroundColor(.theme.onSurfaceColor)
                 
                 Spacer()
                 
                 Text(String(format: "%.1f/10", rating))
-                    .font(.custom("Exo2-SemiBold", size: 14))
+                    .font(.theme.semiBold(size: 14))
                     .foregroundColor(rating > 9 ? .green : rating > 7 ? .orange : .red)
             }
             
@@ -758,7 +758,7 @@ struct InspectionRatingEditor: View {
                 .accentColor(.theme.primaryColor)
             
             TextField("Inspection details...", text: $details)
-                .font(.custom("Exo2-Regular", size: 14))
+                .font(.theme.regular(size: 14))
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 8)
@@ -785,7 +785,7 @@ struct ReviewCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
-                .font(.custom("Exo2-SemiBold", size: 16))
+                .font(.theme.semiBold(size: 16))
                 .foregroundColor(.theme.onSurfaceColor)
             
             content()
@@ -838,7 +838,7 @@ struct ImageCell: View {
                         .foregroundColor(.theme.primaryColor)
                     
                     Text(selectedImages.isEmpty ? "Add Photos" : "Add More")
-                        .font(.custom("Exo2-Medium", size: 12))
+                        .font(.theme.medium(size: 12))
                         .foregroundColor(.theme.onSurfaceColor.opacity(0.7))
                 }
                 .frame(height: 120)

@@ -34,7 +34,7 @@ struct LiveAuctionsView: View {
                         .animation(.easeInOut(duration: 1.0).repeatForever(), value: true)
                     
                     Text("\(filteredAuctions.count) ongoing auctions")
-                        .font(.custom("Exo2-Regular", size: 14))
+                        .font(.theme.regular(size: 14))
                         .foregroundColor(.gray)
                 }
                 
@@ -151,7 +151,7 @@ struct LiveCategoryChip: View {
     var body: some View {
         Button(action: onTap) {
             Text(title)
-                .font(.custom("Exo2-Medium", size: 14))
+                .font(.theme.medium(size: 14))
                 .foregroundColor(isSelected ? .white : .theme.onSurfaceColor)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
@@ -180,7 +180,7 @@ struct LiveAuctionCard2: View {
                         .scaleEffect(1.2)
                     
                     Text("LIVE")
-                        .font(.custom("Exo2-Bold", size: 8))
+                        .font(.theme.bold(size: 8))
                         .foregroundColor(.white)
                 }
                 .padding(.horizontal, 6)
@@ -192,19 +192,19 @@ struct LiveAuctionCard2: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(auction.carTitle)
-                    .font(.custom("Exo2-Medium", size: 14))
+                    .font(.theme.medium(size: 14))
                     .foregroundColor(.theme.onSurfaceColor)
                     .lineLimit(2)
                 
                 HStack {
                     Text(auction.currentBid.description)
-                        .font(.custom("Exo2-Bold", size: 16))
+                        .font(.theme.bold(size: 16))
                         .foregroundColor(.theme.primaryColor)
                     
                     Spacer()
                     
                     Text("\(auction.bidCount) bids")
-                        .font(.custom("Exo2-Regular", size: 12))
+                        .font(.theme.regular(size: 12))
                         .foregroundColor(.gray)
                 }
             }

@@ -17,7 +17,7 @@ struct RegisterView: View {
             VStack(spacing: 12) {
                 Spacer().frame(height: 50)
                 Text("TorqueNet")
-                    .font(.custom("Exo2-ExtraBold", size: 40))
+                    .font(.theme.extraBold(size: 40))
                     .foregroundColor(Color.theme.primaryColor)
                 
                 Image("appCar")
@@ -34,7 +34,7 @@ struct RegisterView: View {
                 ScrollView(.vertical,showsIndicators: false) {
                     VStack(){
                         Text("Create Account")
-                            .font(.custom("Exo2-Bold", size: 20))
+                            .font(.theme.bold(size: 20))
                             .foregroundColor(.theme.primaryColor)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
@@ -124,7 +124,7 @@ struct RegisterView: View {
                         
                         VStack(spacing: 12) {
                             Text("Or sign in with")
-                                .font(.custom("Exo2-Medium", size: 15))
+                                .font(.theme.medium(size: 15))
                                 .foregroundColor(.gray)
                             
                             HStack(spacing: 16) {
@@ -151,7 +151,7 @@ struct RegisterView: View {
                             .foregroundColor(Color.theme.primaryColor)
                             .fontWeight(.semibold)
                         }
-                        .font(.custom("Exo2-Regular", size: 14))
+                        .font(.theme.regular(size: 14))
                         .padding(.top, 8)
                     }
                 }

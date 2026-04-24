@@ -22,12 +22,12 @@ struct EmptyStateView: View {
                 .opacity(0.7)
 
             Text(title)
-                .font(.custom("Exo2-Bold", size: 16))
+                .font(.theme.bold(size: 16))
                 .foregroundColor(.theme.onSurfaceColor)
 
             if let subtitle {
                 Text(subtitle)
-                    .font(.custom("Exo2-Regular", size: 14))
+                    .font(.theme.regular(size: 14))
                     .foregroundColor(.theme.onSurfaceColor.opacity(0.6))
                     .multilineTextAlignment(.center)
             }
